@@ -33,11 +33,41 @@
         .badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
         .badge.active { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
         .badge.paused { background: rgba(239, 68, 68, 0.1); color: var(--accent); }
-        .notice-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #fcd34d; display: flex; align-items: center; gap: 12px; }
+        
+        .notice-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #fcd34d; display: flex; align-items: center; gap: 12px; }
+        .maintenance-banner { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #f87171; display: flex; align-items: center; gap: 12px; }
+        
+        /* BAN SCREEN STYLE */
+        .ban-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); z-index: 99999;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .ban-card {
+            background-color: var(--card-bg); border: 1px solid var(--accent);
+            border-radius: 16px; padding: 40px 30px; text-align: center; max-width: 440px; width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
+        }
+        .ban-card i { font-size: 48px; color: var(--accent); margin-bottom: 20px; }
+        .ban-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .ban-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+        .ip-tag { font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
+
+    <!-- TELA DE BANIMENTO GLOBAL NO DASHBOARD -->
+    <div id="banScreen" class="ban-screen hidden">
+        <div class="ban-card">
+            <i class="fa-solid fa-ban"></i>
+            <h2>Usuário Banido</h2>
+            <p>Usuário banido por favor entre em contato com o suporte para reativação da conta.</p>
+            <div class="ip-tag">Seu IP: <span id="userIpDisplay">Detectando...</span></div>
+        </div>
+    </div>
+
     <aside>
         <div>
             <div class="logo"><i class="fa-solid fa-chart-line"></i> VortexSub</div>
@@ -55,7 +85,13 @@
 
     <main>
         <div class="container">
-            <!-- AVISO DO ADMIN -->
+            <!-- AVISO DE MANUTENÇÃO (Permite usar tudo normalmente) -->
+            <div id="maintenanceBanner" class="maintenance-banner hidden">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 18px;"></i>
+                <div><strong>Aviso de Manutenção:</strong> O sistema está passando por melhorias, mas todas as funções continuam ativas para uso.</div>
+            </div>
+
+            <!-- AVISO DO ADMIN NO TOPO -->
             <div id="noticeBanner" class="notice-banner hidden">
                 <i class="fa-solid fa-bullhorn" style="font-size: 18px;"></i>
                 <div id="noticeText"></div>
@@ -130,19 +166,45 @@
         const adminEmail = "ffvortex20@gmail.com";
         let currentUser = null;
 
+        async function verifyIpBanAndSettings() {
+            try {
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                const userIp = ipData.ip;
+                document.getElementById('userIpDisplay').innerText = userIp;
+
+                const ipKey = userIp.replace(/\./g, '_');
+                const banSnap = await get(child(ref(db), 'bannedIps/' + ipKey));
+                if (banSnap.exists() && banSnap.val() === true) {
+                    document.getElementById('banScreen').classList.remove('hidden');
+                    return false;
+                }
+            } catch(e) {
+                console.error("Erro IP:", e);
+            }
+            return true;
+        }
+
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
+            
+            const notBanned = await verifyIpBanAndSettings();
+            if (!notBanned) return;
+
             currentUser = user;
             document.getElementById('userEmailDisplay').innerText = user.email;
             if (user.email === adminEmail) document.getElementById('adminMenu').classList.remove('hidden');
             
-            // Carrega Avisos Globais do Admin
+            // Carrega Configurações de Avisos e Manutenção
             const settingsSnap = await get(child(ref(db), 'systemSettings'));
             if(settingsSnap.exists()) {
                 const s = settingsSnap.val();
                 if(s.notice) {
                     document.getElementById('noticeText').innerText = s.notice;
                     document.getElementById('noticeBanner').classList.remove('hidden');
+                }
+                if(s.maintenance === true) {
+                    document.getElementById('maintenanceBanner').classList.remove('hidden');
                 }
             }
             loadUserCampaigns();
