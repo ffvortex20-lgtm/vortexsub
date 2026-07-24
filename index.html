@@ -204,7 +204,8 @@
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             GoogleAuthProvider, 
-            signInWithPopup,
+            signInWithRedirect,
+            getRedirectResult,
             setPersistence,
             browserLocalPersistence
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -217,7 +218,7 @@
             projectId: "vortexdev2",
             storageBucket: "vortexdev2.firebasestorage.app",
             messagingSenderId: "755839099190",
-            appId: "1:755839099190:web:f97e6d0dc860177306d397" // Certifique-se de usar um App ID Web do Firebase
+            appId: "1:755839099190:web:f97e6d0dc860177306d397"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -257,13 +258,20 @@
             }
         }
 
-        // Mudança para clique direto no botão em vez de submit de form, evitando o reset por autocomplete
+        // Verifica o retorno do login do Google após o redirecionamento
+        getRedirectResult(auth)
+            .then(async (result) => {
+                if (result && result.user) {
+                    await saveUserData(result.user);
+                    redirectUser(result.user.email);
+                }
+            }).catch((error) => {
+                alert("Erro ao retornar do Google: " + error.message);
+            });
+
         document.getElementById('submitBtn').addEventListener('click', async () => {
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
             if (!email || !password) {
                 alert('Preencha o e-mail e a senha corretamente.');
@@ -284,13 +292,12 @@
             }
         });
 
+        // Usa redirecionamento em vez de pop-up para evitar bloqueio de navegadores
         document.getElementById('googleBtn').addEventListener('click', async () => {
             try {
-                const result = await signInWithPopup(auth, googleProvider);
-                await saveUserData(result.user);
-                redirectUser(result.user.email);
+                await signInWithRedirect(auth, googleProvider);
             } catch (error) {
-                alert("Erro ao entrar com Google: " + error.message);
+                alert("Erro ao iniciar login com Google: " + error.message);
             }
         });
     </script>
