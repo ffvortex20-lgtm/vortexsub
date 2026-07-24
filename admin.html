@@ -14,16 +14,24 @@
         .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); margin-bottom: 32px; }
         .logo i { color: var(--accent); }
         .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
-        .nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 500; transition: 0.2s; }
-        .nav-links li.active a { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+        .nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; }
+        .nav-links li.active a, .nav-links li a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
         main { flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 1000px; }
+        .container { width: 100%; max-width: 1050px; }
         .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
         .page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
         .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
         .admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
         .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; text-align: center; }
         .stat-card h3 { font-size: 24px; color: #4ade80; margin-top: 5px; }
+        .btn-action { padding: 6px 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; margin-right: 4px; }
+        .btn-ban { background: #ef4444; color: #fff; }
+        .btn-pause { background: #f59e0b; color: #000; }
+        .btn-limit { background: #3b82f6; color: #fff; }
+        .btn-reset { background: #8b5cf6; color: #fff; }
+        .global-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        input, textarea { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: var(--text-main); font-size: 13px; outline: none; margin-top: 5px; margin-bottom: 10px; }
+        .btn-primary { background: #fff; color: #000; border: none; padding: 10px 16px; font-weight: 600; border-radius: 8px; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
         th { color: var(--text-muted); }
@@ -46,26 +54,42 @@
     <main>
         <div class="container">
             <h1 class="page-title">Painel Administrativo</h1>
-            <p class="page-subtitle">Acesso total a todos os dados do banco de dados[cite: 1].</p>
+            <p class="page-subtitle">Controle global do sistema, usuários e campanhas.</p>
             
             <div class="admin-stats">
                 <div class="stat-card"><span>Total de Cadastros</span><h3 id="statUsers">0</h3></div>
                 <div class="stat-card"><span>Links Criados</span><h3 id="statCampaigns">0</h3></div>
-                <div class="stat-card"><span>Total de Views/Cliques</span><h3 id="statViews">0</h3></div>
+                <div class="stat-card"><span>Total de Cliques</span><h3 id="statViews">0</h3></div>
             </div>
 
-            <div class="card">
-                <h3 style="margin-bottom: 16px; font-size:16px;"><i class="fa-solid fa-users"></i> Usuários Cadastrados & WhatsApp (Checker)</h3>
+            <div class="global-tools">
+                <div class="card" style="margin-bottom:0;">
+                    <h3 style="font-size:15px; margin-bottom:10px;"><i class="fa-solid fa-screwdriver-wrench"></i> Modo Manutenção</h3>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Bloqueia o acesso de usuários comuns.</p>
+                    <button class="btn-primary" id="maintenanceBtn" onclick="toggleMaintenance()" style="background:#374151; color:#fff;">Alternar Manutenção</button>
+                </div>
+                <div class="card" style="margin-bottom:0;">
+                    <h3 style="font-size:15px; margin-bottom:10px;"><i class="fa-solid fa-bullhorn"></i> Enviar Aviso Global</h3>
+                    <textarea id="globalNotice" rows="2" placeholder="Digite um aviso para todos..."></textarea>
+                    <button class="btn-primary" onclick="sendNotice()" style="width:100%;">Enviar Aviso</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <h3 style="font-size:16px; margin-bottom: 16px;"><i class="fa-solid fa-users"></i> Gerenciar Usuários</h3>
                 <table>
-                    <thead><tr><th>E-mail</th><th>WhatsApp</th><th>Data Registro</th></tr></thead>
+                    <thead><tr><th>E-mail</th><th>Status / Limite</th><th>Ações</th></tr></thead>
                     <tbody id="adminUsersTable"></tbody>
                 </table>
             </div>
 
             <div class="card" style="margin-top: 20px;">
-                <h3 style="margin-bottom: 16px; font-size:16px;"><i class="fa-solid fa-link"></i> Campanhas e Cliques</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                    <h3 style="font-size:16px;"><i class="fa-solid fa-link"></i> Campanhas Criadas</h3>
+                    <button class="btn-action btn-ban" onclick="resetAllCampaigns()">Resetar Todos os Links</button>
+                </div>
                 <table>
-                    <thead><tr><th>Título</th><th>Link TinyURL[cite: 1]</th><th>Cliques / Views</th></tr></thead>
+                    <thead><tr><th>Título</th><th>Criador</th><th>Cliques</th><th>Ações</th></tr></thead>
                     <tbody id="adminCampaignsTable"></tbody>
                 </table>
             </div>
@@ -75,7 +99,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getDatabase, ref, get, child, update, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -94,7 +118,7 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (!user || user.email !== adminEmail) {
-                alert('Acesso negado! Apenas o administrador pode acessar esta página.');
+                alert('Acesso negado!');
                 window.location.href = "dashboard.html";
                 return;
             }
@@ -106,10 +130,26 @@
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 
+                const isMaint = data.settings?.maintenance || false;
+                const mBtn = document.getElementById('maintenanceBtn');
+                mBtn.innerText = isMaint ? '🔴 Manutenção ATIVADA (Desativar)' : '🟢 Manutenção DESATIVADA (Ativar)';
+                mBtn.style.background = isMaint ? '#ef4444' : '#10b981';
+
                 const users = data.users || {};
                 let userHtml = '';
-                Object.values(users).forEach(u => {
-                    userHtml += `<tr><td>${u.email}</td><td>${u.whatsapp}</td><td>${new Date(u.createdAt).toLocaleDateString()}</td></tr>`;
+                Object.entries(users).forEach(([uid, u]) => {
+                    const status = u.status || 'Ativo';
+                    const limit = u.linkLimit || 10;
+                    userHtml += `<tr>
+                        <td>${u.email}</td>
+                        <td><b>${status}</b> (Limite: ${limit})</td>
+                        <td>
+                            <button class="btn-action btn-limit" onclick="changeLimit('${uid}', ${limit})">Limite</button>
+                            <button class="btn-action btn-pause" onclick="togglePauseUser('${uid}', '${status}')">${status === 'paused' ? 'Despausar' : 'Pausar'}</button>
+                            <button class="btn-action btn-ban" onclick="toggleBanUser('${uid}', '${status}')">${status === 'banned' ? 'Desbanir' : 'Banir'}</button>
+                            <button class="btn-action btn-reset" onclick="resetUserAccount('${uid}')">Resetar</button>
+                        </td>
+                    </tr>`;
                 });
                 document.getElementById('adminUsersTable').innerHTML = userHtml;
                 document.getElementById('statUsers').innerText = Object.keys(users).length;
@@ -117,13 +157,74 @@
                 const campaigns = data.campaigns || {};
                 let campHtml = '';
                 let totalViews = 0;
-                Object.values(campaigns).forEach(c => {
+                Object.entries(campaigns).forEach(([cId, c]) => {
                     totalViews += (c.clicks || 0);
-                    campHtml += `<tr><td>${c.title}</td><td><a href="${c.shortUrl}" target="_blank" style="color:#4ade80;">${c.shortUrl}</a></td><td>${c.clicks || 0}</td></tr>`;
+                    campHtml += `<tr>
+                        <td>${c.title}</td>
+                        <td>${c.creator}</td>
+                        <td>${c.clicks || 0}</td>
+                        <td><button class="btn-action btn-ban" onclick="deleteCampaign('${cId}')">Excluir</button></td>
+                    </tr>`;
                 });
                 document.getElementById('adminCampaignsTable').innerHTML = campHtml;
                 document.getElementById('statCampaigns').innerText = Object.keys(campaigns).length;
                 document.getElementById('statViews').innerText = totalViews;
+            }
+        }
+
+        window.toggleMaintenance = async function() {
+            const snap = await get(child(ref(db), `settings/maintenance`));
+            const current = snap.val() || false;
+            await update(ref(db, 'settings'), { maintenance: !current });
+            loadAdminData();
+        }
+
+        window.sendNotice = async function() {
+            const msg = document.getElementById('globalNotice').value;
+            if(!msg) { alert('Digite uma mensagem.'); return; }
+            await update(ref(db, 'settings'), { globalNotice: msg });
+            alert('Aviso enviado com sucesso!');
+            document.getElementById('globalNotice').value = '';
+        }
+
+        window.changeLimit = async function(uid, currentLimit) {
+            const newLim = prompt('Novo limite de links:', currentLimit);
+            if(newLim !== null) {
+                await update(ref(db, `users/${uid}`), { linkLimit: parseInt(newLim) });
+                loadAdminData();
+            }
+        }
+
+        window.togglePauseUser = async function(uid, currentStatus) {
+            const nextStatus = currentStatus === 'paused' ? 'ativo' : 'paused';
+            await update(ref(db, `users/${uid}`), { status: nextStatus });
+            loadAdminData();
+        }
+
+        window.toggleBanUser = async function(uid, currentStatus) {
+            const nextStatus = currentStatus === 'banned' ? 'ativo' : 'banned';
+            await update(ref(db, `users/${uid}`), { status: nextStatus });
+            loadAdminData();
+        }
+
+        window.resetUserAccount = async function(uid) {
+            if(confirm('Resetar dados desta conta?')) {
+                await update(ref(db, `users/${uid}`), { linkLimit: 10, status: 'ativo' });
+                loadAdminData();
+            }
+        }
+
+        window.deleteCampaign = async function(cId) {
+            if(confirm('Excluir este link?')) {
+                await remove(ref(db, `campaigns/${cId}`));
+                loadAdminData();
+            }
+        }
+
+        window.resetAllCampaigns = async function() {
+            if(confirm('ATENÇÃO: Deseja apagar todas as campanhas?')) {
+                await remove(ref(db, `campaigns`));
+                loadAdminData();
             }
         }
     </script>
