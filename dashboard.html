@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VortexSub - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
+        aside { width: 260px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+        .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); margin-bottom: 32px; }
+        .logo i { color: var(--accent); }
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 500; transition: 0.2s; }
+        .nav-links li.active a { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
+        main { flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1fr 380px; gap: 32px; }
+        .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+        .page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
+        input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
+        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .preview-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; text-align: center; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <aside>
+        <div>
+            <div class="logo"><i class="fa-solid fa-chart-line"></i> VortexSub</div>
+            <ul class="nav-links">
+                <li class="active"><a><i class="fa-solid fa-plus-circle"></i> Criar campanha</a></li>
+                <li id="adminMenu" class="hidden"><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Painel Admin</a></li>
+            </ul>
+        </div>
+        <div>
+            <div id="userEmailDisplay" style="font-size: 12px; font-weight:500; margin-bottom: 10px;">user@email.com</div>
+            <a onclick="logout()" style="font-size: 11px; color: var(--accent); cursor:pointer;">Sair da conta</a>
+        </div>
+    </aside>
+
+    <main>
+        <div class="container">
+            <div>
+                <h1 class="page-title">Criar campanha</h1>
+                <p class="page-subtitle">Configure as ações e gere sua TinyURL[cite: 1].</p>
+                <div class="card">
+                    <div class="form-group">
+                        <label>URL de destino (link a desbloquear)*</label>
+                        <input type="url" id="targetUrl" placeholder="https://seu-link.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Título*</label>
+                        <input type="text" id="campTitle" placeholder="Ex: Script VIP" oninput="updatePreview()">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="createCampaign()">Criar campanha & Gerar TinyURL[cite: 1]</button>
+            </div>
+            <div class="preview-container">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">PREVIEW</div>
+                <div class="preview-card">
+                    <h3 id="prevTitle" style="font-size:16px; margin-bottom:16px;">Título da campanha</h3>
+                    <button class="btn-primary" style="background:#1f2937; color:var(--text-muted); cursor:not-allowed;" disabled><i class="fa-solid fa-lock"></i> Desbloquear</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="resultModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center;">
+        <div class="card" style="width:400px; text-align:center;">
+            <h3>Sucesso!</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:10px 0;">Link encurtado via TinyURL[cite: 1]:</p>
+            <input type="text" id="shortUrlOutput" readonly style="text-align:center; color:#4ade80; font-weight:bold; margin-bottom:15px;">
+            <button class="btn-primary" onclick="closeModal()">Fechar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const adminEmail = "ffvortex20@gmail.com";
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('userEmailDisplay').innerText = user.email;
+                if (user.email === adminEmail) {
+                    document.getElementById('adminMenu').classList.remove('hidden');
+                }
+            }
+        });
+
+        window.logout = function() {
+            signOut(auth).then(() => window.location.href = "index.html");
+        }
+
+        window.updatePreview = function() {
+            const title = document.getElementById('campTitle').value;
+            document.getElementById('prevTitle').innerText = title ? title : 'Título da campanha';
+        }
+
+        window.createCampaign = async function() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            const title = document.getElementById('campTitle').value;
+            const user = auth.currentUser;
+
+            if (!targetUrl || !title) { alert('Preencha todos os campos!'); return; }
+
+            try {
+                const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(targetUrl)}`);
+                const shortUrl = await res.text();
+
+                const campaignId = 'camp_' + Date.now();
+                await set(ref(db, 'campaigns/' + campaignId), {
+                    title, targetUrl, shortUrl, clicks: 0, creator: user.email, createdAt: new Date().toISOString()
+                });
+
+                document.getElementById('shortUrlOutput').value = shortUrl;
+                document.getElementById('resultModal').classList.remove('hidden');
+            } catch (e) {
+                alert('Erro ao criar campanha.');
+            }
+        }
+
+        window.closeModal = function() {
+            document.getElementById('resultModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
