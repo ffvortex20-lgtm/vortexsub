@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageMetaTitle">VortexSub - Carregando...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg-color: #050508; --card-bg: #0b0f19; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 480px; text-align: center; }
+        h1 { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; }
+        .author { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+        .box { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; text-align: left; }
+        .progress-text { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+        .action-item { background: #111827; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
+        .action-item:hover { border-color: #374151; }
+        .action-info { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; }
+        .action-info i { color: var(--primary); font-size: 16px; }
+        .action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
+        .btn-complete { width: 100%; background-color: #1f2937; border: none; border-radius: 8px; padding: 14px; color: var(--text-muted); font-weight: 600; cursor: not-allowed; margin-top: 10px; text-transform: uppercase; font-size: 12px; transition: 0.2s; }
+        .btn-complete.active { background-color: #fff; color: #000; cursor: pointer; }
+        .footer { margin-top: 24px; font-size: 11px; color: var(--text-muted); }
+        .footer a { color: var(--text-muted); text-decoration: none; margin: 0 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="campTitle">Carregando...</h1>
+        <div class="author">por <span id="campCreator">VortexDev</span></div>
+
+        <div class="box">
+            <div class="progress-text" id="progressText">0 de 3 ações completas</div>
+            
+            <div class="action-item" onclick="completeAction(0)">
+                <div class="action-info">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span>Curtir um vídeo</span>
+                </div>
+                <button class="action-btn"><i class="fa-solid fa-arrow-up-right-from-square" id="icon1"></i></button>
+            </div>
+
+            <div class="action-item" onclick="completeAction(1)">
+                <div class="action-info">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span>Comentar em um vídeo</span>
+                </div>
+                <button class="action-btn"><i class="fa-solid fa-arrow-up-right-from-square" id="icon2"></i></button>
+            </div>
+
+            <div class="action-item" onclick="completeAction(2)">
+                <div class="action-info">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Inscrever-se no canal / Grupo</span>
+                </div>
+                <button class="action-btn"><i class="fa-solid fa-arrow-up-right-from-square" id="icon3"></i></button>
+            </div>
+
+            <button class="btn-complete" id="unlockBtn" disabled onclick="redirectToTarget()">Complete mais 3 ações</button>
+        </div>
+
+        <div class="footer">
+            Powered by <b>VortexSub</b><br>
+            <a href="#">Termos</a> • <a href="#">Privacidade</a> • <a href="#">Contato</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const campId = urlParams.get('id');
+
+        let targetUrlFinal = "";
+        let completed = [false, false, false];
+
+        async function loadCampaign() {
+            if (!campId) {
+                document.getElementById('campTitle').innerText = "Campanha não encontrada";
+                return;
+            }
+
+            const snap = await get(child(ref(db), `campaigns/${campId}`));
+            if (snap.exists()) {
+                const data = snap.val();
+                document.getElementById('campTitle').innerText = data.title;
+                document.getElementById('pageMetaTitle').innerText = data.title + " - VortexSub";
+                document.getElementById('campCreator').innerText = data.creator.split('@')[0];
+                targetUrlFinal = data.targetUrl;
+
+                const newClicks = (data.clicks || 0) + 1;
+                await update(ref(db, `campaigns/${campId}`), { clicks: newClicks });
+            } else {
+                document.getElementById('campTitle').innerText = "Campanha inválida ou removida";
+            }
+        }
+
+        loadCampaign();
+
+        window.completeAction = function(index) {
+            if(!completed[index]) {
+                completed[index] = true;
+                
+                const icon = document.getElementById(`icon${index+1}`);
+                icon.className = "fa-solid fa-check";
+                icon.style.color = "#4ade80";
+
+                const count = completed.filter(Boolean).length;
+                document.getElementById('progressText').innerText = `${count} de 3 ações completas`;
+
+                if(count === 3) {
+                    const btn = document.getElementById('unlockBtn');
+                    btn.innerText = "Desbloquear link";
+                    btn.classList.add('active');
+                    btn.removeAttribute('disabled');
+                }
+            }
+        }
+
+        window.redirectToTarget = function() {
+            if(targetUrlFinal) {
+                window.location.href = targetUrlFinal;
+            }
+        }
+    </script>
+</body>
+</html>
