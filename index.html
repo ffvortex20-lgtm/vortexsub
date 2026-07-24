@@ -234,13 +234,11 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
-            IdTokenResult,
             getAuth, 
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             GoogleAuthProvider, 
             signInWithPopup, 
-            onAuthStateChanged,
             setPersistence,
             browserLocalPersistence
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -250,7 +248,7 @@
         const firebaseConfig = {
             apiKey: "SUA_API_KEY",
             authDomain: "SEU_AUTH_DOMAIN",
-            databaseURL: "SUA_DATABASE_URL",
+            databaseURL: "SEU_DATABASE_URL",
             projectId: "SEU_PROJECT_ID",
             storageBucket: "SEU_STORAGE_BUCKET",
             messagingSenderId: "SEU_MESSAGING_SENDER_ID",
@@ -262,12 +260,12 @@
         const db = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Garante que a sessão permaneça salva no navegador
+        // Configura persistência local para manter o usuário logado
         setPersistence(auth, browserLocalPersistence).catch((error) => {
-            console.error("Erro ao configurar persistência:", error);
+            console.error("Erro de persistência:", error);
         });
 
-        // Alternar entre as telas separadas de Sign In e Register
+        // Alternar entre as telas de Login e Cadastro
         window.switchView = function(viewName) {
             document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
             if (viewName === 'signin') {
@@ -277,7 +275,7 @@
             }
         }
 
-        // Função auxiliar para salvar/atualizar dados do usuário no Realtime Database ao logar
+        // Salvar dados do usuário no banco ao logar/cadastrar
         async function saveUserData(user) {
             const userRef = ref(db, 'users/' + user.uid);
             await set(userRef, {
@@ -287,7 +285,7 @@
             });
         }
 
-        // Login com E-mail e Senha
+        // Entrar com E-mail e Senha
         window.handleSignIn = async function(e) {
             e.preventDefault();
             const email = document.getElementById('signinEmail').value;
@@ -298,7 +296,7 @@
                 await saveUserData(userCredential.user);
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
                     alert('E-mail ou senha incorretos.');
                 } else {
                     alert('Erro ao entrar: ' + error.message);
@@ -306,7 +304,7 @@
             }
         }
 
-        // Cadastro com E-mail e Senha
+        // Criar Conta com E-mail e Senha
         window.handleRegister = async function(e) {
             e.preventDefault();
             const email = document.getElementById('registerEmail').value;
@@ -318,14 +316,16 @@
                 window.location.href = 'dashboard.html';
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert('Este e-mail já está cadastrado. Tente entrar na aba de login.');
+                    alert('Este e-mail já está cadastrado. Vá para a tela de entrar.');
+                } else if (error.code === 'auth/weak-password') {
+                    alert('A senha deve ter pelo menos 6 caracteres.');
                 } else {
                     alert('Erro ao cadastrar: ' + error.message);
                 }
             }
         }
 
-        // Login com Google (Serve tanto para entrar quanto para cadastrar)
+        // Entrar / Cadastrar com Google
         window.loginWithGoogle = async function() {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
