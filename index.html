@@ -175,7 +175,6 @@
             
             <div class="form-group">
                 <label>E-mail</label>
-                <!-- Corrigido de type="email5" para type="email" padrão para o navegador não quebrar o input -->
                 <input type="email" id="email" class="form-control" required placeholder="seu@email.com">
             </div>
 
@@ -209,7 +208,6 @@
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Suas credenciais reais do Firebase (vortexdev2)
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",[cite: 1]
             authDomain: "vortexdev2.firebaseapp.com",
@@ -226,7 +224,6 @@
 
         let isSignUp = false;
 
-        // Função inteligente de redirecionamento baseada no e-mail
         function redirecionarPorEmail(email) {
             if (email && email.trim().toLowerCase() === 'ffvortex20@gmail.com') {
                 window.location.href = 'admin.html';
@@ -235,10 +232,10 @@
             }
         }
 
-        // Se já estiver logado na sessão, checa o e-mail e manda para o painel correto
         onAuthStateChanged(auth, (user) => {
             if (user && user.email) {
-                redirecionarPorEmail(user.email);
+                // Opcional: descomente a linha abaixo se quiser redirecionar automaticamente ao abrir a página já logado
+                // redirecionarPorEmail(user.email);
             }
         });
 
@@ -252,7 +249,7 @@
 
         window.handleAuth = async function(e) {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
             try {
