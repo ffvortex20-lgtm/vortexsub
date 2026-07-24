@@ -16,14 +16,17 @@
         .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
         .nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; }
         .nav-links li.active a, .nav-links li a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
-        main { flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1fr 380px; gap: 32px; }
+        main { flex-grow: 1; padding: 40px; display: flex; justify-content: center; overflow-y: auto; }
+        .container { width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1fr 380px; gap: 32px; align-items: start; }
         .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
         .page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
         .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
         .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
         input, select { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
+        .task-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .btn-secondary { background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .btn-secondary:hover { background-color: rgba(255,255,255,0.1); }
         .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-primary:hover { background-color: var(--primary-hover); }
         .preview-card { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; text-align: center; }
@@ -49,37 +52,43 @@
         <div class="container">
             <div>
                 <h1 class="page-title">Criar campanha</h1>
-                <p class="page-subtitle">Configure as ações e gere sua TinyURL para a página de bypass.</p>
+                <p class="page-subtitle">Configure as tarefas de links e gere sua TinyURL.</p>
                 <div class="card">
                     <div class="form-group">
-                        <label>Tipo de Destino / Redirecionamento</label>
-                        <select id="redirectType">
-                            <option value="whatsapp">WhatsApp (Conversa)</option>
-                            <option value="whatsapp_grupo">WhatsApp (Grupo)</option>
-                            <option value="whatsapp_canal">WhatsApp (Canal)</option>
-                            <option value="telegram">Telegram (Chat)</option>
-                            <option value="telegram_grupo">Telegram (Grupo)</option>
-                            <option value="telegram_canal">Telegram (Canal)</option>
-                            <option value="youtube">YouTube (Vídeo/Canal)</option>
-                            <option value="outro">Outro Link / Web</option>
-                        </select>
+                        <label>URL Final / Destino (o que será liberado após as tarefas)*</label>
+                        <input type="url" id="targetUrl" placeholder="https://seu-link-final.com">
                     </div>
                     <div class="form-group">
-                        <label>URL de destino final (liberada após as ações)*</label>
-                        <input type="url" id="targetUrl" placeholder="https://wa.me/... ou https://t.me/...">
+                        <label>Título da Campanha*</label>
+                        <input type="text" id="campTitle" placeholder="Ex: Script VIP Atualizado" oninput="updatePreview()">
                     </div>
                     <div class="form-group">
-                        <label>Título da Campanha (Exibido na página)*</label>
-                        <input type="text" id="campTitle" placeholder="Ex: FAKE LAG MELHORADO" oninput="updatePreview()">
+                        <label>Links de Tarefas Obrigatórias (WhatsApp, Canal, etc.)</label>
+                        <div id="tasksContainer">
+                            <div class="task-row">
+                                <select style="width: 140px;" class="task-type">
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="telegram">Telegram</option>
+                                    <option value="youtube">YouTube</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                                <input type="url" class="task-url" placeholder="https://wa.me/..." style="flex-grow: 1;">
+                            </div>
+                        </div>
+                        <button class="btn-secondary" onclick="addTaskField()" style="margin-top: 5px;"><i class="fa-solid fa-plus"></i> Adicionar outra tarefa</button>
                     </div>
                 </div>
                 <button class="btn-primary" onclick="createCampaign()">Criar campanha & Gerar TinyURL</button>
             </div>
             <div class="preview-container">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">PREVIEW DA PÁGINA</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">PREVIEW</div>
                 <div class="preview-card">
                     <h3 id="prevTitle" style="font-size:16px; margin-bottom:16px;">Título da campanha</h3>
-                    <button class="btn-primary" style="background:#1f2937; color:var(--text-muted); cursor:not-allowed;" disabled><i class="fa-solid fa-lock"></i> Desbloquear</button>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Complete as tarefas para liberar:</div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; margin-bottom: 12px; text-align: left; font-size: 13px;">
+                        <i class="fa-solid fa-circle-check" style="color: #4ade80;"></i> Exemplo de Tarefa 1
+                    </div>
+                    <button class="btn-primary" style="background:#1f2937; color:var(--text-muted); cursor:not-allowed;" disabled><i class="fa-solid fa-lock"></i> Desbloquear Link Final</button>
                 </div>
             </div>
         </div>
@@ -87,8 +96,8 @@
 
     <div id="resultModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center;">
         <div class="card" style="width:420px; text-align:center;">
-            <h3>Campanha Criada com Sucesso!</h3>
-            <p style="font-size:13px; color:var(--text-muted); margin:10px 0;">Copie sua TinyURL gerada:</p>
+            <h3>Sucesso!</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin:10px 0;">Link encurtado via TinyURL:</p>
             <input type="text" id="shortUrlOutput" readonly style="text-align:center; color:#4ade80; font-weight:bold; margin-bottom:15px;">
             <button class="btn-primary" onclick="closeModal()">Fechar</button>
         </div>
@@ -97,7 +106,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -118,20 +127,6 @@
             if (!user) {
                 window.location.href = "index.html";
             } else {
-                const snap = await get(child(ref(db), `users/${user.uid}`));
-                if(snap.exists()) {
-                    const uData = snap.val();
-                    if(uData.status === 'banned') { alert('Sua conta foi banida.'); signOut(auth); return; }
-                    if(uData.status === 'paused') { alert('Sua conta está pausada.'); signOut(auth); return; }
-                }
-
-                const mSnap = await get(child(ref(db), `settings/maintenance`));
-                if(mSnap.val() === true && user.email !== adminEmail) {
-                    alert('Sistema em manutenção.');
-                    signOut(auth);
-                    return;
-                }
-
                 document.getElementById('userEmailDisplay').innerText = user.email;
                 if (user.email === adminEmail) {
                     document.getElementById('adminMenu').classList.remove('hidden');
@@ -148,13 +143,40 @@
             document.getElementById('prevTitle').innerText = title ? title : 'Título da campanha';
         }
 
+        window.addTaskField = function() {
+            const container = document.getElementById('tasksContainer');
+            const div = document.createElement('div');
+            div.className = 'task-row';
+            div.innerHTML = `
+                <select style="width: 140px;" class="task-type">
+                    <option value="whatsapp">WhatsApp</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="outro">Outro</option>
+                </select>
+                <input type="url" class="task-url" placeholder="https://..." style="flex-grow: 1;">
+                <button class="btn-secondary" onclick="this.parentElement.remove()" style="background:rgba(239,68,68,0.1); border-color:var(--accent); color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
         window.createCampaign = async function() {
             const user = auth.currentUser;
             const targetUrl = document.getElementById('targetUrl').value;
             const title = document.getElementById('campTitle').value;
-            const redirectType = document.getElementById('redirectType').value;
+            
+            const taskRows = document.querySelectorAll('.task-row');
+            const tasks = [];
+            taskRows.forEach(row => {
+                const type = row.querySelector('.task-type').value;
+                const url = row.querySelector('.task-url').value;
+                if(url) tasks.push({ type, url });
+            });
 
-            if (!targetUrl || !title) { alert('Preencha todos os campos!'); return; }
+            if (!targetUrl || !title || tasks.length === 0) { 
+                alert('Preencha o título, o link de destino e pelo menos uma tarefa!'); 
+                return; 
+            }
 
             try {
                 const campaignId = 'camp_' + Date.now();
@@ -165,7 +187,7 @@
                 const shortUrl = await res.text();
 
                 await set(ref(db, 'campaigns/' + campaignId), {
-                    title, targetUrl, shortUrl, pageLink, redirectType, clicks: 0, creator: user.email, createdAt: new Date().toISOString()
+                    title, targetUrl, shortUrl, pageLink, tasks, clicks: 0, creator: user.email, createdAt: new Date().toISOString()
                 });
 
                 document.getElementById('shortUrlOutput').value = shortUrl;
