@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Admin</title>
+    <title>VortexSub - Painel Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
+        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --accent: #ef4444; --success: #10b981; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
         aside { width: 260px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
@@ -16,217 +16,119 @@
         .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
         .nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; }
         .nav-links li.active a, .nav-links li a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
-        main { flex-grow: 1; padding: 40px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 1050px; }
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 1000px; }
         .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
         .page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
         .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
-        .admin-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; text-align: center; }
-        .stat-card h3 { font-size: 24px; color: #4ade80; margin-top: 5px; }
-        .btn-action { padding: 6px 10px; border-radius: 6px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; margin-right: 4px; }
-        .btn-ban { background: #ef4444; color: #fff; }
-        .btn-pause { background: #f59e0b; color: #000; }
-        .btn-limit { background: #3b82f6; color: #fff; }
-        .btn-reset { background: #8b5cf6; color: #fff; }
-        .global-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-        input, textarea { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: var(--text-main); font-size: 13px; outline: none; margin-top: 5px; margin-bottom: 10px; }
-        .btn-primary { background: #fff; color: #000; border: none; padding: 10px 16px; font-weight: 600; border-radius: 8px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
-        th { color: var(--text-muted); }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
+        input, textarea { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
+        textarea { resize: vertical; height: 90px; }
+        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background-color: #e5e7eb; }
+        .campaign-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <aside>
         <div>
-            <div class="logo"><i class="fa-solid fa-chart-line"></i> VortexSub</div>
+            <div class="logo"><i class="fa-solid fa-shield-halved"></i> VortexAdmin</div>
             <ul class="nav-links">
-                <li><a href="dashboard.html"><i class="fa-solid fa-plus-circle"></i> Criar campanha</a></li>
-                <li class="active"><a><i class="fa-solid fa-shield-halved"></i> Painel Admin</a></li>
+                <li class="active"><a><i class="fa-solid fa-gear"></i> Configurações & Avisos</a></li>
+                <li><a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao Dashboard</a></li>
             </ul>
         </div>
-        <div>
-            <a href="index.html" style="font-size: 11px; color: var(--accent); cursor:pointer;">Sair da conta</a>
-        </div>
+        <div><a onclick="signOut()" style="font-size: 11px; color: var(--accent); cursor:pointer;">Sair</a></div>
     </aside>
 
     <main>
         <div class="container">
-            <h1 class="page-title">Painel Administrativo</h1>
-            <p class="page-subtitle">Controle global do sistema, usuários e campanhas.</p>
-            
-            <div class="admin-stats">
-                <div class="stat-card"><span>Total de Cadastros</span><h3 id="statUsers">0</h3></div>
-                <div class="stat-card"><span>Links Criados</span><h3 id="statCampaigns">0</h3></div>
-                <div class="stat-card"><span>Total de Cliques</span><h3 id="statViews">0</h3></div>
+            <h1 class="page-title">Painel de Administração Global</h1>
+            <p class="page-subtitle">Envie avisos, configure manutenções e controle o sistema.</p>
+
+            <div class="card">
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent)"></i> Aviso Geral & Manutenção</h3>
+                <div class="form-group">
+                    <label>Mensagem de Aviso / Alerta para o Dashboard</label>
+                    <textarea id="globalNotice" placeholder="Ex: Sistema em atualização às 18h..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Modo Manutenção Global</label>
+                    <select id="maintenanceMode" style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); border-radius:8px; padding:12px; color:var(--text-main)">
+                        <option value="false">Desligado (Normal)</option>
+                        <option value="true">Ligado (Bloquear Usuários)</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="saveGlobalSettings()">Salvar Alterações</button>
             </div>
 
-            <div class="global-tools">
-                <div class="card" style="margin-bottom:0;">
-                    <h3 style="font-size:15px; margin-bottom:10px;"><i class="fa-solid fa-screwdriver-wrench"></i> Modo Manutenção</h3>
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Bloqueia o acesso de usuários comuns.</p>
-                    <button class="btn-primary" id="maintenanceBtn" onclick="toggleMaintenance()" style="background:#374151; color:#fff;">Alternar Manutenção</button>
-                </div>
-                <div class="card" style="margin-bottom:0;">
-                    <h3 style="font-size:15px; margin-bottom:10px;"><i class="fa-solid fa-bullhorn"></i> Enviar Aviso Global</h3>
-                    <textarea id="globalNotice" rows="2" placeholder="Digite um aviso para todos..."></textarea>
-                    <button class="btn-primary" onclick="sendNotice()" style="width:100%;">Enviar Aviso</button>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 20px;">
-                <h3 style="font-size:16px; margin-bottom: 16px;"><i class="fa-solid fa-users"></i> Gerenciar Usuários</h3>
-                <table>
-                    <thead><tr><th>E-mail</th><th>Status / Limite</th><th>Ações</th></tr></thead>
-                    <tbody id="adminUsersTable"></tbody>
-                </table>
-            </div>
-
-            <div class="card" style="margin-top: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-                    <h3 style="font-size:16px;"><i class="fa-solid fa-link"></i> Campanhas Criadas</h3>
-                    <button class="btn-action btn-ban" onclick="resetAllCampaigns()">Resetar Todos os Links</button>
-                </div>
-                <table>
-                    <thead><tr><th>Título</th><th>Criador</th><th>Cliques</th><th>Ações</th></tr></thead>
-                    <tbody id="adminCampaignsTable"></tbody>
-                </table>
+            <div class="card">
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-list-check"></i> Todas as Campanhas do Sistema</h3>
+                <div id="adminCampList"><p style="color:var(--text-muted); font-size:13px;">Carregando...</p></div>
             </div>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, get, child, update, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-        const firebaseConfig = {
+        const app = initializeApp({
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
             databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2",
-            storageBucket: "vortexdev2.firebasestorage.app",
-            messagingSenderId: "755839099190",
-            appId: "1:755839099190:android:f97e6d0dc860177306d397"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        const adminEmail = "ffvortex20@gmail.com";
-
-        onAuthStateChanged(auth, async (user) => {
-            if (!user || user.email !== adminEmail) {
-                alert('Acesso negado!');
-                window.location.href = "dashboard.html";
-                return;
-            }
-            loadAdminData();
+            projectId: "vortexdev2"
         });
+        const db = getDatabase(app);
 
         async function loadAdminData() {
-            const snapshot = await get(child(ref(db), `/`));
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                
-                const isMaint = data.settings?.maintenance || false;
-                const mBtn = document.getElementById('maintenanceBtn');
-                mBtn.innerText = isMaint ? '🔴 Manutenção ATIVADA (Desativar)' : '🟢 Manutenção DESATIVADA (Ativar)';
-                mBtn.style.background = isMaint ? '#ef4444' : '#10b981';
-
-                const users = data.users || {};
-                let userHtml = '';
-                Object.entries(users).forEach(([uid, u]) => {
-                    const status = u.status || 'Ativo';
-                    const limit = u.linkLimit || 10;
-                    userHtml += `<tr>
-                        <td>${u.email}</td>
-                        <td><b>${status}</b> (Limite: ${limit})</td>
-                        <td>
-                            <button class="btn-action btn-limit" onclick="changeLimit('${uid}', ${limit})">Limite</button>
-                            <button class="btn-action btn-pause" onclick="togglePauseUser('${uid}', '${status}')">${status === 'paused' ? 'Despausar' : 'Pausar'}</button>
-                            <button class="btn-action btn-ban" onclick="toggleBanUser('${uid}', '${status}')">${status === 'banned' ? 'Desbanir' : 'Banir'}</button>
-                            <button class="btn-action btn-reset" onclick="resetUserAccount('${uid}')">Resetar</button>
-                        </td>
-                    </tr>`;
-                });
-                document.getElementById('adminUsersTable').innerHTML = userHtml;
-                document.getElementById('statUsers').innerText = Object.keys(users).length;
-
-                const campaigns = data.campaigns || {};
-                let campHtml = '';
-                let totalViews = 0;
-                Object.entries(campaigns).forEach(([cId, c]) => {
-                    totalViews += (c.clicks || 0);
-                    campHtml += `<tr>
-                        <td>${c.title}</td>
-                        <td>${c.creator}</td>
-                        <td>${c.clicks || 0}</td>
-                        <td><button class="btn-action btn-ban" onclick="deleteCampaign('${cId}')">Excluir</button></td>
-                    </tr>`;
-                });
-                document.getElementById('adminCampaignsTable').innerHTML = campHtml;
-                document.getElementById('statCampaigns').innerText = Object.keys(campaigns).length;
-                document.getElementById('statViews').innerText = totalViews;
+            const snap = await get(child(ref(db), 'systemSettings'));
+            if(snap.exists()) {
+                const data = snap.val();
+                document.getElementById('globalNotice').value = data.notice || '';
+                document.getElementById('maintenanceMode').value = data.maintenance ? "true" : "false";
             }
+
+            const campSnap = await get(child(ref(db), 'campaigns'));
+            const listEl = document.getElementById('adminCampList');
+            if(!campSnap.exists()) { listEl.innerHTML = "<p>Nenhuma campanha.</p>"; return; }
+
+            let html = '';
+            campSnap.forEach(childSnap => {
+                const c = childSnap.val();
+                const id = childSnap.key;
+                html += `
+                    <div class="campaign-item">
+                        <div>
+                            <div style="font-weight:600; font-size:14px;">${c.title} <span style="font-size:11px; color:var(--text-muted)">(${c.creator})</span></div>
+                            <div style="font-size:12px; color:var(--text-muted)">Cliques: ${c.clicks || 0}</div>
+                        </div>
+                        <button onclick="deleteCamp('${id}')" style="background:rgba(239,68,68,0.1); border:1px solid var(--accent); color:var(--accent); padding:6px 10px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
         }
 
-        window.toggleMaintenance = async function() {
-            const snap = await get(child(ref(db), `settings/maintenance`));
-            const current = snap.val() || false;
-            await update(ref(db, 'settings'), { maintenance: !current });
-            loadAdminData();
+        window.saveGlobalSettings = async function() {
+            const notice = document.getElementById('globalNotice').value;
+            const maintenance = document.getElementById('maintenanceMode').value === "true";
+            await set(ref(db, 'systemSettings'), { notice, maintenance });
+            alert('Configurações globais salvas e sincronizadas!');
         }
 
-        window.sendNotice = async function() {
-            const msg = document.getElementById('globalNotice').value;
-            if(!msg) { alert('Digite uma mensagem.'); return; }
-            await update(ref(db, 'settings'), { globalNotice: msg });
-            alert('Aviso enviado com sucesso!');
-            document.getElementById('globalNotice').value = '';
-        }
-
-        window.changeLimit = async function(uid, currentLimit) {
-            const newLim = prompt('Novo limite de links:', currentLimit);
-            if(newLim !== null) {
-                await update(ref(db, `users/${uid}`), { linkLimit: parseInt(newLim) });
+        window.deleteCamp = async function(id) {
+            if(confirm('Apagar campanha do sistema?')) {
+                await remove(ref(db, 'campaigns/' + id));
                 loadAdminData();
             }
         }
 
-        window.togglePauseUser = async function(uid, currentStatus) {
-            const nextStatus = currentStatus === 'paused' ? 'ativo' : 'paused';
-            await update(ref(db, `users/${uid}`), { status: nextStatus });
-            loadAdminData();
-        }
-
-        window.toggleBanUser = async function(uid, currentStatus) {
-            const nextStatus = currentStatus === 'banned' ? 'ativo' : 'banned';
-            await update(ref(db, `users/${uid}`), { status: nextStatus });
-            loadAdminData();
-        }
-
-        window.resetUserAccount = async function(uid) {
-            if(confirm('Resetar dados desta conta?')) {
-                await update(ref(db, `users/${uid}`), { linkLimit: 10, status: 'ativo' });
-                loadAdminData();
-            }
-        }
-
-        window.deleteCampaign = async function(cId) {
-            if(confirm('Excluir este link?')) {
-                await remove(ref(db, `campaigns/${cId}`));
-                loadAdminData();
-            }
-        }
-
-        window.resetAllCampaigns = async function() {
-            if(confirm('ATENÇÃO: Deseja apagar todas as campanhas?')) {
-                await remove(ref(db, `campaigns`));
-                loadAdminData();
-            }
-        }
+        window.signOut = () => signOut(getAuth(app)).then(() => window.location.href = "index.html");
+        loadAdminData();
     </script>
 </body>
 </html>
