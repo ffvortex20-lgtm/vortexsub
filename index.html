@@ -170,30 +170,31 @@
             <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
         </div>
 
-        <form id="authForm">
+        <form id="authForm" onsubmit="handleAuth(event)">
             <h2 id="formTitle" style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
             
             <div class="form-group">
                 <label>E-mail</label>
-                <input type="email" id="email" class="form-control" autocomplete="email" required placeholder="seu@email.com">
+                <!-- Corrigido de type="email5" para type="email" padrão para o navegador não quebrar o input -->
+                <input type="email" id="email" class="form-control" required placeholder="seu@email.com">
             </div>
 
             <div class="form-group">
                 <label>Senha</label>
-                <input type="password" id="password" class="form-control" autocomplete="current-password" required placeholder="••••••••">
+                <input type="password" id="password" class="form-control" required placeholder="••••••••">
             </div>
 
-            <button type="button" id="submitBtn" class="btn-primary">Entrar</button>
+            <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
         </form>
 
-        <button type="button" class="btn-google" id="googleBtn">
+        <button type="button" class="btn-google" onclick="loginWithGoogle()">
             <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
         </button>
 
         <div class="divider">ou</div>
 
         <div class="switch-auth">
-            <span id="switchText">Não tem uma conta?</span> <a id="switchToggleBtn">Criar conta</a>
+            <span id="switchText">Não tem uma conta?</span> <a onclick="toggleMode()" id="switchBtnText">Criar conta</a>
         </div>
     </div>
 
@@ -204,41 +205,29 @@
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             GoogleAuthProvider, 
-            signInWithRedirect,
-            getRedirectResult,
-            setPersistence,
-            browserLocalPersistence
+            signInWithPopup, 
+            onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // Suas credenciais reais do Firebase (vortexdev2)
         const firebaseConfig = {
-            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",[cite: 1]
             authDomain: "vortexdev2.firebaseapp.com",
-            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2",
-            storageBucket: "vortexdev2.firebasestorage.app",
-            messagingSenderId: "755839099190",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",[cite: 1]
+            projectId: "vortexdev2",[cite: 1]
+            storageBucket: "vortexdev2.firebasestorage.app",[cite: 1]
+            messagingSenderId: "755839099190",[cite: 1]
             appId: "1:755839099190:web:f97e6d0dc860177306d397"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
-
-        setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
 
         let isSignUp = false;
 
-        document.getElementById('switchToggleBtn').addEventListener('click', () => {
-            isSignUp = !isSignUp;
-            document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
-            document.getElementById('submitBtn').innerText = isSignUp ? 'Cadastrar' : 'Entrar';
-            document.getElementById('switchText').innerText = isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?';
-            document.getElementById('switchToggleBtn').innerText = isSignUp ? 'Entrar' : 'Criar conta';
-        });
-
-        function redirectUser(email) {
+        // Função inteligente de redirecionamento baseada no e-mail
+        function redirecionarPorEmail(email) {
             if (email && email.trim().toLowerCase() === 'ffvortex20@gmail.com') {
                 window.location.href = 'admin.html';
             } else {
@@ -246,60 +235,55 @@
             }
         }
 
-        async function saveUserData(user) {
+        // Se já estiver logado na sessão, checa o e-mail e manda para o painel correto
+        onAuthStateChanged(auth, (user) => {
+            if (user && user.email) {
+                redirecionarPorEmail(user.email);
+            }
+        });
+
+        window.toggleMode = function() {
+            isSignUp = !isSignUp;
+            document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
+            document.getElementById('submitBtn').innerText = isSignUp ? 'Cadastrar' : 'Entrar';
+            document.getElementById('switchText').innerText = isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?';
+            document.getElementById('switchBtnText').innerText = isSignUp ? 'Entrar' : 'Criar conta';
+        }
+
+        window.handleAuth = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
             try {
-                await set(ref(db, 'users/' + user.uid), {
-                    uid: user.uid,
-                    email: user.email,
-                    lastLogin: Date.now()
-                });
-            } catch (err) {
-                console.error("Erro ao salvar no Database:", err);
+                let userCredential;
+                if (isSignUp) {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                }
+                redirecionarPorEmail(userCredential.user.email);
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    alert('Este e-mail já está cadastrado. Tente entrar ou recuperar a senha.');
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    alert('E-mail ou senha incorretos.');
+                } else {
+                    alert('Erro ao autenticar: ' + error.message);
+                }
             }
         }
 
-        // Verifica o retorno do login do Google após o redirecionamento
-        getRedirectResult(auth)
-            .then(async (result) => {
-                if (result && result.user) {
-                    await saveUserData(result.user);
-                    redirectUser(result.user.email);
-                }
-            }).catch((error) => {
-                alert("Erro ao retornar do Google: " + error.message);
-            });
-
-        document.getElementById('submitBtn').addEventListener('click', async () => {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) {
-                alert('Preencha o e-mail e a senha corretamente.');
-                return;
-            }
-
+        window.loginWithGoogle = async function() {
             try {
-                let userCred;
-                if (isSignUp) {
-                    userCred = await createUserWithEmailAndPassword(auth, email, password);
-                } else {
-                    userCred = await signInWithEmailAndPassword(auth, email, password);
+                const result = await signInWithPopup(auth, googleProvider);
+                redirecionarPorEmail(result.user.email);
+            } catch (error) {
+                if (error.code !== 'auth/cancelled-popup-request') {
+                    alert('Erro ao logar com o Google: ' + error.message);
                 }
-                await saveUserData(userCred.user);
-                redirectUser(userCred.user.email);
-            } catch (error) {
-                alert("Erro: " + error.message);
             }
-        });
-
-        // Usa redirecionamento em vez de pop-up para evitar bloqueio de navegadores
-        document.getElementById('googleBtn').addEventListener('click', async () => {
-            try {
-                await signInWithRedirect(auth, googleProvider);
-            } catch (error) {
-                alert("Erro ao iniciar login com Google: " + error.message);
-            }
-        });
+        }
     </script>
 </body>
 </html>
