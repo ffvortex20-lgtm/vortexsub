@@ -4,328 +4,444 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexSub - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; flex-direction: row; }
-        
-        aside { width: 260px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; flex-shrink: 0; }
-        .logo { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); margin-bottom: 24px; }
-        .logo i { color: var(--accent); }
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
-        .nav-links li a { display: flex; align-items: center; gap: 10px; color: var(--text-muted); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; font-size: 14px; }
-        .nav-links li.active a, .nav-links li a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
-        
-        main { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; justify-content: center; width: 100%; }
-        .container { width: 100%; max-width: 900px; }
-        .page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-        .page-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
-        .form-group { margin-bottom: 14px; }
-        label { display: block; font-size: 12px; font-weight: 500; color: var(--text-main); margin-bottom: 6px; }
-        input, select { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: var(--text-main); font-size: 13px; outline: none; }
-        .task-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-        .btn-secondary { background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 10px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 500; transition: 0.2s; }
-        .btn-secondary:hover { background-color: rgba(255,255,255,0.1); }
-        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 10px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 8px; font-size: 13px; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
-        .campaign-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .badge { font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: 600; }
-        .badge.active { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
-        .badge.paused { background: rgba(239, 68, 68, 0.1); color: var(--accent); }
-        
-        .notice-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 12px; color: #fcd34d; display: flex; align-items: center; gap: 10px; }
-        .maintenance-banner { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 12px; color: #f87171; display: flex; align-items: center; gap: 10px; }
-        
-        .ban-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .ban-card { background-color: var(--card-bg); border: 1px solid var(--accent); border-radius: 16px; padding: 30px 20px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25); }
-        .ban-card i { font-size: 40px; color: var(--accent); margin-bottom: 16px; }
-        .ban-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
-        .ban-card p { font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px; }
-        .ip-tag { font-size: 11px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
-        .hidden { display: none !important; }
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
 
-        /* RESPONSIVO PARA CELULAR */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            aside { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
-            .nav-links { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-            .nav-links li { flex: 1; min-width: 100px; }
-            .nav-links li a { justify-content: center; padding: 8px; font-size: 12px; text-align: center; }
-            main { padding: 15px; }
-            .task-row { flex-direction: column; align-items: stretch; }
-            .task-row select { width: 100% !important; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        main {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .campaign-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .campaign-info h3 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .campaign-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .campaign-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-main);
+        }
+
+        .task-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 1rem;
+            }
+            .campaign-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .campaign-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="banScreen" class="ban-screen hidden">
-        <div class="ban-card">
-            <i class="fa-solid fa-ban"></i>
-            <h2>Usuário Banido</h2>
-            <p>Usuário banido por favor entre em contato com o suporte para reativação da conta.</p>
-            <div class="ip-tag">Seu IP: <span id="userIpDisplay">Detectando...</span></div>
+    <header>
+        <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
+        <div class="user-info">
+            <span id="userEmailDisplay">Carregando...</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
         </div>
-    </div>
-
-    <aside>
-        <div>
-            <div class="logo"><i class="fa-solid fa-chart-line"></i> VortexSub</div>
-            <ul class="nav-links">
-                <li id="menuCreate" class="active"><a onclick="switchTab('create')"><i class="fa-solid fa-plus-circle"></i> Criar</a></li>
-                <li id="menuList"><a onclick="switchTab('list')"><i class="fa-solid fa-list"></i> Campanhas</a></li>
-                <li id="adminMenu" class="hidden"><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>
-            </ul>
-        </div>
-        <div style="margin-top: 15px;">
-            <div id="userEmailDisplay" style="font-size: 11px; font-weight:500; margin-bottom: 6px; word-break: break-all;">Carregando...</div>
-            <a onclick="logout()" style="font-size: 11px; color: var(--accent); cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
-        </div>
-    </aside>
+    </header>
 
     <main>
-        <div class="container">
-            <div id="maintenanceBanner" class="maintenance-banner hidden">
-                <i class="fa-solid fa-triangle-exclamation" style="font-size: 16px;"></i>
-                <div><strong>Manutenção:</strong> O sistema está passando por melhorias, mas tudo continua ativo.</div>
-            </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('list')">Minhas Campanhas</button>
+            <button class="tab-btn" id="tabCreateBtn" onclick="switchTab('create')">Criar Campanha</button>
+        </div>
 
-            <div id="noticeBanner" class="notice-banner hidden">
-                <i class="fa-solid fa-bullhorn" style="font-size: 16px;"></i>
-                <div id="noticeText"></div>
+        <!-- Painel de Listagem -->
+        <div id="listPanel" class="panel active">
+            <div id="campaignsContainer">
+                <p style="color:var(--text-muted); font-size:12px;">Carregando campanhas...</p>
             </div>
+        </div>
 
-            <div id="tabCreate">
-                <h1 class="page-title" id="formTitleAction">Criar campanha</h1>
-                <p class="page-subtitle">Configure as tarefas e gere seu link.</p>
-                <div class="card">
-                    <input type="hidden" id="editCampaignId">
-                    <div class="form-group">
-                        <label>URL Final / Destino*</label>
-                        <input type="url" id="targetUrl" placeholder="https://seu-link.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Título da Campanha*</label>
-                        <input type="text" id="campTitle" placeholder="Ex: Script VIP">
-                    </div>
-                    <div class="form-group">
-                        <label>Links de Tarefas Obrigatórias</label>
-                        <div id="tasksContainer">
-                            <div class="task-row">
-                                <select style="width: 130px;" class="task-type">
-                                    <option value="whatsapp">WhatsApp</option>
-                                    <option value="telegram">Telegram</option>
-                                    <option value="youtube">YouTube</option>
-                                    <option value="outro">Outro</option>
-                                </select>
-                                <input type="url" class="task-url" placeholder="https://..." style="flex-grow: 1;">
-                            </div>
-                        </div>
-                        <button class="btn-secondary" onclick="addTaskField()" style="margin-top: 6px;"><i class="fa-solid fa-plus"></i> Adicionar outra tarefa</button>
-                    </div>
+        <!-- Painel de Criação/Edição -->
+        <div id="createPanel" class="panel">
+            <h2 id="formTitleAction" style="font-size:1.1rem; margin-bottom:1.2rem;">Criar campanha</h2>
+            <form id="campaignForm" onsubmit="saveCampaign(event)">
+                <input type="hidden" id="editCampaignId">
+                <div class="form-group">
+                    <label>Título da Campanha</label>
+                    <input type="text" id="campTitle" class="form-control" required placeholder="Ex: Meu Mod Menu">
                 </div>
-                <button class="btn-primary" onclick="saveCampaign()">Salvar & Gerar Link</button>
-            </div>
-
-            <div id="tabList" class="hidden">
-                <h1 class="page-title">Minhas campanhas</h1>
-                <p class="page-subtitle">Gerencie e compartilhe seus links criados.</p>
-                <div id="campaignsListContainer"><p style="color: var(--text-muted); font-size: 13px;">Carregando...</p></div>
-            </div>
+                <div class="form-group">
+                    <label>Link de Destino (Final)</label>
+                    <input type="url" id="targetUrl" class="form-control" required placeholder="https://exemplo.com/download">
+                </div>
+                <div class="form-group">
+                    <label>Tarefas (Inscrições, Redes Sociais, etc.)</label>
+                    <div id="tasksContainer"></div>
+                    <button type="button" class="btn-secondary" style="margin-top:0.5rem;" onclick="addTaskField()"><i class="fa-solid fa-plus"></i> Adicionar Tarefa</button>
+                </div>
+                <button type="submit" class="btn-primary">Salvar Campanha</button>
+            </form>
         </div>
     </main>
 
-    <div id="resultModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; padding: 20px;">
-        <div class="card" style="width:100%; max-width:380px; text-align:center;">
-            <h3>Campanha Salva!</h3>
-            <p style="font-size:12px; color:var(--text-muted); margin:10px 0;">Link encurtado:</p>
-            <input type="text" id="shortUrlOutput" readonly style="text-align:center; color:#4ade80; font-weight:bold; margin-bottom:14px; font-size: 12px;">
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-secondary" style="flex:1;" onclick="copyOutputLink()"><i class="fa-solid fa-copy"></i> Copiar</button>
-                <button class="btn-primary" style="flex:1; margin-top:0;" onclick="closeModal()">Fechar</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Firebase SDKs e Lógica -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, update, remove, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, push, set, get, child, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const app = initializeApp({
-            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
-            authDomain: "vortexdev2.firebaseapp.com",
-            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2"
-        });
+        // Substitua com suas credenciais do Firebase
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            databaseURL: "SUA_DATABASE_URL",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        const adminEmail = "ffvortex20@gmail.com";
+
         let currentUser = null;
 
-        async function verifyIpBanAndSettings() {
-            try {
-                const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
-                const userIp = ipData.ip;
-                document.getElementById('userIpDisplay').innerText = userIp;
-
-                const ipKey = userIp.replace(/\./g, '_');
-                const banSnap = await get(child(ref(db), 'bannedIps/' + ipKey));
-                if (banSnap.exists() && banSnap.val() === true) {
-                    document.getElementById('banScreen').classList.remove('hidden');
-                    return false;
-                }
-            } catch(e) {
-                console.error("Erro IP:", e);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('userEmailDisplay').innerText = user.email;
+                loadUserCampaigns();
+            } else {
+                window.location.href = 'index.html';
             }
-            return true;
-        }
-
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) { window.location.href = "index.html"; return; }
-            const notBanned = await verifyIpBanAndSettings();
-            if (!notBanned) return;
-
-            currentUser = user;
-            document.getElementById('userEmailDisplay').innerText = user.email;
-            if (user.email === adminEmail) document.getElementById('adminMenu').classList.remove('hidden');
-            
-            const settingsSnap = await get(child(ref(db), 'systemSettings'));
-            if(settingsSnap.exists()) {
-                const s = settingsSnap.val();
-                if(s.notice) {
-                    document.getElementById('noticeText').innerText = s.notice;
-                    document.getElementById('noticeBanner').classList.remove('hidden');
-                }
-                if(s.maintenance === true) {
-                    document.getElementById('maintenanceBanner').classList.remove('hidden');
-                }
-            }
-            loadUserCampaigns();
         });
 
-        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
-        window.switchTab = function(tab) {
-            document.getElementById('tabCreate').classList.toggle('hidden', tab !== 'create');
-            document.getElementById('tabList').classList.toggle('hidden', tab !== 'list');
-            document.getElementById('menuCreate').classList.toggle('active', tab === 'create');
-            document.getElementById('menuList').classList.toggle('active', tab === 'list');
-            if(tab === 'list') loadUserCampaigns();
+        window.logout = function() {
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            });
         }
 
-        window.addTaskField = function(type = 'whatsapp', url = '') {
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+            if(tab === 'list') {
+                document.querySelector('.tabs button:nth-child(1)').classList.add('active');
+                document.getElementById('listPanel').classList.add('active');
+                document.getElementById('editCampaignId').value = '';
+                document.getElementById('campaignForm').reset();
+                document.getElementById('formTitleAction').innerText = 'Criar campanha';
+                document.getElementById('tasksContainer').innerHTML = '';
+            } else {
+                document.getElementById('tabCreateBtn').classList.add('active');
+                document.getElementById('createPanel').classList.add('active');
+                if(document.getElementById('tasksContainer').children.length === 0) {
+                    addTaskField();
+                }
+            }
+        }
+
+        window.addTaskField = function(type = 'youtube', url = '') {
             const container = document.getElementById('tasksContainer');
             const div = document.createElement('div');
             div.className = 'task-row';
             div.innerHTML = `
-                <select style="width: 130px;" class="task-type">
-                    <option value="whatsapp" ${type=='whatsapp'?'selected':''}>WhatsApp</option>
-                    <option value="telegram" ${type=='telegram'?'selected':''}>Telegram</option>
-                    <option value="youtube" ${type=='youtube'?'selected':''}>YouTube</option>
-                    <option value="outro" ${type=='outro'?'selected':''}>Outro</option>
+                <select class="form-control" style="width: 130px;" name="taskType">
+                    <option value="youtube" ${type==='youtube'?'selected':''}>YouTube</option>
+                    <option value="whatsapp" ${type==='whatsapp'?'selected':''}>WhatsApp</option>
+                    <option value="telegram" ${type==='telegram'?'selected':''}>Telegram</option>
                 </select>
-                <input type="url" class="task-url" value="${url}" placeholder="https://..." style="flex-grow: 1;">
-                <button class="btn-secondary" onclick="this.parentElement.remove()" style="background:rgba(239,68,68,0.1); border-color:var(--accent); color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
+                <input type="url" class="form-control" placeholder="URL da tarefa" value="${url}" name="taskUrl" required>
+                <button type="button" class="btn-secondary" onclick="this.parentElement.remove()" style="color:var(--accent); border-color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
 
-        window.saveCampaign = async function() {
+        window.saveCampaign = async function(e) {
+            e.preventDefault();
             const editId = document.getElementById('editCampaignId').value;
-            const targetUrl = document.getElementById('targetUrl').value;
             const title = document.getElementById('campTitle').value;
+            const targetUrl = document.getElementById('targetUrl').value;
+            
+            const taskRows = document.querySelectorAll('.task-row');
             const tasks = [];
-            document.querySelectorAll('.task-row').forEach(row => {
-                const type = row.querySelector('.task-type').value;
-                const url = row.querySelector('.task-url').value;
-                if(url) tasks.push({ type, url });
+            taskRows.forEach(row => {
+                tasks.push({
+                    type: row.querySelector('[name="taskType"]').value,
+                    url: row.querySelector('[name="taskUrl"]').value
+                });
             });
 
-            if (!targetUrl || !title || tasks.length === 0) { alert('Preencha todos os campos!'); return; }
+            const campaignData = {
+                userId: currentUser.uid,
+                title,
+                targetUrl,
+                tasks,
+                shortUrl: editId ? undefined : `https://vortexsub.pages.dev/s/?id=${Math.random().toString(36).substring(7)}`,
+                updatedAt: Date.now()
+            };
 
-            try {
-                const campaignId = editId ? editId : 'camp_' + Date.now();
-                const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-                const pageLink = `${baseUrl}campaign.html?id=${campaignId}`;
+            if(editId) {
+                delete campaignData.shortUrl; // Mantém o link curto original na edição
+                await update(ref(db, 'campaigns/' + editId), campaignData);
+            } else {
+                campaignData.createdAt = Date.now();
+                const newRef = push(ref(db, 'campaigns'));
+                await set(newRef, campaignData);
+            }
 
-                let shortUrl = "";
-                if(!editId) {
-                    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(pageLink)}`);
-                    shortUrl = await res.text();
-                }
-
-                const campaignData = { title, targetUrl, pageLink, tasks, creator: currentUser.email, status: 'active' };
-                if(!editId) {
-                    campaignData.shortUrl = shortUrl;
-                    campaignData.clicks = 0;
-                    campaignData.createdAt = new Date().toISOString();
-                    await set(ref(db, 'campaigns/' + campaignId), campaignData);
-                } else {
-                    await update(ref(db, 'campaigns/' + campaignId), campaignData);
-                    const snap = await get(child(ref(db), 'campaigns/' + campaignId));
-                    shortUrl = snap.val().shortUrl;
-                }
-
-                document.getElementById('shortUrlOutput').value = shortUrl;
-                document.getElementById('resultModal').classList.remove('hidden');
-                document.getElementById('editCampaignId').value = '';
-                document.getElementById('targetUrl').value = '';
-                document.getElementById('campTitle').value = '';
-            } catch (e) { alert('Erro ao salvar.'); }
+            switchTab('list');
+            loadUserCampaigns();
         }
 
-        window.loadUserCampaigns = async function() {
-            const container = document.getElementById('campaignsListContainer');
-            const snapshot = await get(child(ref(db), 'campaigns'));
-            if (!snapshot.exists()) { container.innerHTML = `<p style="color:var(--text-muted); font-size:12px;">Nenhuma campanha.</p>`; return; }
-
+        async function loadUserCampaigns() {
+            const container = document.getElementById('campaignsContainer');
+            container.innerHTML = `<p style="color:var(--text-muted); font-size:12px;">Carregando campanhas...</p>`;
+            
+            const snap = await get(child(ref(db), 'campaigns'));
             let html = '';
-            snapshot.forEach((childSnap) => {
-                const camp = childSnap.val();
-                const id = childSnap.key;
-                if(camp.creator === currentUser.email) {
-                    const status = camp.status || 'active';
-                    html += `
-                        <div class="campaign-item">
-                            <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis;">
-                                <div style="font-weight:600; margin-bottom:2px;">${camp.title} <span class="badge ${status}">${status==='active'?'Ativo':'Pausado'}</span></div>
-                                <div style="color:var(--text-muted);">Cliques: ${camp.clicks || 0}</div>
+            
+            if(snap.exists()) {
+                snap.forEach(childSnap => {
+                    const id = childSnap.key;
+                    const camp = childSnap.val();
+                    
+                    if(camp.userId === currentUser.uid) {
+                        html += `
+                            <div class="campaign-card">
+                                <div class="campaign-info">
+                                    <h3>${camp.title}</h3>
+                                    <p>${camp.shortUrl || 'Link personalizado'}</p>
+                                </div>
+                                <div class="campaign-actions">
+                                    <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl || ''}'); alert('Link copiado!');"><i class="fa-solid fa-copy"></i></button>
+                                    <button class="btn-secondary" onclick="editCampaign('${id}')" style="background:rgba(59,130,246,0.1); border-color:#3b82f6; color:#3b82f6;"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="btn-secondary" onclick="deleteCampaign('${id}')" style="background:rgba(239,68,68,0.1); border-color:var(--accent); color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
+                                </div>
                             </div>
-                            <div style="display:flex; gap:4px;">
-                                <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl}'); alert('Copiado!');"><i class="fa-solid fa-copy"></i></button>
-                                <button class="btn-secondary" onclick="togglePause('${id}', '${status}')"><i class="fa-solid ${status==='active'?'fa-pause':'fa-play'}"></i></button>
-                                <button class="btn-secondary" onclick="editCampaign('${id}')"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn-secondary" onclick="deleteCampaign('${id}')" style="border-color:var(--accent); color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-            container.innerHTML = html || `<p style="color:var(--text-muted); font-size:12px;">Nenhuma campanha.</p>`;
+                        `;
+                    }
+                });
+            }
+            container.innerHTML = html || `<p style="color:var(--text-muted); font-size:12px;">Nenhuma campanha encontrada.</p>`;
         }
 
-        window.togglePause = async (id, status) => { await update(ref(db, 'campaigns/' + id), { status: status === 'active' ? 'paused' : 'active' }); loadUserCampaigns(); }
-        window.deleteCampaign = async (id) => { if(confirm('Apagar?')) { await remove(ref(db, 'campaigns/' + id)); loadUserCampaigns(); } }
-        window.editCampaign = async (id) => {
+        window.editCampaign = async function(id) {
             const snap = await get(child(ref(db), 'campaigns/' + id));
-            if(snap.exists()) {
-                const camp = snap.val();
-                document.getElementById('editCampaignId').value = id;
-                document.getElementById('targetUrl').value = camp.targetUrl;
-                document.getElementById('campTitle').value = camp.title;
-                document.getElementById('formTitleAction').innerText = "Editar campanha";
-                const container = document.getElementById('tasksContainer');
-                container.innerHTML = '';
-                if(camp.tasks) camp.tasks.forEach(t => addTaskField(t.type, t.url));
-                switchTab('create');
+            if(!snap.exists()) return;
+            const c = snap.val();
+
+            document.getElementById('editCampaignId').value = id;
+            document.getElementById('targetUrl').value = c.targetUrl;
+            document.getElementById('campTitle').value = c.title;
+            document.getElementById('formTitleAction').innerText = 'Editar Campanha';
+
+            const tasksContainer = document.getElementById('tasksContainer');
+            tasksContainer.innerHTML = '';
+            if(c.tasks && c.tasks.length > 0) {
+                c.tasks.forEach(t => {
+                    addTaskField(t.type, t.url);
+                });
+            } else {
+                addTaskField();
+            }
+
+            switchTab('create');
+        }
+
+        window.deleteCampaign = async function(id) {
+            if(confirm('Tem certeza que deseja excluir esta campanha?')) {
+                await remove(ref(db, 'campaigns/' + id));
+                loadUserCampaigns();
             }
         }
-        window.copyOutputLink = () => { navigator.clipboard.writeText(document.getElementById('shortUrlOutput').value); alert('Copiado!'); }
-        window.closeModal = () => { document.getElementById('resultModal').classList.add('hidden'); switchTab('list'); }
     </script>
 </body>
 </html>
