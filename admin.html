@@ -23,12 +23,11 @@
         .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
         .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
-        input, textarea { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
+        input, textarea, select { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
         textarea { resize: vertical; height: 90px; }
         .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-primary:hover { background-color: #e5e7eb; }
-        .campaign-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .hidden { display: none !important; }
+        .campaign-item, .ban-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -36,7 +35,7 @@
         <div>
             <div class="logo"><i class="fa-solid fa-shield-halved"></i> VortexAdmin</div>
             <ul class="nav-links">
-                <li class="active"><a><i class="fa-solid fa-gear"></i> Configurações & Avisos</a></li>
+                <li class="active"><a><i class="fa-solid fa-gear"></i> Sistema & Banimentos</a></li>
                 <li><a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Voltar ao Dashboard</a></li>
             </ul>
         </div>
@@ -46,26 +45,40 @@
     <main>
         <div class="container">
             <h1 class="page-title">Painel de Administração Global</h1>
-            <p class="page-subtitle">Envie avisos, configure manutenções e controle o sistema.</p>
+            <p class="page-subtitle">Controle de avisos, manutenções e banimentos por IP.</p>
 
             <div class="card">
-                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent)"></i> Aviso Geral & Manutenção</h3>
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent)"></i> Aviso Geral & Modo Manutenção</h3>
                 <div class="form-group">
-                    <label>Mensagem de Aviso / Alerta para o Dashboard</label>
-                    <textarea id="globalNotice" placeholder="Ex: Sistema em atualização às 18h..."></textarea>
+                    <label>Mensagem de Aviso (Exibida no topo do Dashboard)</label>
+                    <textarea id="globalNotice" placeholder="Ex: Servidor atualizado com sucesso..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Modo Manutenção Global</label>
-                    <select id="maintenanceMode" style="width:100%; background:var(--bg-color); border:1px solid var(--border-color); border-radius:8px; padding:12px; color:var(--text-main)">
+                    <label>Modo Manutenção (Avisa no Dashboard mas permite usar tudo)</label>
+                    <select id="maintenanceMode">
                         <option value="false">Desligado (Normal)</option>
-                        <option value="true">Ligado (Bloquear Usuários)</option>
+                        <option value="true">Ligado (Aviso de Manutenção Ativo)</option>
                     </select>
                 </div>
-                <button class="btn-primary" onclick="saveGlobalSettings()">Salvar Alterações</button>
+                <button class="btn-primary" onclick="saveGlobalSettings()">Salvar Configurações</button>
             </div>
 
             <div class="card">
-                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-list-check"></i> Todas as Campanhas do Sistema</h3>
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-user-slash" style="color:var(--accent)"></i> Banir Usuário por IP</h3>
+                <div class="form-group">
+                    <label>Endereço IP do Usuário para Bloquear</label>
+                    <input type="text" id="targetIpInput" placeholder="Ex: 192.168.1.50">
+                </div>
+                <button class="btn-primary" style="background:var(--accent); color:#fff;" onclick="banIpUser()">Bloquear IP Imediatamente</button>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-ban"></i> IPs Atualmente Banidos</h3>
+                <div id="bannedListContainer"><p style="color:var(--text-muted); font-size:13px;">Carregando...</p></div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 16px; margin-bottom: 16px;"><i class="fa-solid fa-list-check"></i> Campanhas Cadastradas</h3>
                 <div id="adminCampList"><p style="color:var(--text-muted); font-size:13px;">Carregando...</p></div>
             </div>
         </div>
@@ -92,6 +105,26 @@
                 document.getElementById('maintenanceMode').value = data.maintenance ? "true" : "false";
             }
 
+            // Carregar IPs Banidos
+            const banSnap = await get(child(ref(db), 'bannedIps'));
+            const banContainer = document.getElementById('bannedListContainer');
+            if(!banSnap.exists()) {
+                banContainer.innerHTML = "<p style='color:var(--text-muted); font-size:13px;'>Nenhum IP banido.</p>";
+            } else {
+                let banHtml = '';
+                banSnap.forEach(b => {
+                    const cleanIp = b.key.replace(/_/g, '.');
+                    banHtml += `
+                        <div class="ban-item">
+                            <span style="font-family:monospace; font-weight:600;">IP: ${cleanIp}</span>
+                            <button onclick="unbanIp('${b.key}')" style="background:rgba(16,185,129,0.1); border:1px solid var(--success); color:var(--success); padding:6px 10px; border-radius:6px; cursor:pointer;"><i class="fa-solid fa-check"></i> Desbanir</button>
+                        </div>
+                    `;
+                });
+                banContainer.innerHTML = banHtml;
+            }
+
+            // Campanhas
             const campSnap = await get(child(ref(db), 'campaigns'));
             const listEl = document.getElementById('adminCampList');
             if(!campSnap.exists()) { listEl.innerHTML = "<p>Nenhuma campanha.</p>"; return; }
@@ -117,7 +150,23 @@
             const notice = document.getElementById('globalNotice').value;
             const maintenance = document.getElementById('maintenanceMode').value === "true";
             await set(ref(db, 'systemSettings'), { notice, maintenance });
-            alert('Configurações globais salvas e sincronizadas!');
+            alert('Avisos e configurações globais atualizados!');
+        }
+
+        window.banIpUser = async function() {
+            const ip = document.getElementById('targetIpInput').value.trim();
+            if(!ip) { alert('Insira um IP válido!'); return; }
+            const ipKey = ip.replace(/\./g, '_');
+            await set(ref(db, 'bannedIps/' + ipKey), true);
+            document.getElementById('targetIpInput').value = '';
+            alert('IP banido com sucesso! O usuário não conseguirá acessar o site.');
+            loadAdminData();
+        }
+
+        window.unbanIp = async function(ipKey) {
+            await remove(ref(db, 'bannedIps/' + ipKey));
+            alert('IP desbanido com sucesso!');
+            loadAdminData();
         }
 
         window.deleteCamp = async function(id) {
