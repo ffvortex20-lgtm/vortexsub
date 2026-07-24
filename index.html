@@ -170,7 +170,6 @@
             <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
         </div>
 
-        <!-- Removido o onsubmit daqui, será tratado no script -->
         <form id="authForm">
             <h2 id="formTitle" style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
             
@@ -187,7 +186,6 @@
             <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
         </form>
 
-        <!-- Removido o onclick daqui -->
         <button type="button" class="btn-google" id="googleBtn">
             <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
         </button>
@@ -195,7 +193,6 @@
         <div class="divider">ou</div>
 
         <div class="switch-auth">
-            <!-- Removido o onclick daqui -->
             <span id="switchText">Não tem uma conta?</span> <a id="switchBtnText">Criar conta</a>
         </div>
     </div>
@@ -211,7 +208,7 @@
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Suas credenciais reais
+        // Configuração totalmente limpa, sem caracteres invasores
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
@@ -236,17 +233,12 @@
             }
         }
 
-        // Checagem de sessão ativa
         onAuthStateChanged(auth, (user) => {
             if (user && user.email) {
-                // Se quiser que pule o login caso já esteja logado, descomente a linha abaixo
                 // redirecionarPorEmail(user.email);
             }
         });
-
-        // Configurando os eventos diretamente via JavaScript (Evita o bug de recarregar a página)
         
-        // 1. Botão de Alternar (Entrar / Criar Conta)
         document.getElementById('switchBtnText').addEventListener('click', () => {
             isSignUp = !isSignUp;
             document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
@@ -255,9 +247,8 @@
             document.getElementById('switchBtnText').innerText = isSignUp ? 'Entrar' : 'Criar conta';
         });
 
-        // 2. Formulário Principal (Email e Senha)
         document.getElementById('authForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); // ISSO AQUI IMPEDE O FORM DE RECARREGAR A PÁGINA
+            e.preventDefault(); 
             
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -281,7 +272,6 @@
             }
         });
 
-        // 3. Botão do Google
         document.getElementById('googleBtn').addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
