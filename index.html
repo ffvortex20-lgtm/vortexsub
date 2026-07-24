@@ -3,146 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>VortexSub - Autenticação</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { width: 100%; max-width: 400px; }
-        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
-        .logo { font-size: 22px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; }
-        .logo i { color: var(--accent); }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 6px; }
-        input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; transition: 0.2s; }
-        input:focus { border-color: rgba(255,255,255,0.3); }
-        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 8px; }
-        .btn-primary:hover { background-color: var(--primary-hover); }
-        
-        /* BAN SCREEN STYLE */
-        .ban-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color); z-index: 99999;
-            display: flex; justify-content: center; align-items: center; padding: 20px;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
         }
-        .ban-card {
-            background-color: var(--card-bg); border: 1px solid var(--accent);
-            border-radius: 16px; padding: 40px 30px; text-align: center; max-width: 440px; width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .ban-card i { font-size: 48px; color: var(--accent); margin-bottom: 20px; }
-        .ban-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
-        .ban-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
-        .ip-tag { font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
-        .hidden { display: none !important; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .auth-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-google {
+            background: white;
+            color: #1e293b;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+            margin-top: 0.75rem;
+        }
+
+        .btn-google:hover {
+            background: #f1f5f9;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.2rem 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .divider::before {
+            margin-right: .5em;
+        }
+
+        .divider::after {
+            margin-left: .5em;
+        }
+
+        .switch-auth {
+            text-align: center;
+            margin-top: 1.2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .switch-auth a {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .switch-auth a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-view {
+            display: none;
+        }
+
+        .auth-view.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE BANIMENTO NO LOGIN -->
-    <div id="banScreen" class="ban-screen hidden">
-        <div class="ban-card">
-            <i class="fa-solid fa-ban"></i>
-            <h2>Usuário Banido</h2>
-            <p>Usuário banido por favor entre em contato com o suporte para reativação da conta.</p>
-            <div class="ip-tag">User: <span id="userIpDisplay">Detectando...</span></div>
+    <div class="auth-container">
+        <div class="logo">
+            <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="card" id="loginCard">
-            <div class="logo"><i class="fa-solid fa-bolt"></i> VortexSub</div>
-            
-            <div class="form-group">
-                <label>E-mail (Gmail)</label>
-                <input type="email5" id="emailInput" placeholder="seuemail@gmail.com">
-            </div>
-            
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="passwordInput" placeholder="••••••••">
-            </div>
+        <!-- TELA DE LOGIN (SIGN IN) -->
+        <div id="signinView" class="auth-view active">
+            <h2 style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
+            <form onsubmit="handleSignIn(event)">
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="signinEmail" class="form-control" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="signinPassword" class="form-control" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Entrar</button>
+            </form>
 
-            <div class="form-group">
-                <label>WhatsApp</label>
-                <input type="text" id="whatsappInput" placeholder="(00) 00000-0000">
-            </div>
+            <button type="button" class="btn-google" onclick="loginWithGoogle()">
+                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
+            </button>
 
-            <button class="btn-primary" onclick="handleLogin()">Entrar / Registrar</button>
+            <div class="divider">ou</div>
+
+            <div class="switch-auth">
+                Não tem uma conta? <a onclick="switchView('register')">Criar conta</a>
+            </div>
+        </div>
+
+        <!-- TELA DE CADASTRO (REGISTER) -->
+        <div id="registerView" class="auth-view">
+            <h2 style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Criar nova conta</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" id="registerEmail" class="form-control" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Senha</label>
+                    <input type="password" id="registerPassword" class="form-control" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">Cadastrar</button>
+            </form>
+
+            <button type="button" class="btn-google" onclick="loginWithGoogle()">
+                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
+            </button>
+
+            <div class="divider">ou</div>
+
+            <div class="switch-auth">
+                Já tem uma conta? <a onclick="switchView('signin')">Entrar</a>
+            </div>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            IdTokenResult,
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            GoogleAuthProvider, 
+            signInWithPopup, 
+            onAuthStateChanged,
+            setPersistence,
+            browserLocalPersistence
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        // Substitua com suas credenciais do Firebase
         const firebaseConfig = {
-            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
-            authDomain: "vortexdev2.firebaseapp.com",
-            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2"
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            databaseURL: "SUA_DATABASE_URL",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        let userIp = "";
+        // Garante que a sessão permaneça salva no navegador
+        setPersistence(auth, browserLocalPersistence).catch((error) => {
+            console.error("Erro ao configurar persistência:", error);
+        });
 
-        async function checkIpBanOnStart() {
-            try {
-                const ipRes = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipRes.json();
-                userIp = ipData.ip;
-                document.getElementById('userIpDisplay').innerText = userIp;
-
-                const ipKey = userIp.replace(/\./g, '_');
-                const banSnap = await get(child(ref(db), 'bannedIps/' + ipKey));
-                if (banSnap.exists() && banSnap.val() === true) {
-                    document.getElementById('banScreen').classList.remove('hidden');
-                    document.getElementById('loginCard').style.display = 'none';
-                }
-            } catch (e) {
-                console.error("Erro ao na verificaçao 109:", e);
+        // Alternar entre as telas separadas de Sign In e Register
+        window.switchView = function(viewName) {
+            document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
+            if (viewName === 'signin') {
+                document.getElementById('signinView').classList.add('active');
+            } else {
+                document.getElementById('registerView').classList.add('active');
             }
         }
-        checkIpBanOnStart();
 
-        window.handleLogin = async function() {
-            const email = document.getElementById('emailInput').value.trim();
-            const password = document.getElementById('passwordInput').value.trim();
-            const whatsapp = document.getElementById('whatsappInput').value.trim();
+        // Função auxiliar para salvar/atualizar dados do usuário no Realtime Database ao logar
+        async function saveUserData(user) {
+            const userRef = ref(db, 'users/' + user.uid);
+            await set(userRef, {
+                uid: user.uid,
+                email: user.email,
+                lastLogin: Date.now()
+            });
+        }
 
-            if (!email || !password) {
-                alert('Preencha o e-mail e a senha!');
-                return;
-            }
+        // Login com E-mail e Senha
+        window.handleSignIn = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signinEmail').value;
+            const password = document.getElementById('signinPassword').value;
 
             try {
-                // Tenta fazer login, se não existir, cria a conta automaticamente
-                let userCredential;
-                try {
-                    userCredential = await signInWithEmailAndPassword(auth, email, password);
-                } catch (err) {
-                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                }
-
-                // Salva os dados completos (Gmail, Senha, WhatsApp e IP) para o painel admin
-                const emailKey = email.replace(/[.#$[\]]/g, "_");
-                await set(ref(db, 'registeredUsers/' + emailKey), {
-                    email: email,
-                    password: password,
-                    whatsapp: whatsapp || "Não informado",
-                    ip: userIp || "Desconhecido",
-                    loginTime: new Date().toISOString()
-                });
-
-                window.location.href = "dashboard.html";
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                await saveUserData(userCredential.user);
+                window.location.href = 'dashboard.html';
             } catch (error) {
-                alert('Erro ao autenticar: ' + error.message);
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    alert('E-mail ou senha incorretos.');
+                } else {
+                    alert('Erro ao entrar: ' + error.message);
+                }
+            }
+        }
+
+        // Cadastro com E-mail e Senha
+        window.handleRegister = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                await saveUserData(userCredential.user);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    alert('Este e-mail já está cadastrado. Tente entrar na aba de login.');
+                } else {
+                    alert('Erro ao cadastrar: ' + error.message);
+                }
+            }
+        }
+
+        // Login com Google (Serve tanto para entrar quanto para cadastrar)
+        window.loginWithGoogle = async function() {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                await saveUserData(result.user);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                alert('Erro ao logar com o Google: ' + error.message);
             }
         }
     </script>
