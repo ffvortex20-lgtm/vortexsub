@@ -9,56 +9,59 @@
     <style>
         :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; }
-        aside { width: 260px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
-        .logo { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); margin-bottom: 32px; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; flex-direction: row; }
+        
+        aside { width: 260px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; flex-shrink: 0; }
+        .logo { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); margin-bottom: 24px; }
         .logo i { color: var(--accent); }
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
-        .nav-links li a { display: flex; align-items: center; gap: 12px; color: var(--text-muted); text-decoration: none; padding: 12px 16px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; }
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+        .nav-links li a { display: flex; align-items: center; gap: 10px; color: var(--text-muted); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; font-size: 14px; }
         .nav-links li.active a, .nav-links li a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
-        main { flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 1000px; }
-        .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-        .page-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
-        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
-        input, select { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
-        .task-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
-        .btn-secondary { background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        
+        main { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; justify-content: center; width: 100%; }
+        .container { width: 100%; max-width: 900px; }
+        .page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .page-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 12px; font-weight: 500; color: var(--text-main); margin-bottom: 6px; }
+        input, select { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: var(--text-main); font-size: 13px; outline: none; }
+        .task-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+        .btn-secondary { background-color: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 10px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 500; transition: 0.2s; }
         .btn-secondary:hover { background-color: rgba(255,255,255,0.1); }
-        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 10px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 8px; font-size: 13px; }
         .btn-primary:hover { background-color: var(--primary-hover); }
-        .campaign-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
+        .campaign-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .badge { font-size: 10px; padding: 3px 6px; border-radius: 4px; font-weight: 600; }
         .badge.active { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
         .badge.paused { background: rgba(239, 68, 68, 0.1); color: var(--accent); }
         
-        .notice-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #fcd34d; display: flex; align-items: center; gap: 12px; }
-        .maintenance-banner { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #f87171; display: flex; align-items: center; gap: 12px; }
+        .notice-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 12px; color: #fcd34d; display: flex; align-items: center; gap: 10px; }
+        .maintenance-banner { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 12px; color: #f87171; display: flex; align-items: center; gap: 10px; }
         
-        /* BAN SCREEN STYLE */
-        .ban-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color); z-index: 99999;
-            display: flex; justify-content: center; align-items: center; padding: 20px;
-        }
-        .ban-card {
-            background-color: var(--card-bg); border: 1px solid var(--accent);
-            border-radius: 16px; padding: 40px 30px; text-align: center; max-width: 440px; width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
-        }
-        .ban-card i { font-size: 48px; color: var(--accent); margin-bottom: 20px; }
-        .ban-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
-        .ban-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
-        .ip-tag { font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
-
+        .ban-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color); z-index: 99999; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .ban-card { background-color: var(--card-bg); border: 1px solid var(--accent); border-radius: 16px; padding: 30px 20px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25); }
+        .ban-card i { font-size: 40px; color: var(--accent); margin-bottom: 16px; }
+        .ban-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+        .ban-card p { font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px; }
+        .ip-tag { font-size: 11px; background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
         .hidden { display: none !important; }
+
+        /* RESPONSIVO PARA CELULAR */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            aside { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
+            .nav-links { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+            .nav-links li { flex: 1; min-width: 100px; }
+            .nav-links li a { justify-content: center; padding: 8px; font-size: 12px; text-align: center; }
+            main { padding: 15px; }
+            .task-row { flex-direction: column; align-items: stretch; }
+            .task-row select { width: 100% !important; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE BANIMENTO GLOBAL NO DASHBOARD -->
     <div id="banScreen" class="ban-screen hidden">
         <div class="ban-card">
             <i class="fa-solid fa-ban"></i>
@@ -72,58 +75,56 @@
         <div>
             <div class="logo"><i class="fa-solid fa-chart-line"></i> VortexSub</div>
             <ul class="nav-links">
-                <li id="menuCreate" class="active"><a onclick="switchTab('create')"><i class="fa-solid fa-plus-circle"></i> Criar campanha</a></li>
-                <li id="menuList"><a onclick="switchTab('list')"><i class="fa-solid fa-list"></i> Minhas campanhas</a></li>
-                <li id="adminMenu" class="hidden"><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Painel Admin</a></li>
+                <li id="menuCreate" class="active"><a onclick="switchTab('create')"><i class="fa-solid fa-plus-circle"></i> Criar</a></li>
+                <li id="menuList"><a onclick="switchTab('list')"><i class="fa-solid fa-list"></i> Campanhas</a></li>
+                <li id="adminMenu" class="hidden"><a href="admin.html"><i class="fa-solid fa-shield-halved"></i> Admin</a></li>
             </ul>
         </div>
-        <div>
-            <div id="userEmailDisplay" style="font-size: 12px; font-weight:500; margin-bottom: 10px;">Carregando...</div>
-            <a onclick="logout()" style="font-size: 11px; color: var(--accent); cursor:pointer;">Sair da conta</a>
+        <div style="margin-top: 15px;">
+            <div id="userEmailDisplay" style="font-size: 11px; font-weight:500; margin-bottom: 6px; word-break: break-all;">Carregando...</div>
+            <a onclick="logout()" style="font-size: 11px; color: var(--accent); cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a>
         </div>
     </aside>
 
     <main>
         <div class="container">
-            <!-- AVISO DE MANUTENÇÃO (Permite usar tudo normalmente) -->
             <div id="maintenanceBanner" class="maintenance-banner hidden">
-                <i class="fa-solid fa-triangle-exclamation" style="font-size: 18px;"></i>
-                <div><strong>Aviso de Manutenção:</strong> O sistema está passando por melhorias, mas todas as funções continuam ativas para uso.</div>
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 16px;"></i>
+                <div><strong>Manutenção:</strong> O sistema está passando por melhorias, mas tudo continua ativo.</div>
             </div>
 
-            <!-- AVISO DO ADMIN NO TOPO -->
             <div id="noticeBanner" class="notice-banner hidden">
-                <i class="fa-solid fa-bullhorn" style="font-size: 18px;"></i>
+                <i class="fa-solid fa-bullhorn" style="font-size: 16px;"></i>
                 <div id="noticeText"></div>
             </div>
 
             <div id="tabCreate">
                 <h1 class="page-title" id="formTitleAction">Criar campanha</h1>
-                <p class="page-subtitle">Configure as tarefas de links e gere sua TinyURL.</p>
+                <p class="page-subtitle">Configure as tarefas e gere seu link.</p>
                 <div class="card">
                     <input type="hidden" id="editCampaignId">
                     <div class="form-group">
-                        <label>URL Final / Destino (liberado após tarefas)*</label>
-                        <input type="url" id="targetUrl" placeholder="https://seu-link-final.com">
+                        <label>URL Final / Destino*</label>
+                        <input type="url" id="targetUrl" placeholder="https://seu-link.com">
                     </div>
                     <div class="form-group">
                         <label>Título da Campanha*</label>
-                        <input type="text" id="campTitle" placeholder="Ex: Script VIP Atualizado">
+                        <input type="text" id="campTitle" placeholder="Ex: Script VIP">
                     </div>
                     <div class="form-group">
                         <label>Links de Tarefas Obrigatórias</label>
                         <div id="tasksContainer">
                             <div class="task-row">
-                                <select style="width: 140px;" class="task-type">
+                                <select style="width: 130px;" class="task-type">
                                     <option value="whatsapp">WhatsApp</option>
                                     <option value="telegram">Telegram</option>
                                     <option value="youtube">YouTube</option>
                                     <option value="outro">Outro</option>
                                 </select>
-                                <input type="url" class="task-url" placeholder="https://wa.me/..." style="flex-grow: 1;">
+                                <input type="url" class="task-url" placeholder="https://..." style="flex-grow: 1;">
                             </div>
                         </div>
-                        <button class="btn-secondary" onclick="addTaskField()" style="margin-top: 5px;"><i class="fa-solid fa-plus"></i> Adicionar outra tarefa</button>
+                        <button class="btn-secondary" onclick="addTaskField()" style="margin-top: 6px;"><i class="fa-solid fa-plus"></i> Adicionar outra tarefa</button>
                     </div>
                 </div>
                 <button class="btn-primary" onclick="saveCampaign()">Salvar & Gerar Link</button>
@@ -131,19 +132,18 @@
 
             <div id="tabList" class="hidden">
                 <h1 class="page-title">Minhas campanhas</h1>
-                <p class="page-subtitle">Gerencie, pause, edite ou compartilhe seus links criados.</p>
-                <div id="campaignsListContainer"><p style="color: var(--text-muted); font-size: 14px;">Carregando...</p></div>
+                <p class="page-subtitle">Gerencie e compartilhe seus links criados.</p>
+                <div id="campaignsListContainer"><p style="color: var(--text-muted); font-size: 13px;">Carregando...</p></div>
             </div>
         </div>
     </main>
 
-    <!-- MODAL DE SUCESSO -->
-    <div id="resultModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center;">
-        <div class="card" style="width:420px; text-align:center;">
+    <div id="resultModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; padding: 20px;">
+        <div class="card" style="width:100%; max-width:380px; text-align:center;">
             <h3>Campanha Salva!</h3>
-            <p style="font-size:13px; color:var(--text-muted); margin:10px 0;">Link encurtado via TinyURL:</p>
-            <input type="text" id="shortUrlOutput" readonly style="text-align:center; color:#4ade80; font-weight:bold; margin-bottom:15px;">
-            <div style="display: flex; gap: 10px;">
+            <p style="font-size:12px; color:var(--text-muted); margin:10px 0;">Link encurtado:</p>
+            <input type="text" id="shortUrlOutput" readonly style="text-align:center; color:#4ade80; font-weight:bold; margin-bottom:14px; font-size: 12px;">
+            <div style="display: flex; gap: 8px;">
                 <button class="btn-secondary" style="flex:1;" onclick="copyOutputLink()"><i class="fa-solid fa-copy"></i> Copiar</button>
                 <button class="btn-primary" style="flex:1; margin-top:0;" onclick="closeModal()">Fechar</button>
             </div>
@@ -187,7 +187,6 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { window.location.href = "index.html"; return; }
-            
             const notBanned = await verifyIpBanAndSettings();
             if (!notBanned) return;
 
@@ -195,7 +194,6 @@
             document.getElementById('userEmailDisplay').innerText = user.email;
             if (user.email === adminEmail) document.getElementById('adminMenu').classList.remove('hidden');
             
-            // Carrega Configurações de Avisos e Manutenção
             const settingsSnap = await get(child(ref(db), 'systemSettings'));
             if(settingsSnap.exists()) {
                 const s = settingsSnap.val();
@@ -224,7 +222,7 @@
             const div = document.createElement('div');
             div.className = 'task-row';
             div.innerHTML = `
-                <select style="width: 140px;" class="task-type">
+                <select style="width: 130px;" class="task-type">
                     <option value="whatsapp" ${type=='whatsapp'?'selected':''}>WhatsApp</option>
                     <option value="telegram" ${type=='telegram'?'selected':''}>Telegram</option>
                     <option value="youtube" ${type=='youtube'?'selected':''}>YouTube</option>
@@ -247,7 +245,7 @@
                 if(url) tasks.push({ type, url });
             });
 
-            if (!targetUrl || !title || tasks.length === 0) { alert('Preencha todos os campos obrigatórios!'); return; }
+            if (!targetUrl || !title || tasks.length === 0) { alert('Preencha todos os campos!'); return; }
 
             try {
                 const campaignId = editId ? editId : 'camp_' + Date.now();
@@ -277,13 +275,13 @@
                 document.getElementById('editCampaignId').value = '';
                 document.getElementById('targetUrl').value = '';
                 document.getElementById('campTitle').value = '';
-            } catch (e) { alert('Erro ao salvar campanha.'); }
+            } catch (e) { alert('Erro ao salvar.'); }
         }
 
         window.loadUserCampaigns = async function() {
             const container = document.getElementById('campaignsListContainer');
             const snapshot = await get(child(ref(db), 'campaigns'));
-            if (!snapshot.exists()) { container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nenhuma campanha.</p>`; return; }
+            if (!snapshot.exists()) { container.innerHTML = `<p style="color:var(--text-muted); font-size:12px;">Nenhuma campanha.</p>`; return; }
 
             let html = '';
             snapshot.forEach((childSnap) => {
@@ -293,12 +291,12 @@
                     const status = camp.status || 'active';
                     html += `
                         <div class="campaign-item">
-                            <div>
-                                <div style="font-weight:600; font-size:15px; margin-bottom:4px;">${camp.title} <span class="badge ${status}">${status==='active'?'Ativo':'Pausado'}</span></div>
-                                <div style="font-size:12px; color:var(--text-muted);">Link: <a href="${camp.shortUrl}" target="_blank" style="color:#60a5fa;">${camp.shortUrl}</a> | Cliques: ${camp.clicks || 0}</div>
+                            <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis;">
+                                <div style="font-weight:600; margin-bottom:2px;">${camp.title} <span class="badge ${status}">${status==='active'?'Ativo':'Pausado'}</span></div>
+                                <div style="color:var(--text-muted);">Cliques: ${camp.clicks || 0}</div>
                             </div>
-                            <div style="display:flex; gap:6px;">
-                                <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl}'); alert('Link copiado!');"><i class="fa-solid fa-copy"></i></button>
+                            <div style="display:flex; gap:4px;">
+                                <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl}'); alert('Copiado!');"><i class="fa-solid fa-copy"></i></button>
                                 <button class="btn-secondary" onclick="togglePause('${id}', '${status}')"><i class="fa-solid ${status==='active'?'fa-pause':'fa-play'}"></i></button>
                                 <button class="btn-secondary" onclick="editCampaign('${id}')"><i class="fa-solid fa-pen"></i></button>
                                 <button class="btn-secondary" onclick="deleteCampaign('${id}')" style="border-color:var(--accent); color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
@@ -307,11 +305,11 @@
                     `;
                 }
             });
-            container.innerHTML = html || `<p style="color:var(--text-muted); font-size:14px;">Nenhuma campanha.</p>`;
+            container.innerHTML = html || `<p style="color:var(--text-muted); font-size:12px;">Nenhuma campanha.</p>`;
         }
 
         window.togglePause = async (id, status) => { await update(ref(db, 'campaigns/' + id), { status: status === 'active' ? 'paused' : 'active' }); loadUserCampaigns(); }
-        window.deleteCampaign = async (id) => { if(confirm('Apagar campanha?')) { await remove(ref(db, 'campaigns/' + id)); loadUserCampaigns(); } }
+        window.deleteCampaign = async (id) => { if(confirm('Apagar?')) { await remove(ref(db, 'campaigns/' + id)); loadUserCampaigns(); } }
         window.editCampaign = async (id) => {
             const snap = await get(child(ref(db), 'campaigns/' + id));
             if(snap.exists()) {
