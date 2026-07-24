@@ -223,7 +223,6 @@
                     await set(ref(db, 'campaigns/' + campaignId), campaignData);
                 } else {
                     await update(ref(db, 'campaigns/' + campaignId), campaignData);
-                    // Pega o shortUrl existente para exibir no modal ao atualizar
                     const snap = await get(child(ref(db), 'campaigns/' + campaignId));
                     shortUrl = snap.val().shortUrl;
                 }
@@ -231,15 +230,25 @@
                 document.getElementById('shortUrlOutput').value = shortUrl;
                 document.getElementById('resultModal').classList.remove('hidden');
                 
-                // Limpa form
+                // Limpa form com correção
                 document.getElementById('editCampaignId').value = '';
                 document.getElementById('targetUrl').value = '';
                 document.getElementById('campTitle').value = '';
                 document.getElementById('formTitleAction').innerText = "Criar campanha";
-                document.getElementById('tasksContainer.innerHTML').innerHTML = '';
-                addTaskField();
+                document.getElementById('tasksContainer').innerHTML = `
+                    <div class="task-row">
+                        <select style="width: 140px;" class="task-type">
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                        <input type="url" class="task-url" placeholder="https://wa.me/..." style="flex-grow: 1;">
+                    </div>
+                `;
             } catch (e) {
-                alert('Erro ao salvar campanha.');
+                console.error(e);
+                alert('Erro ao salvar campanha: ' + e.message);
             }
         }
 
