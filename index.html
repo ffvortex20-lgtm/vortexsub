@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Autenticação</title>
+    <title>VortexSub - Entrar / Criar Conta</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -161,14 +161,6 @@
         .switch-auth a:hover {
             text-decoration: underline;
         }
-
-        .auth-view {
-            display: none;
-        }
-
-        .auth-view.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -178,56 +170,30 @@
             <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
         </div>
 
-        <!-- TELA DE LOGIN (SIGN IN) -->
-        <div id="signinView" class="auth-view active">
-            <h2 style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
-            <form onsubmit="handleSignIn(event)">
-                <div class="form-group">
-                    <label>E-mail</label>
-                    <input type="email" id="signinEmail" class="form-control" required placeholder="seu@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" id="signinPassword" class="form-control" required placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn-primary">Entrar</button>
-            </form>
-
-            <button type="button" class="btn-google" onclick="loginWithGoogle()">
-                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
-            </button>
-
-            <div class="divider">ou</div>
-
-            <div class="switch-auth">
-                Não tem uma conta? <a onclick="switchView('register')">Criar conta</a>
+        <form id="authForm" onsubmit="handleAuth(event)">
+            <h2 id="formTitle" style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
+            
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="email" class="form-control" required placeholder="seu@email.com">
             </div>
-        </div>
 
-        <!-- TELA DE CADASTRO (REGISTER) -->
-        <div id="registerView" class="auth-view">
-            <h2 style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Criar nova conta</h2>
-            <form onsubmit="handleRegister(event)">
-                <div class="form-group">
-                    <label>E-mail</label>
-                    <input type="email" id="registerEmail" class="form-control" required placeholder="seu@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" id="registerPassword" class="form-control" required placeholder="••••••••">
-                </div>
-                <button type="submit" class="btn-primary">Cadastrar</button>
-            </form>
-
-            <button type="button" class="btn-google" onclick="loginWithGoogle()">
-                <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
-            </button>
-
-            <div class="divider">ou</div>
-
-            <div class="switch-auth">
-                Já tem uma conta? <a onclick="switchView('signin')">Entrar</a>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" class="form-control" required placeholder="••••••••">
             </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
+        </form>
+
+        <button type="button" class="btn-google" onclick="loginWithGoogle()">
+            <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
+        </button>
+
+        <div class="divider">ou</div>
+
+        <div class="switch-auth">
+            <span id="switchText">Não tem uma conta?</span> <a onclick="toggleMode()" id="switchBtnText">Criar conta</a>
         </div>
     </div>
 
@@ -238,7 +204,7 @@
             signInWithEmailAndPassword, 
             createUserWithEmailAndPassword, 
             GoogleAuthProvider, 
-            signInWithPopup, 
+            signInWithPopup,
             setPersistence,
             browserLocalPersistence
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -251,8 +217,8 @@
             databaseURL: "SEU_DATABASE_URL",
             projectId: "SEU_PROJECT_ID",
             storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
+            messagingSenderId: "SUA_MESSAGING_SENDER_ID",
+            appId: "SUA_APP_ID"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -260,77 +226,80 @@
         const db = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Configura persistência local para manter o usuário logado
+        // Garante que salva e mantém a sessão ativa no navegador
         setPersistence(auth, browserLocalPersistence).catch((error) => {
             console.error("Erro de persistência:", error);
         });
 
-        // Alternar entre as telas de Login e Cadastro
-        window.switchView = function(viewName) {
-            document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
-            if (viewName === 'signin') {
-                document.getElementById('signinView').classList.add('active');
+        let isSignUp = false;
+
+        // Alterna entre Entrar e Criar Conta na mesma caixinha (como funcionava antes)
+        window.toggleMode = function() {
+            isSignUp = !isSignUp;
+            document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
+            document.getElementById('submitBtn').innerText = isSignUp ? 'Cadastrar' : 'Entrar';
+            document.getElementById('switchText').innerText = isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?';
+            document.getElementById('switchBtnText').innerText = isSignUp ? 'Entrar' : 'Criar conta';
+        }
+
+        // Função para redirecionar verificando se é o Admin ou usuário comum
+        function redirectUser(email) {
+            if (email && email.toLowerCase() === 'ffvortex20@gmail.com') {
+                window.location.href = 'admin.html';
             } else {
-                document.getElementById('registerView').classList.add('active');
+                window.location.href = 'dashboard.html';
             }
         }
 
-        // Salvar dados do usuário no banco ao logar/cadastrar
+        // Salva os dados do usuário no Realtime Database ao logar/cadastrar
         async function saveUserData(user) {
-            const userRef = ref(db, 'users/' + user.uid);
-            await set(userRef, {
-                uid: user.uid,
-                email: user.email,
-                lastLogin: Date.now()
-            });
-        }
-
-        // Entrar com E-mail e Senha
-        window.handleSignIn = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('signinEmail').value;
-            const password = document.getElementById('signinPassword').value;
-
             try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                await saveUserData(userCredential.user);
-                window.location.href = 'dashboard.html';
-            } catch (error) {
-                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                    alert('E-mail ou senha incorretos.');
-                } else {
-                    alert('Erro ao entrar: ' + error.message);
-                }
+                const userRef = ref(db, 'users/' + user.uid);
+                await set(userRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    lastLogin: Date.now()
+                });
+            } catch (err) {
+                console.error("Erro ao salvar no banco:", err);
             }
         }
 
-        // Criar Conta com E-mail e Senha
-        window.handleRegister = async function(e) {
+        // Lidar com o envio do Formulário (Entrar ou Cadastrar)
+        window.handleAuth = async function(e) {
             e.preventDefault();
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                let userCredential;
+                if (isSignUp) {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                }
+                
                 await saveUserData(userCredential.user);
-                window.location.href = 'dashboard.html';
+                redirectUser(userCredential.user.email);
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') {
-                    alert('Este e-mail já está cadastrado. Vá para a tela de entrar.');
+                    alert('Este e-mail já está cadastrado. Tente entrar.');
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                    alert('E-mail ou senha incorretos.');
                 } else if (error.code === 'auth/weak-password') {
                     alert('A senha deve ter pelo menos 6 caracteres.');
                 } else {
-                    alert('Erro ao cadastrar: ' + error.message);
+                    alert('Erro: ' + error.message);
                 }
             }
         }
 
-        // Entrar / Cadastrar com Google
+        // Lidar com o botão de Logar com o Google
         window.loginWithGoogle = async function() {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 await saveUserData(result.user);
-                window.location.href = 'dashboard.html';
+                redirectUser(result.user.email);
             } catch (error) {
                 alert('Erro ao logar com o Google: ' + error.message);
             }
