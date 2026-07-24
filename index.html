@@ -170,7 +170,8 @@
             <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
         </div>
 
-        <form id="authForm" onsubmit="handleAuth(event)">
+        <!-- Removido o onsubmit daqui, será tratado no script -->
+        <form id="authForm">
             <h2 id="formTitle" style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
             
             <div class="form-group">
@@ -186,14 +187,16 @@
             <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
         </form>
 
-        <button type="button" class="btn-google" onclick="loginWithGoogle()">
+        <!-- Removido o onclick daqui -->
+        <button type="button" class="btn-google" id="googleBtn">
             <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
         </button>
 
         <div class="divider">ou</div>
 
         <div class="switch-auth">
-            <span id="switchText">Não tem uma conta?</span> <a onclick="toggleMode()" id="switchBtnText">Criar conta</a>
+            <!-- Removido o onclick daqui -->
+            <span id="switchText">Não tem uma conta?</span> <a id="switchBtnText">Criar conta</a>
         </div>
     </div>
 
@@ -208,13 +211,14 @@
             onAuthStateChanged 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // Suas credenciais reais
         const firebaseConfig = {
-            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",[cite: 1]
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
-            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",[cite: 1]
-            projectId: "vortexdev2",[cite: 1]
-            storageBucket: "vortexdev2.firebasestorage.app",[cite: 1]
-            messagingSenderId: "755839099190",[cite: 1]
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
             appId: "1:755839099190:web:f97e6d0dc860177306d397"
         };
 
@@ -232,23 +236,29 @@
             }
         }
 
+        // Checagem de sessão ativa
         onAuthStateChanged(auth, (user) => {
             if (user && user.email) {
-                // Opcional: descomente a linha abaixo se quiser redirecionar automaticamente ao abrir a página já logado
+                // Se quiser que pule o login caso já esteja logado, descomente a linha abaixo
                 // redirecionarPorEmail(user.email);
             }
         });
 
-        window.toggleMode = function() {
+        // Configurando os eventos diretamente via JavaScript (Evita o bug de recarregar a página)
+        
+        // 1. Botão de Alternar (Entrar / Criar Conta)
+        document.getElementById('switchBtnText').addEventListener('click', () => {
             isSignUp = !isSignUp;
             document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
             document.getElementById('submitBtn').innerText = isSignUp ? 'Cadastrar' : 'Entrar';
             document.getElementById('switchText').innerText = isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?';
             document.getElementById('switchBtnText').innerText = isSignUp ? 'Entrar' : 'Criar conta';
-        }
+        });
 
-        window.handleAuth = async function(e) {
-            e.preventDefault();
+        // 2. Formulário Principal (Email e Senha)
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // ISSO AQUI IMPEDE O FORM DE RECARREGAR A PÁGINA
+            
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
@@ -269,9 +279,10 @@
                     alert('Erro ao autenticar: ' + error.message);
                 }
             }
-        }
+        });
 
-        window.loginWithGoogle = async function() {
+        // 3. Botão do Google
+        document.getElementById('googleBtn').addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 redirecionarPorEmail(result.user.email);
@@ -280,7 +291,7 @@
                     alert('Erro ao logar com o Google: ' + error.message);
                 }
             }
-        }
+        });
     </script>
 </body>
 </html>
