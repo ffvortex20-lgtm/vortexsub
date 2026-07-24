@@ -33,6 +33,7 @@
         .badge { font-size: 11px; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
         .badge.active { background: rgba(74, 222, 128, 0.1); color: #4ade80; }
         .badge.paused { background: rgba(239, 68, 68, 0.1); color: var(--accent); }
+        .notice-banner { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: #fcd34d; display: flex; align-items: center; gap: 12px; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -54,14 +55,19 @@
 
     <main>
         <div class="container">
-            <!-- ABA CRIAR / EDITAR -->
+            <!-- AVISO DO ADMIN -->
+            <div id="noticeBanner" class="notice-banner hidden">
+                <i class="fa-solid fa-bullhorn" style="font-size: 18px;"></i>
+                <div id="noticeText"></div>
+            </div>
+
             <div id="tabCreate">
                 <h1 class="page-title" id="formTitleAction">Criar campanha</h1>
                 <p class="page-subtitle">Configure as tarefas de links e gere sua TinyURL.</p>
                 <div class="card">
                     <input type="hidden" id="editCampaignId">
                     <div class="form-group">
-                        <label>URL Final / Destino (o que será liberado após as tarefas)*</label>
+                        <label>URL Final / Destino (liberado após tarefas)*</label>
                         <input type="url" id="targetUrl" placeholder="https://seu-link-final.com">
                     </div>
                     <div class="form-group">
@@ -69,7 +75,7 @@
                         <input type="text" id="campTitle" placeholder="Ex: Script VIP Atualizado">
                     </div>
                     <div class="form-group">
-                        <label>Links de Tarefas Obrigatórias (WhatsApp, Canal, etc.)</label>
+                        <label>Links de Tarefas Obrigatórias</label>
                         <div id="tasksContainer">
                             <div class="task-row">
                                 <select style="width: 140px;" class="task-type">
@@ -87,18 +93,15 @@
                 <button class="btn-primary" onclick="saveCampaign()">Salvar & Gerar Link</button>
             </div>
 
-            <!-- ABA MINHAS CAMPANHAS -->
             <div id="tabList" class="hidden">
                 <h1 class="page-title">Minhas campanhas</h1>
                 <p class="page-subtitle">Gerencie, pause, edite ou compartilhe seus links criados.</p>
-                <div id="campaignsListContainer">
-                    <p style="color: var(--text-muted); font-size: 14px;">Carregando campanhas...</p>
-                </div>
+                <div id="campaignsListContainer"><p style="color: var(--text-muted); font-size: 14px;">Carregando...</p></div>
             </div>
         </div>
     </main>
 
-    <!-- MODAL DE SUCESSO / LINK GERADO -->
+    <!-- MODAL DE SUCESSO -->
     <div id="resultModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center;">
         <div class="card" style="width:420px; text-align:center;">
             <h3>Campanha Salva!</h3>
@@ -116,52 +119,42 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getDatabase, ref, set, get, update, remove, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-        const firebaseConfig = {
+        const app = initializeApp({
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
             databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2",
-            storageBucket: "vortexdev2.firebasestorage.app",
-            messagingSenderId: "755839099190",
-            appId: "1:755839099190:android:f97e6d0dc860177306d397"
-        };
-
-        const app = initializeApp(firebaseConfig);
+            projectId: "vortexdev2"
+        });
         const auth = getAuth(app);
         const db = getDatabase(app);
         const adminEmail = "ffvortex20@gmail.com";
         let currentUser = null;
 
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "index.html";
-            } else {
-                currentUser = user;
-                document.getElementById('userEmailDisplay').innerText = user.email;
-                if (user.email === adminEmail) {
-                    document.getElementById('adminMenu').classList.remove('hidden');
+            if (!user) { window.location.href = "index.html"; return; }
+            currentUser = user;
+            document.getElementById('userEmailDisplay').innerText = user.email;
+            if (user.email === adminEmail) document.getElementById('adminMenu').classList.remove('hidden');
+            
+            // Carrega Avisos Globais do Admin
+            const settingsSnap = await get(child(ref(db), 'systemSettings'));
+            if(settingsSnap.exists()) {
+                const s = settingsSnap.val();
+                if(s.notice) {
+                    document.getElementById('noticeText').innerText = s.notice;
+                    document.getElementById('noticeBanner').classList.remove('hidden');
                 }
-                loadUserCampaigns();
             }
+            loadUserCampaigns();
         });
 
-        window.logout = function() {
-            signOut(auth).then(() => window.location.href = "index.html");
-        }
-
+        window.logout = () => signOut(auth).then(() => window.location.href = "index.html");
         window.switchTab = function(tab) {
-            if(tab === 'create') {
-                document.getElementById('tabCreate').classList.remove('hidden');
-                document.getElementById('tabList').classList.add('hidden');
-                document.getElementById('menuCreate').classList.add('active');
-                document.getElementById('menuList').classList.remove('active');
-            } else {
-                document.getElementById('tabCreate').classList.add('hidden');
-                document.getElementById('tabList').classList.remove('hidden');
-                document.getElementById('menuCreate').classList.remove('active');
-                document.getElementById('menuList').classList.add('active');
-                loadUserCampaigns();
-            }
+            document.getElementById('tabCreate').classList.toggle('hidden', tab !== 'create');
+            document.getElementById('tabList').classList.toggle('hidden', tab !== 'list');
+            document.getElementById('menuCreate').classList.toggle('active', tab === 'create');
+            document.getElementById('menuList').classList.toggle('active', tab === 'list');
+            if(tab === 'list') loadUserCampaigns();
         }
 
         window.addTaskField = function(type = 'whatsapp', url = '') {
@@ -185,19 +178,14 @@
             const editId = document.getElementById('editCampaignId').value;
             const targetUrl = document.getElementById('targetUrl').value;
             const title = document.getElementById('campTitle').value;
-            
-            const taskRows = document.querySelectorAll('.task-row');
             const tasks = [];
-            taskRows.forEach(row => {
+            document.querySelectorAll('.task-row').forEach(row => {
                 const type = row.querySelector('.task-type').value;
                 const url = row.querySelector('.task-url').value;
                 if(url) tasks.push({ type, url });
             });
 
-            if (!targetUrl || !title || tasks.length === 0) { 
-                alert('Preencha o título, o link de destino e pelo menos uma tarefa!'); 
-                return; 
-            }
+            if (!targetUrl || !title || tasks.length === 0) { alert('Preencha todos os campos obrigatórios!'); return; }
 
             try {
                 const campaignId = editId ? editId : 'camp_' + Date.now();
@@ -210,12 +198,7 @@
                     shortUrl = await res.text();
                 }
 
-                const campaignData = {
-                    title, targetUrl, pageLink, tasks, 
-                    creator: currentUser.email, 
-                    status: 'active'
-                };
-
+                const campaignData = { title, targetUrl, pageLink, tasks, creator: currentUser.email, status: 'active' };
                 if(!editId) {
                     campaignData.shortUrl = shortUrl;
                     campaignData.clicks = 0;
@@ -229,36 +212,16 @@
 
                 document.getElementById('shortUrlOutput').value = shortUrl;
                 document.getElementById('resultModal').classList.remove('hidden');
-                
-                // Limpa form com correção
                 document.getElementById('editCampaignId').value = '';
                 document.getElementById('targetUrl').value = '';
                 document.getElementById('campTitle').value = '';
-                document.getElementById('formTitleAction').innerText = "Criar campanha";
-                document.getElementById('tasksContainer').innerHTML = `
-                    <div class="task-row">
-                        <select style="width: 140px;" class="task-type">
-                            <option value="whatsapp">WhatsApp</option>
-                            <option value="telegram">Telegram</option>
-                            <option value="youtube">YouTube</option>
-                            <option value="outro">Outro</option>
-                        </select>
-                        <input type="url" class="task-url" placeholder="https://wa.me/..." style="flex-grow: 1;">
-                    </div>
-                `;
-            } catch (e) {
-                console.error(e);
-                alert('Erro ao salvar campanha: ' + e.message);
-            }
+            } catch (e) { alert('Erro ao salvar campanha.'); }
         }
 
         window.loadUserCampaigns = async function() {
             const container = document.getElementById('campaignsListContainer');
             const snapshot = await get(child(ref(db), 'campaigns'));
-            if (!snapshot.exists()) {
-                container.innerHTML = `<p style="color: var(--text-muted); font-size: 14px;">Nenhuma campanha encontrada.</p>`;
-                return;
-            }
+            if (!snapshot.exists()) { container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">Nenhuma campanha.</p>`; return; }
 
             let html = '';
             snapshot.forEach((childSnap) => {
@@ -273,26 +236,21 @@
                                 <div style="font-size:12px; color:var(--text-muted);">Link: <a href="${camp.shortUrl}" target="_blank" style="color:#60a5fa;">${camp.shortUrl}</a> | Cliques: ${camp.clicks || 0}</div>
                             </div>
                             <div style="display:flex; gap:6px;">
-                                <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl}'); alert('Link copiado!');" title="Copiar Link"><i class="fa-solid fa-copy"></i></button>
-                                <button class="btn-secondary" onclick="togglePause('${id}', '${status}')" title="${status==='active'?'Pausar':'Ativar'}"><i class="fa-solid ${status==='active'?'fa-pause':'fa-play'}"></i></button>
-                                <button class="btn-secondary" onclick="editCampaign('${id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn-secondary" onclick="shareCampaign('${camp.shortUrl}', '${camp.title}')" title="Compartilhar"><i class="fa-solid fa-share-nodes"></i></button>
-                                <button class="btn-secondary" onclick="deleteCampaign('${id}')" style="border-color:var(--accent); color:var(--accent);" title="Apagar"><i class="fa-solid fa-trash"></i></button>
+                                <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl}'); alert('Link copiado!');"><i class="fa-solid fa-copy"></i></button>
+                                <button class="btn-secondary" onclick="togglePause('${id}', '${status}')"><i class="fa-solid ${status==='active'?'fa-pause':'fa-play'}"></i></button>
+                                <button class="btn-secondary" onclick="editCampaign('${id}')"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn-secondary" onclick="deleteCampaign('${id}')" style="border-color:var(--accent); color:var(--accent);"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     `;
                 }
             });
-            container.innerHTML = html || `<p style="color: var(--text-muted); font-size: 14px;">Nenhuma campanha encontrada.</p>`;
+            container.innerHTML = html || `<p style="color:var(--text-muted); font-size:14px;">Nenhuma campanha.</p>`;
         }
 
-        window.togglePause = async function(id, currentStatus) {
-            const newStatus = currentStatus === 'active' ? 'paused' : 'active';
-            await update(ref(db, 'campaigns/' + id), { status: newStatus });
-            loadUserCampaigns();
-        }
-
-        window.editCampaign = async function(id) {
+        window.togglePause = async (id, status) => { await update(ref(db, 'campaigns/' + id), { status: status === 'active' ? 'paused' : 'active' }); loadUserCampaigns(); }
+        window.deleteCampaign = async (id) => { if(confirm('Apagar campanha?')) { await remove(ref(db, 'campaigns/' + id)); loadUserCampaigns(); } }
+        window.editCampaign = async (id) => {
             const snap = await get(child(ref(db), 'campaigns/' + id));
             if(snap.exists()) {
                 const camp = snap.val();
@@ -300,43 +258,14 @@
                 document.getElementById('targetUrl').value = camp.targetUrl;
                 document.getElementById('campTitle').value = camp.title;
                 document.getElementById('formTitleAction').innerText = "Editar campanha";
-                
                 const container = document.getElementById('tasksContainer');
                 container.innerHTML = '';
-                if(camp.tasks) {
-                    camp.tasks.forEach(t => addTaskField(t.type, t.url));
-                }
+                if(camp.tasks) camp.tasks.forEach(t => addTaskField(t.type, t.url));
                 switchTab('create');
             }
         }
-
-        window.deleteCampaign = async function(id) {
-            if(confirm('Tem certeza que deseja apagar esta campanha?')) {
-                await remove(ref(db, 'campaigns/' + id));
-                loadUserCampaigns();
-            }
-        }
-
-        window.shareCampaign = function(url, title) {
-            if (navigator.share) {
-                navigator.share({ title: title, url: url }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(url);
-                alert('Link copiado para a área de transferência!');
-            }
-        }
-
-        window.copyOutputLink = function() {
-            const input = document.getElementById('shortUrlOutput');
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            alert('Link copiado!');
-        }
-
-        window.closeModal = function() {
-            document.getElementById('resultModal').classList.add('hidden');
-            switchTab('list');
-        }
+        window.copyOutputLink = () => { navigator.clipboard.writeText(document.getElementById('shortUrlOutput').value); alert('Copiado!'); }
+        window.closeModal = () => { document.getElementById('resultModal').classList.add('hidden'); switchTab('list'); }
     </script>
 </body>
 </html>
