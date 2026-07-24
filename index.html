@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VortexSub - Entrar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; width: 100vw; height: 100vh; justify-content: center; align-items: center; }
+        .auth-box { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 12px; width: 100%; max-width: 400px; }
+        .auth-box h2 { margin-bottom: 24px; font-size: 20px; text-align: center; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
+        input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
+        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="auth-box">
+        <h2 id="authTitle">Entrar no VortexSub</h2>
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" id="authEmail" placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="authPass" placeholder="******">
+        </div>
+        <div class="form-group hidden" id="whatsappGroup">
+            <label>Número do WhatsApp (Checker)</label>
+            <input type="text" id="authWhatsapp" placeholder="+55 11 99999-9999">
+        </div>
+        <button class="btn-primary" id="authBtn" onclick="handleAuth()">Entrar</button>
+        <p style="text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted); cursor: pointer;" onclick="toggleAuthMode()">
+            <span id="toggleText">Não tem uma conta? Cadastre-se</span>
+        </p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let isRegisterMode = false;
+
+        window.toggleAuthMode = function() {
+            isRegisterMode = !isRegisterMode;
+            document.getElementById('authTitle').innerText = isRegisterMode ? 'Criar Conta (Com Checker WhatsApp)' : 'Entrar no VortexSub';
+            document.getElementById('authBtn').innerText = isRegisterMode ? 'Cadastrar' : 'Entrar';
+            const wpGroup = document.getElementById('whatsappGroup');
+            if(isRegisterMode) wpGroup.classList.remove('hidden'); else wpGroup.classList.add('hidden');
+            document.getElementById('toggleText').innerText = isRegisterMode ? 'Já tem uma conta? Entre' : 'Não tem uma conta? Cadastre-se';
+        }
+
+        window.handleAuth = async function() {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            const whatsapp = document.getElementById('authWhatsapp').value;
+
+            if (!email || !pass) { alert('Preencha e-mail e senha!'); return; }
+
+            try {
+                if (isRegisterMode) {
+                    const cleanPhone = whatsapp.replace(/\D/g,'');
+                    if (cleanPhone.length < 10) { alert('Número de WhatsApp inválido!'); return; }
+
+                    const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+                    await set(ref(db, 'users/' + userCred.user.uid), { email, whatsapp, createdAt: new Date().toISOString() });
+                    alert('Conta criada com sucesso!');
+                } else {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                }
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
