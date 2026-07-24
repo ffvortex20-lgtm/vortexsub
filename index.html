@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexSub - Entrar</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --primary-hover: #e5e7eb; --accent: #ef4444; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -16,6 +17,12 @@
         input { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 14px; outline: none; }
         .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 12px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-google { width: 100%; background-color: #1f2937; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-main); font-weight: 600; cursor: pointer; transition: 0.2s; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-google:hover { background-color: #374151; }
+        .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 12px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
+        .divider::before { margin-right: .5em; }
+        .divider::after { margin-left: .5em; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -35,15 +42,22 @@
             <input type="text" id="authWhatsapp" placeholder="+55 11 99999-9999">
         </div>
         <button class="btn-primary" id="authBtn" onclick="handleAuth()">Entrar</button>
-        <p style="text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted); cursor: pointer;" onclick="toggleAuthMode()">
+        
+        <div class="divider">ou</div>
+
+        <button class="btn-google" onclick="handleGoogleLogin()">
+            <i class="fa-brands fa-google"></i> Continuar com o Google
+        </button>
+
+        <p style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); cursor: pointer;" onclick="toggleAuthMode()">
             <span id="toggleText">Não tem uma conta? Cadastre-se</span>
         </p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -91,6 +105,30 @@
                 window.location.href = "dashboard.html";
             } catch (error) {
                 alert('Erro: ' + error.message);
+            }
+        }
+
+        window.handleGoogleLogin = async function() {
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+
+                // Verifica se o usuário já existe no banco de dados, senão cadastra automaticamente
+                const dbRef = ref(db);
+                const snapshot = await get(child(dbRef, `users/${user.uid}`));
+                
+                if (!snapshot.exists()) {
+                    await set(ref(db, 'users/' + user.uid), {
+                        email: user.email,
+                        whatsapp: user.phoneNumber || 'Não vinculado',
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                alert('Erro ao logar com o Google: ' + error.message);
             }
         }
     </script>
