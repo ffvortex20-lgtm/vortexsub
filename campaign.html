@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Verificação de Tarefas</title>
+    <title>VortexSub - Sistema Completo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -18,7 +17,6 @@
             background-color: var(--bg-color); color: var(--text-main); 
             display: flex; justify-content: center; align-items: center; 
             min-height: 100vh; padding: 20px;
-            background-image: radial-gradient(circle at 50% 10%, rgba(31, 41, 55, 0.4) 0%, transparent 60%);
         }
         .container { width: 100%; max-width: 480px; }
         .card { 
@@ -51,10 +49,7 @@
         
         .task-name { font-size: 14px; font-weight: 600; color: var(--text-main); display: block; }
         .task-desc { font-size: 11px; color: var(--text-muted); }
-        
-        .toast-msg {
-            font-size: 11px; color: var(--warning); margin-top: 4px; font-weight: 500; display: none;
-        }
+        .toast-msg { font-size: 11px; color: var(--warning); margin-top: 4px; font-weight: 500; display: none; }
 
         .btn-main { 
             width: 100%; background-color: var(--primary); border: none; border-radius: 10px; 
@@ -64,16 +59,45 @@
         }
         .btn-main.unlocked { opacity: 1; pointer-events: auto; }
         .btn-main:hover { background-color: var(--primary-hover); }
+        
+        /* BAN SCREEN STYLE */
+        .ban-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); z-index: 99999;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
+        }
+        .ban-card {
+            background-color: var(--card-bg); border: 1px solid var(--accent);
+            border-radius: 16px; padding: 40px 30px; text-align: center; max-width: 440px; width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);
+        }
+        .ban-card i { font-size: 48px; color: var(--accent); margin-bottom: 20px; }
+        .ban-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
+        .ban-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+        .ip-tag { font-size: 12px; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; display: inline-block; color: var(--text-muted); }
+        
+        .hidden { display: none !important; }
         .footer-brand { margin-top: 24px; font-size: 11px; color: var(--text-muted); text-align: center; }
         .footer-brand span { color: var(--accent); font-weight: 600; }
     </style>
 </head>
 <body>
+
+    <!-- TELA DE BANIMENTO GLOBAL (Bloqueia IP / Usuário) -->
+    <div id="banScreen" class="ban-screen hidden">
+        <div class="ban-card">
+            <i class="fa-solid fa-ban"></i>
+            <h2>Usuário Banido</h2>
+            <p>Usuário banido por favor entre em contato com o suporte para reativação da conta.</p>
+            <div class="ip-tag">Seu IP: <span id="userIpDisplay">Detectando...</span></div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="card" id="mainCard">
             <div id="loadingView">
                 <i class="fa-solid fa-spinner fa-spin" style="font-size: 28px; color: var(--text-muted); margin-bottom: 12px;"></i>
-                <p style="font-size: 14px; color: var(--text-muted);">Carregando campanha...</p>
+                <p style="font-size: 14px; color: var(--text-muted);">Verificando sistema e campanha...</p>
             </div>
             <div id="contentView" style="display: none;">
                 <h1 class="camp-title" id="campTitleDisplay">Carregando...</h1>
@@ -90,7 +114,7 @@
                     <i class="fa-solid fa-unlock-keyhole"></i> LIBERAR LINK FINAL
                 </button>
             </div>
-            <div id="pausedView" style="display: none;" class="paused-box">
+            <div id="pausedView" style="display: none;">
                 <i class="fa-solid fa-circle-exclamation" style="font-size: 36px; color: var(--accent); margin-bottom: 12px;"></i>
                 <h3 style="font-size: 18px; margin-bottom: 6px;">Campanha Pausada</h3>
                 <p style="font-size: 13px; color: var(--text-muted);">Esta campanha foi pausada pelo criador.</p>
@@ -101,7 +125,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getDatabase, ref, get, update, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -116,20 +140,44 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const campId = urlParams.get('id');
-        let targetUrlFinal = "";
-        let completedTasks = new Set();
-        let totalTasksCount = 0;
-        let pendingVerification = null;
-        let clickTimestamp = 0;
+        let userIp = "";
 
-        async function loadCampaign() {
-            if (!campId) return;
+        async function initSecurityAndCampaign() {
+            try {
+                // Pega o IP real do usuário por API pública
+                const ipRes = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipRes.json();
+                userIp = ipData.ip;
+                document.getElementById('userIpDisplay').innerText = userIp;
+
+                // Formata o IP para usar como chave no Firebase (substitui pontos por underscores)
+                const ipKey = userIp.replace(/\./g, '_');
+
+                // Verifica se o IP está banido no banco de dados global
+                const banSnap = await get(child(ref(db), 'bannedIps/' + ipKey));
+                if (banSnap.exists() && banSnap.val() === true) {
+                    document.getElementById('banScreen').classList.remove('hidden');
+                    return; // Interrompe totalmente o carregamento se estiver banido
+                }
+            } catch (e) {
+                console.error("Erro ao verificar IP/Ban:", e);
+            }
+
+            // Carrega a Campanha normalmente caso não esteja banido
+            const urlParams = new URLSearchParams(window.location.search);
+            const campId = urlParams.get('id');
+            if (!campId) {
+                document.getElementById('loadingView').innerHTML = "<p style='color:var(--accent);'>ID da campanha não informado.</p>";
+                return;
+            }
+
             const snap = await get(child(ref(db), 'campaigns/' + campId));
-            if (!snap.exists()) return;
-            const camp = snap.val();
+            if (!snap.exists()) {
+                document.getElementById('loadingView').innerHTML = "<p style='color:var(--accent);'>Campanha não encontrada.</p>";
+                return;
+            }
 
+            const camp = snap.val();
             if (camp.status === 'paused') {
                 document.getElementById('loadingView').style.display = 'none';
                 document.getElementById('pausedView').style.display = 'block';
@@ -137,8 +185,8 @@
             }
 
             document.getElementById('campTitleDisplay').innerText = camp.title;
-            targetUrlFinal = camp.targetUrl;
-            totalTasksCount = camp.tasks ? camp.tasks.length : 0;
+            window.targetUrlFinal = camp.targetUrl;
+            window.totalTasksCount = camp.tasks ? camp.tasks.length : 0;
 
             const listContainer = document.getElementById('taskListContainer');
             listContainer.innerHTML = '';
@@ -169,29 +217,35 @@
             document.getElementById('contentView').style.display = 'block';
         }
 
+        window.completedTasks = new Set();
+        window.pendingVerification = null;
+        window.clickTimestamp = 0;
+        window.targetUrlFinal = "";
+        window.totalTasksCount = 0;
+
         window.startTask = function(index, url) {
-            if (completedTasks.has(index)) return;
-            window.open(url, '_blank');
-            clickTimestamp = Date.now();
-            pendingVerification = index;
+            if (window.completedTasks.has(index)) return;
+            window.clickTimestamp = Date.now();
+            window.pendingVerification = index;
 
             const icon = document.getElementById(`icon-${index}`);
             icon.className = "fa-solid fa-spinner fa-spin";
             document.getElementById(`desc-${index}`).innerText = "Verificando conclusão...";
+            
+            window.open(url, '_blank');
         }
 
-        // Checker ao focar novamente na aba
         window.addEventListener('focus', () => {
-            if (pendingVerification !== null) {
-                const elapsed = Date.now() - clickTimestamp;
-                const index = pendingVerification;
-                pendingVerification = null;
+            if (window.pendingVerification !== null) {
+                const elapsed = Date.now() - window.clickTimestamp;
+                const index = window.pendingVerification;
+                window.pendingVerification = null;
+                
                 const item = document.getElementById(`task-${index}`);
                 const icon = document.getElementById(`icon-${index}`);
                 const desc = document.getElementById(`desc-${index}`);
                 const toast = document.getElementById(`toast-${index}`);
 
-                // Se voltar em menos de 4 segundos, rejeita e avisa
                 if (elapsed < 4000) {
                     item.classList.add('warning');
                     icon.className = "fa-solid fa-triangle-exclamation";
@@ -206,25 +260,26 @@
                         toast.style.display = "none";
                         desc.innerText = "Clique para realizar a tarefa";
                     }, 4000);
-                } else {
-                    completedTasks.add(index);
+                } else if (!window.completedTasks.has(index)) {
+                    window.completedTasks.add(index);
                     item.classList.add('completed');
                     icon.className = "fa-solid fa-check";
+                    icon.style.color = "";
+                    desc.style.display = "block";
+                    toast.style.display = "none";
                     desc.innerText = "Concluído com sucesso!";
-                    updateProgress();
+                    
+                    const count = window.completedTasks.size;
+                    document.getElementById('progressText').innerText = `${count} de ${window.totalTasksCount} ações completas`;
+                    document.getElementById('progressBarFill').style.width = `${(count / window.totalTasksCount) * 100}%`;
+                    if (count === window.totalTasksCount) document.getElementById('finalBtn').classList.add('unlocked');
                 }
             }
         });
 
-        function updateProgress() {
-            const count = completedTasks.size;
-            document.getElementById('progressText').innerText = `${count} de ${totalTasksCount} ações completas`;
-            document.getElementById('progressBarFill').style.width = `${(count / totalTasksCount) * 100}%`;
-            if (count === totalTasksCount) document.getElementById('finalBtn').classList.add('unlocked');
-        }
+        window.goToTarget = function() { if (window.targetUrlFinal) window.location.href = window.targetUrlFinal; }
 
-        window.goToTarget = function() { if (targetUrlFinal) window.location.href = targetUrlFinal; }
-        loadCampaign();
+        initSecurityAndCampaign();
     </script>
 </body>
 </html>
