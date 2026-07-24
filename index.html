@@ -170,30 +170,30 @@
             <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
         </div>
 
-        <form id="authForm" onsubmit="handleAuth(event)">
+        <form id="authForm">
             <h2 id="formTitle" style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
             
             <div class="form-group">
                 <label>E-mail</label>
-                <input type="email" id="email" class="form-config form-control" required placeholder="seu@email.com">
+                <input type="email" id="email" class="form-control" autocomplete="email" required placeholder="seu@email.com">
             </div>
 
             <div class="form-group">
                 <label>Senha</label>
-                <input type="password" id="password" class="form-control" required placeholder="••••••••">
+                <input type="password" id="password" class="form-control" autocomplete="current-password" required placeholder="••••••••">
             </div>
 
-            <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
+            <button type="button" id="submitBtn" class="btn-primary">Entrar</button>
         </form>
 
-        <button type="button" class="btn-google" onclick="loginWithGoogle()">
+        <button type="button" class="btn-google" id="googleBtn">
             <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
         </button>
 
         <div class="divider">ou</div>
 
         <div class="switch-auth">
-            <span id="switchText">Não tem uma conta?</span> <a onclick="toggleMode()" id="switchBtnText">Criar conta</a>
+            <span id="switchText">Não tem uma conta?</span> <a id="switchToggleBtn">Criar conta</a>
         </div>
     </div>
 
@@ -210,15 +210,14 @@
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Configurações do Firebase preenchidas com os seus dados reais
         const firebaseConfig = {
-            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",[cite: 1]
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
-            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",[cite: 1]
-            projectId: "vortexdev2",[cite: 1]
-            storageBucket: "vortexdev2.firebasestorage.app",[cite: 1]
-            messagingSenderId: "755839099190",[cite: 1]
-            appId: "1:755839099190:android:f97e6d0dc860177306d397"[cite: 1]
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:web:f97e6d0dc860177306d397" // Certifique-se de usar um App ID Web do Firebase
         };
 
         const app = initializeApp(firebaseConfig);
@@ -226,22 +225,18 @@
         const db = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // Mantém o usuário conectado na sessão do navegador
-        setPersistence(auth, browserLocalPersistence).catch((error) => {
-            console.error("Erro de persistência:", error);
-        });
+        setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
 
         let isSignUp = false;
 
-        window.toggleMode = function() {
+        document.getElementById('switchToggleBtn').addEventListener('click', () => {
             isSignUp = !isSignUp;
             document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
             document.getElementById('submitBtn').innerText = isSignUp ? 'Cadastrar' : 'Entrar';
             document.getElementById('switchText').innerText = isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?';
-            document.getElementById('switchBtnText').innerText = isSignUp ? 'Entrar' : 'Criar conta';
-        }
+            document.getElementById('switchToggleBtn').innerText = isSignUp ? 'Entrar' : 'Criar conta';
+        });
 
-        // Direcionamento dinâmico: Admin vai para admin.html, outros vão para dashboard.html
         function redirectUser(email) {
             if (email && email.trim().toLowerCase() === 'ffvortex20@gmail.com') {
                 window.location.href = 'admin.html';
@@ -252,54 +247,52 @@
 
         async function saveUserData(user) {
             try {
-                const userRef = ref(db, 'users/' + user.uid);
-                await set(userRef, {
+                await set(ref(db, 'users/' + user.uid), {
                     uid: user.uid,
                     email: user.email,
                     lastLogin: Date.now()
                 });
             } catch (err) {
-                console.error("Erro ao salvar dados no banco:", err);
+                console.error("Erro ao salvar no Database:", err);
             }
         }
 
-        window.handleAuth = async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // Mudança para clique direto no botão em vez de submit de form, evitando o reset por autocomplete
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                alert('Preencha o e-mail e a senha corretamente.');
+                return;
+            }
 
             try {
-                let userCredential;
+                let userCred;
                 if (isSignUp) {
-                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    userCred = await createUserWithEmailAndPassword(auth, email, password);
                 } else {
-                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    userCred = await signInWithEmailAndPassword(auth, email, password);
                 }
-                
-                await saveUserData(userCredential.user);
-                redirectUser(userCredential.user.email);
+                await saveUserData(userCred.user);
+                redirectUser(userCred.user.email);
             } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    alert('Este e-mail já está cadastrado. Tente entrar.');
-                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                    alert('E-mail ou senha incorretos.');
-                } else if (error.code === 'auth/weak-password') {
-                    alert('A senha deve ter pelo menos 6 caracteres.');
-                } else {
-                    alert('Erro: ' + error.message);
-                }
+                alert("Erro: " + error.message);
             }
-        }
+        });
 
-        window.loginWithGoogle = async function() {
+        document.getElementById('googleBtn').addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 await saveUserData(result.user);
                 redirectUser(result.user.email);
             } catch (error) {
-                alert('Erro ao logar com o Google: ' + error.message);
+                alert("Erro ao entrar com Google: " + error.message);
             }
-        }
+        });
     </script>
 </body>
 </html>
