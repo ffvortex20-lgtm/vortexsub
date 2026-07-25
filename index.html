@@ -196,7 +196,7 @@
 </head>
 <body>
 
-    <div class="auth-container">
+    <div class="auth-container" id="authBox">
         <div class="brand">VORTEX<span>.</span></div>
         
         <div id="errorAlert" class="error-msg"></div>
@@ -224,6 +224,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -237,7 +238,93 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
         const googleProvider = new GoogleAuthProvider();
+
+        // Intercepta rota de campanha no carregamento (#/campaign/ID)
+        window.addEventListener('DOMContentLoaded', async () => {
+            const hash = window.location.hash;
+            
+            if (hash.startsWith('#/campaign/')) {
+                const campaignId = hash.replace('#/campaign/', '');
+                
+                document.getElementById('authBox').innerHTML = `
+                    <div class="brand">VORTEX<span>.</span></div>
+                    <h2 id="campTitle" style="margin-top: 0; text-align: center; color: var(--text-main); font-size: 18px; margin-bottom: 20px;">Carregando Campanha...</h2>
+                    <div id="tasksList" style="margin: 20px 0;">
+                        <p style="text-align: center; color: var(--text-muted); font-size: 14px;"><i class="fa-solid fa-spinner fa-spin"></i> Buscando tarefas...</p>
+                    </div>
+                    <button id="unlockBtn" class="btn-primary" style="background: #374151; color: var(--text-muted); cursor: not-allowed; box-shadow: none;" disabled>Complete as tarefas para liberar</button>
+                `;
+
+                try {
+                    const snap = await get(child(ref(db), 'campaigns/' + campaignId));
+                    
+                    if (snap.exists()) {
+                        const camp = snap.val();
+                        document.getElementById('campTitle').innerText = camp.title;
+                        
+                        const tasksList = document.getElementById('tasksList');
+                        tasksList.innerHTML = '';
+                        
+                        let completedTasks = {};
+
+                        if (camp.tasks && camp.tasks.length > 0) {
+                            camp.tasks.forEach((task, index) => {
+                                completedTasks[index] = false;
+                                const taskDiv = document.createElement('div');
+                                taskDiv.style.cssText = "display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.4); padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08);";
+                                
+                                taskDiv.innerHTML = `
+                                    <span style="text-transform: capitalize; font-weight: 600; font-size: 14px; color: var(--text-main);"><i class="fa-solid fa-link" style="color: var(--accent); margin-right: 8px;"></i> ${task.type}</span>
+                                    <a href="${task.url}" target="_blank" id="task-${index}" style="background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid var(--accent); padding: 7px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;" onclick="window.markTaskDone(${index}, '${camp.targetUrl}')">Visitar</a>
+                                `;
+                                tasksList.appendChild(taskDiv);
+                            });
+                        } else {
+                            document.getElementById('tasksList').innerHTML = '<p style="text-align: center; color: var(--text-muted);">Nenhuma tarefa configurada nesta campanha.</p>';
+                            const unlockBtn = document.getElementById('unlockBtn');
+                            unlockBtn.style.background = 'var(--accent)';
+                            unlockBtn.style.color = '#fff';
+                            unlockBtn.style.cursor = 'pointer';
+                            unlockBtn.style.boxShadow = '0 0 15px var(--accent-glow)';
+                            unlockBtn.disabled = false;
+                            unlockBtn.innerHTML = 'Acessar Link Final';
+                            unlockBtn.onclick = () => { window.location.href = camp.targetUrl; };
+                        }
+
+                        window.markTaskDone = function(index, targetUrl) {
+                            completedTasks[index] = true;
+                            const btn = document.getElementById(`task-${index}`);
+                            btn.style.background = '#10b981';
+                            btn.style.borderColor = '#10b981';
+                            btn.style.color = '#fff';
+                            btn.innerHTML = '<i class="fa-solid fa-check"></i> Concluído';
+
+                            const allDone = Object.values(completedTasks).every(v => v === true);
+                            if (allDone) {
+                                const unlockBtn = document.getElementById('unlockBtn');
+                                unlockBtn.style.background = 'var(--accent)';
+                                unlockBtn.style.color = '#fff';
+                                unlockBtn.style.cursor = 'pointer';
+                                unlockBtn.style.boxShadow = '0 0 15px var(--accent-glow)';
+                                unlockBtn.disabled = false;
+                                unlockBtn.innerHTML = 'Acessar Link Final';
+                                unlockBtn.onclick = () => { window.location.href = targetUrl; };
+                            }
+                        };
+
+                    } else {
+                        document.getElementById('campTitle').innerText = 'Campanha não encontrada';
+                        document.getElementById('tasksList').innerHTML = '<p style="text-align: center; color: #fca5a5;'>Este link é inválido ou a campanha foi excluída.</p>';
+                    }
+                } catch (err) {
+                    console.error(err);
+                    document.getElementById('campTitle').innerText = 'Erro ao carregar';
+                    document.getElementById('tasksList').innerHTML = '<p style="text-align: center; color: #fca5a5;'>Ocorreu um erro ao buscar os dados da campanha.</p>';
+                }
+            }
+        });
 
         let isLoginMode = true;
 
