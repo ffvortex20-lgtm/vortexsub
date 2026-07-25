@@ -3,83 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Entrar / Criar Conta</title>
+    <title>Vortex - Login / Cadastro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #ef4444;
-            --accent-hover: #dc2626;
+            --panel-bg: #1e293b;
+            --accent: #3b82f6;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border: #334155;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --border-radius: 12px;
         }
 
         body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1rem;
+            height: 100vh;
+            margin: 0;
         }
 
         .auth-container {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            background: var(--panel-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-sizing: border-box;
+            margin: 20px;
         }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
+        .brand {
+            font-size: 28px;
+            font-weight: bold;
             color: var(--accent);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.4rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.75rem;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
             color: var(--text-main);
-            font-size: 0.95rem;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border 0.3s;
         }
 
         .form-control:focus {
-            outline: none;
             border-color: var(--accent);
         }
 
@@ -87,78 +69,45 @@
             background: var(--accent);
             color: white;
             border: none;
-            padding: 0.75rem;
+            padding: 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: bold;
             width: 100%;
-            transition: background 0.2s;
-            margin-top: 0.5rem;
+            transition: 0.3s;
+            margin-top: 5px;
         }
 
         .btn-primary:hover {
-            background: var(--accent-hover);
+            opacity: 0.9;
         }
 
-        .btn-google {
-            background: white;
-            color: #1e293b;
-            border: none;
-            padding: 0.75rem;
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 10px;
             border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            transition: background 0.2s;
-            margin-top: 0.75rem;
-        }
-
-        .btn-google:hover {
-            background: #f1f5f9;
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
+            font-size: 13px;
+            margin-bottom: 15px;
+            display: none;
             text-align: center;
-            margin: 1.2rem 0;
-            color: var(--text-muted);
-            font-size: 0.8rem;
         }
 
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .divider::before {
-            margin-right: .5em;
-        }
-
-        .divider::after {
-            margin-left: .5em;
-        }
-
-        .switch-auth {
+        .toggle-auth {
             text-align: center;
-            margin-top: 1.2rem;
-            font-size: 0.85rem;
+            margin-top: 20px;
+            font-size: 14px;
             color: var(--text-muted);
         }
 
-        .switch-auth a {
+        .toggle-auth span {
             color: var(--accent);
-            text-decoration: none;
             cursor: pointer;
             font-weight: 600;
         }
 
-        .switch-auth a:hover {
+        .toggle-auth span:hover {
             text-decoration: underline;
         }
     </style>
@@ -166,49 +115,28 @@
 <body>
 
     <div class="auth-container">
-        <div class="logo">
-            <h1><i class="fa-solid fa-bolt"></i> VortexSub</h1>
-        </div>
+        <div class="brand">VORTEX</div>
+        
+        <div id="errorAlert" class="error-msg"></div>
 
-        <form id="authForm">
-            <h2 id="formTitle" style="font-size: 1.1rem; margin-bottom: 1rem; text-align: center;">Entrar na sua conta</h2>
+        <form id="authForm" onsubmit="handleAuth(event)">
+            <h2 id="formTitle" style="margin-top:0; font-size: 20px; margin-bottom: 20px; text-align: center;">Entrar na Conta</h2>
             
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" id="email" class="form-control" required placeholder="seu@email.com">
-            </div>
-
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="password" class="form-control" required placeholder="••••••••">
-            </div>
-
-            <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
+            <input type="email" id="emailInput" class="form-control" placeholder="Seu Gmail (@gmail.com)" required>
+            <input type="password" id="passInput" class="form-control" placeholder="Sua senha / Número (Mín. 6 caracteres)" required>
+            
+            <button type="submit" id="submitBtn" class="btn-primary">Entrar</button>
         </form>
 
-        <button type="button" class="btn-google" id="googleBtn">
-            <i class="fa-brands fa-google" style="color: #ea4335;"></i> Continuar com o Google
-        </button>
-
-        <div class="divider">ou</div>
-
-        <div class="switch-auth">
-            <span id="switchText">Não tem uma conta?</span> <a id="switchBtnText">Criar conta</a>
+        <div class="toggle-auth">
+            <span id="toggleText" onclick="toggleMode()">Não tem uma conta? Crie agora</span>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword, 
-            GoogleAuthProvider, 
-            signInWithPopup, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Configuração totalmente limpa, sem caracteres invasores
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
@@ -221,67 +149,73 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const googleProvider = new GoogleAuthProvider();
 
-        let isSignUp = false;
+        let isLoginMode = true;
 
-        function redirecionarPorEmail(email) {
-            if (email && email.trim().toLowerCase() === 'ffvortex20@gmail.com') {
-                window.location.href = 'admin.html';
-            } else {
-                window.location.href = 'dashboard.html';
+        window.toggleMode = function() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('formTitle').innerText = isLoginMode ? 'Entrar na Conta' : 'Criar Nova Conta';
+            document.getElementById('submitBtn').innerText = isLoginMode ? 'Entrar' : 'Cadastrar';
+            document.getElementById('toggleText').innerText = isLoginMode ? 'Não tem uma conta? Crie agora' : 'Já tem uma conta? Faça login';
+            document.getElementById('errorAlert').style.display = 'none';
+        }
+
+        window.handleAuth = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passInput').value.trim();
+            const errorAlert = document.getElementById('errorAlert');
+
+            errorAlert.style.display = 'none';
+
+            // Validação estrita de Gmail
+            if (!email.endsWith('@gmail.com')) {
+                showError('Por favor, insira um endereço de Gmail válido (@gmail.com).');
+                return;
+            }
+
+            // Validação do número/senha
+            if (password.length < 6) {
+                showError('A senha/número precisa ter pelo menos 6 caracteres.');
+                return;
+            }
+
+            try {
+                if (isLoginMode) {
+                    // Tenta fazer login (O Firebase valida se o Gmail existe e se a senha confere)
+                    await signInWithEmailAndPassword(auth, email, password);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Tenta criar a conta
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    alert('Conta criada com sucesso!');
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (error) {
+                let msg = 'Ocorreu um erro. Tente novamente.';
+                
+                // Traduzindo os erros mais comuns do Firebase para o usuário
+                if (error.code === 'auth/invalid-email') {
+                    msg = 'O formato do e-mail digitado é inválido.';
+                } else if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    msg = 'Este Gmail não está cadastrado ou a senha/número está incorreto.';
+                } else if (error.code === 'auth/wrong-password') {
+                    msg = 'Senha ou número incorreto.';
+                } else if (error.code === 'auth/email-already-in-use') {
+                    msg = 'Este Gmail já possui uma conta cadastrada. Faça login.';
+                } else if (error.code === 'auth/weak-password') {
+                    msg = 'A senha ou número é muito fraco.';
+                }
+
+                showError(msg);
             }
         }
 
-        onAuthStateChanged(auth, (user) => {
-            if (user && user.email) {
-                // redirecionarPorEmail(user.email);
-            }
-        });
-        
-        document.getElementById('switchBtnText').addEventListener('click', () => {
-            isSignUp = !isSignUp;
-            document.getElementById('formTitle').innerText = isSignUp ? 'Criar nova conta' : 'Entrar na sua conta';
-            document.getElementById('submitBtn').innerText = isSignUp ? 'Cadastrar' : 'Entrar';
-            document.getElementById('switchText').innerText = isSignUp ? 'Já tem uma conta?' : 'Não tem uma conta?';
-            document.getElementById('switchBtnText').innerText = isSignUp ? 'Entrar' : 'Criar conta';
-        });
-
-        document.getElementById('authForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); 
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            try {
-                let userCredential;
-                if (isSignUp) {
-                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                } else {
-                    userCredential = await signInWithEmailAndPassword(auth, email, password);
-                }
-                redirecionarPorEmail(userCredential.user.email);
-            } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    alert('Este e-mail já está cadastrado. Tente entrar ou recuperar a senha.');
-                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-                    alert('E-mail ou senha incorretos.');
-                } else {
-                    alert('Erro ao autenticar: ' + error.message);
-                }
-            }
-        });
-
-        document.getElementById('googleBtn').addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                redirecionarPorEmail(result.user.email);
-            } catch (error) {
-                if (error.code !== 'auth/cancelled-popup-request') {
-                    alert('Erro ao logar com o Google: ' + error.message);
-                }
-            }
-        });
+        function showError(message) {
+            const alertBox = document.getElementById('errorAlert');
+            alertBox.innerText = message;
+            alertBox.style.display = 'block';
+        }
     </script>
 </body>
 </html>
