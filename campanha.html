@@ -8,17 +8,21 @@
 </head>
 <body>
     <div class="container-campanha">
-        <h1 id="tituloExibicao">Carregando Campanha...</h1>
-        <p id="subtituloExibicao">Complete as ações abaixo para liberar o link.</p>
+        <div class="card-box">
+            <h1 id="tituloExibicao">Carregando Campanha...</h1>
+            <p id="descricaoExibicao">Complete a etapa abaixo para liberar o seu acesso.</p>
 
-        <div id="acoesContainer">
+            <div class="etapa-box" onclick="concluirEtapa(this)">
+                <span>📺 Inscrever-se no canal / Ação obrigatória</span>
+                <span class="status-etapa">Pendente</span>
             </div>
 
-        <button id="btnDesbloquear" class="btn-bloqueado" disabled onclick="liberarLinkFinal()">
-            Desbloquear Conteúdo
-        </button>
+            <button id="btnDesbloquear" class="btn-bloqueado" disabled onclick="irParaDestino()">
+                Desbloquear Conteúdo
+            </button>
+        </div>
     </div>
 
-    <script src="js/campanha.js"></script>
+    <script type="module" src="js/campanha.js"></script>
 </body>
 </html>
