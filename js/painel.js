@@ -1,39 +1,31 @@
-function switchTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+import { db, ref, set } from "./firebase-config.js";
 
-    if (tabName === 'criar') {
-        document.getElementById('secao-criar').classList.add('active');
-    }
-}
-
-function adicionarAcao() {
-    const listaAcoes = document.getElementById('listaAcoes');
-    const div = document.createElement('div');
-    div.className = 'acao-item';
-    div.innerHTML = `
-        <select class="tipo-acao">
-            <option value="youtube">Inscrever-se no canal (YouTube)</option>
-            <option value="curtir">Curtir vídeo (YouTube)</option>
-        </select>
-        <input type="text" placeholder="Cole a URL aqui" class="url-acao">
-    `;
-    listaAcoes.appendChild(div);
-}
-
-function publicarCampanha() {
-    const link = document.getElementById('linkDestino').value;
-    const titulo = document.getElementById('tituloCampanha').value;
+document.getElementById('btnPublicar').addEventListener('click', async () => {
+    const link = document.getElementById('linkDestino').value.trim();
+    const titulo = document.getElementById('tituloCampanha').value.trim();
+    const descricao = document.getElementById('descricaoCampanha').value.trim();
 
     if (!link || !titulo) {
-        alert('Preencha os campos obrigatórios!');
+        alert('Por favor, preencha o link de destino e o título!');
         return;
     }
 
-    // Salvando os dados no armazenamento local para a página de destino ler
-    const dadosCampanha = { link, titulo };
-    localStorage.setItem('campanhaAtual', JSON.stringify(dadosCampanha));
+    const campanhaId = 'camp_' + Date.now();
 
-    alert('Campanha criada com sucesso! Acesse a página de campanha.');
-    window.location.href = 'campanha.html';
-}
+    try {
+        await set(ref(db, 'campanhas/' + campanhaId), {
+            id: campanhaId,
+            titulo: titulo,
+            descricao: descricao,
+            linkDestino: link,
+            criadoEm: Date.now()
+        });
+
+        alert('Campanha criada com sucesso!');
+        // Redireciona para testar a página de campanha gerada
+        window.location.href = `campanha.html?id=${campanhaId}`;
+    } catch (error) {
+        console.error("Erro ao salvar:", error);
+        alert('Erro ao salvar no Firebase. Verifique o console.');
+    }
+});
