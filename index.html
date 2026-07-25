@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --panel-bg: #1e293b;
-            --accent: #3b82f6;
+            --bg-color: #09090b;
+            --panel-bg: #121216;
+            --accent: #ef4444;
+            --accent-glow: rgba(239, 68, 68, 0.4);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-radius: 12px;
@@ -24,80 +25,154 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #1a0f0f 0%, #09090b 100%);
         }
 
         .auth-container {
             width: 100%;
             max-width: 400px;
             background: var(--panel-bg);
-            padding: 30px;
+            padding: 35px;
             border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.15), 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             box-sizing: border-box;
             margin: 20px;
+            position: relative;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
         }
 
         .brand {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--accent);
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-main);
             text-align: center;
             margin-bottom: 25px;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .brand span {
+            color: var(--accent);
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 14px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             color: var(--text-main);
             margin-bottom: 15px;
             box-sizing: border-box;
             outline: none;
-            transition: border 0.3s;
+            transition: all 0.3s ease;
         }
 
         .form-control:focus {
             border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            background: rgba(0, 0, 0, 0.6);
         }
 
         .btn-primary {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
             width: 100%;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             margin-top: 5px;
+            box-shadow: 0 0 15px var(--accent-glow);
+            letter-spacing: 0.5px;
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
+            background: #dc2626;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .btn-google {
+            background: #18181b;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-google:hover {
+            background: #27272a;
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-muted);
+            margin: 20px 0;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .divider::before {
+            margin-right: 10px;
+        }
+
+        .divider::after {
+            margin-left: 10px;
         }
 
         .error-msg {
             background: rgba(239, 68, 68, 0.1);
-            border: 1px solid #ef4444;
-            color: #ef4444;
+            border: 1px solid var(--accent);
+            color: #fca5a5;
             padding: 10px;
             border-radius: 8px;
             font-size: 13px;
             margin-bottom: 15px;
             display: none;
             text-align: center;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
         }
 
         .toggle-auth {
             text-align: center;
             margin-top: 20px;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
@@ -105,22 +180,35 @@
             color: var(--accent);
             cursor: pointer;
             font-weight: 600;
+            transition: text-shadow 0.2s;
         }
 
         .toggle-auth span:hover {
+            text-shadow: 0 0 8px var(--accent-glow);
             text-decoration: underline;
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
     <div class="auth-container">
-        <div class="brand">VORTEX</div>
+        <div class="brand">VORTEX<span>.</span></div>
         
         <div id="errorAlert" class="error-msg"></div>
 
+        <button type="button" class="btn-google" onclick="loginWithGoogle()">
+            <i class="fa-brands fa-google" style="color: var(--accent);"></i> Entrar com o Google
+        </button>
+
+        <div class="divider">ou continue com e-mail</div>
+
         <form id="authForm" onsubmit="handleAuth(event)">
-            <h2 id="formTitle" style="margin-top:0; font-size: 20px; margin-bottom: 20px; text-align: center;">Entrar na Conta</h2>
+            <h2 id="formTitle" style="margin-top:0; font-size: 16px; margin-bottom: 15px; text-align: center; letter-spacing: 0.5px;">Entrar na Conta</h2>
             
             <input type="email" id="emailInput" class="form-control" placeholder="Seu Gmail (@gmail.com)" required>
             <input type="password" id="passInput" class="form-control" placeholder="Sua senha / Número (Mín. 6 caracteres)" required>
@@ -135,7 +223,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -149,6 +237,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
 
         let isLoginMode = true;
 
@@ -160,6 +249,15 @@
             document.getElementById('errorAlert').style.display = 'none';
         }
 
+        window.loginWithGoogle = async function() {
+            try {
+                await signInWithPopup(auth, googleProvider);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                showError('Não foi possível entrar com o Google. Tente novamente.');
+            }
+        }
+
         window.handleAuth = async function(e) {
             e.preventDefault();
             const email = document.getElementById('emailInput').value.trim();
@@ -168,13 +266,11 @@
 
             errorAlert.style.display = 'none';
 
-            // Validação estrita de Gmail
             if (!email.endsWith('@gmail.com')) {
                 showError('Por favor, insira um endereço de Gmail válido (@gmail.com).');
                 return;
             }
 
-            // Validação do número/senha
             if (password.length < 6) {
                 showError('A senha/número precisa ter pelo menos 6 caracteres.');
                 return;
@@ -182,11 +278,9 @@
 
             try {
                 if (isLoginMode) {
-                    // Tenta fazer login (O Firebase valida se o Gmail existe e se a senha confere)
                     await signInWithEmailAndPassword(auth, email, password);
                     window.location.href = 'dashboard.html';
                 } else {
-                    // Tenta criar a conta
                     await createUserWithEmailAndPassword(auth, email, password);
                     alert('Conta criada com sucesso!');
                     window.location.href = 'dashboard.html';
@@ -194,7 +288,6 @@
             } catch (error) {
                 let msg = 'Ocorreu um erro. Tente novamente.';
                 
-                // Traduzindo os erros mais comuns do Firebase para o usuário
                 if (error.code === 'auth/invalid-email') {
                     msg = 'O formato do e-mail digitado é inválido.';
                 } else if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
