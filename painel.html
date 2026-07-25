@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel - GanheSub / VortexSub</title>
+    <link rel="stylesheet" href="css/painel.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>VortexSub</h2>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active" onclick="switchTab('criar')">Criar campanha</a>
+                <a href="#" class="nav-item" onclick="switchTab('minhas')">Minhas campanhas</a>
+                <a href="#" class="nav-item" onclick="switchTab('config')">Configurações</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <section id="secao-criar" class="tab-content active">
+                <h2>Criar campanha</h2>
+                <p>Configure as ações e o link a desbloquear.</p>
+
+                <div class="form-group">
+                    <label>URL de destino (link a desbloquear)*</label>
+                    <input type="text" id="linkDestino" placeholder="https://exemplo.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Título*</label>
+                    <input type="text" id="tituloCampanha" placeholder="Título da sua campanha">
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição (opcional)</label>
+                    <textarea id="descricaoCampanha" placeholder="Escreva uma breve descrição"></textarea>
+                </div>
+
+                <div class="acoes-section">
+                    <h3>Ações</h3>
+                    <div id="listaAcoes"></div>
+                    <button class="btn-secundario" onclick="adicionarAcao()">+ Adicionar ação</button>
+                </div>
+
+                <button class="btn-principal" onclick="publicarCampanha()">Criar campanha</button>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/painel.js"></script>
+</body>
+</html>
