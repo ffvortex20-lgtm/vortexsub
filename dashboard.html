@@ -271,9 +271,7 @@
             padding: 10px 14px;
         }
 
-        /* ========================================= */
-        /* RESPONSIVIDADE PARA CELULARES (MOBILE)    */
-        /* ========================================= */
+        /* RESPONSIVIDADE PARA CELULARES */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -310,7 +308,7 @@
             }
             
             #userEmailDisplay {
-                display: none; /* Esconde email no topo do celular para poupar espaço */
+                display: none;
             }
             
             .btn-logout {
@@ -515,7 +513,7 @@
                 title,
                 targetUrl,
                 tasks,
-                shortUrl: editId ? undefined : `https://vortexsub.pages.dev/s/?id=${Math.random().toString(36).substring(7)}`,
+                shortUrl: editId ? undefined : `https://vortexsub.pages.dev/campaign.html?id=${Math.random().toString(36).substring(7)}`,
                 updatedAt: Date.now()
             };
 
