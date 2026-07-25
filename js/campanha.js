@@ -1,31 +1,60 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const dados = JSON.parse(localStorage.getItem('campanhaAtual'));
-    if (dados) {
-        document.getElementById('tituloExibico').innerText = dados.titulo;
+import { db, ref, get, child } from "./firebase-config.js";
+
+let linkFinalSalvo = "";
+let acaoConcluida = false;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(window.location.search);
+    const campanhaId = params.get('id');
+
+    if (!campanhaId) {
+        document.getElementById('tituloExibicao').innerText = "Campanha não encontrada";
+        document.getElementById('descricaoExibicao').innerText = "O link acessado é inválido.";
+        return;
+    }
+
+    try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, `campanhas/${campanhaId}`));
+
+        if (snapshot.exists()) {
+            const dados = snapshot.val();
+            document.getElementById('tituloExibicao').innerText = dados.titulo;
+            if (dados.descricao) {
+                document.getElementById('descricaoExibicao').innerText = dados.descricao;
+            }
+            linkFinalSalvo = dados.linkDestino;
+        } else {
+            document.getElementById('tituloExibicao').innerText = "Campanha inexistente";
+            document.getElementById('descricaoExibicao').innerText = "Esta campanha pode ter sido removida.";
+        }
+    } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+        document.getElementById('tituloExibicao').innerText = "Erro de Conexão";
     }
 });
 
-let acoesConcluidas = 0;
-const totalAcoes = 1; // Defina de acordo com a quantidade configurada
+// Função acionada quando o usuário clica na etapa de inscrição/ação
+window.concluirEtapa = function(elemento) {
+    if (acaoConcluida) return;
 
-function concluirAcao(element) {
-    element.style.backgroundColor = '#22c55e';
-    element.innerText = 'Concluído ✓';
-    acoesConcluidas++;
+    acaoConcluida = true;
+    elemento.style.borderColor = '#22c55e';
+    elemento.style.backgroundColor = '#064e3b';
+    elemento.querySelector('.status-etapa').innerText = 'Concluído ✓';
+    elemento.querySelector('.status-etapa').style.color = '#4ade80';
 
-    if (acoesConcluidas >= totalAcoes) {
-        const btn = document.getElementById('btnDesbloquear');
-        btn.disabled = false;
-        btn.classList.remove('btn-bloqueado');
-        btn.classList.add('btn-liberado');
-    }
+    // Libera o botão de download/destino final
+    const btn = document.getElementById('btnDesbloquear');
+    btn.disabled = false;
+    btn.classList.remove('btn-bloqueado');
+    btn.classList.add('btn-liberado');
 }
 
-function liberarLinkFinal() {
-    const dados = JSON.parse(localStorage.getItem('campanhaAtual'));
-    if (dados && dados.link) {
-        window.location.href = dados.link;
+window.irParaDestino = function() {
+    if (linkFinalSalvo) {
+        window.location.href = linkFinalSalvo;
     } else {
-        alert('Link não encontrado.');
+        alert('O link final ainda não foi carregado.');
     }
 }
