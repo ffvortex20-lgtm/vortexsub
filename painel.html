@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel - GanheSub / VortexSub</title>
+    <title>Painel - VortexSub</title>
     <link rel="stylesheet" href="css/painel.css">
 </head>
 <body>
@@ -13,43 +13,35 @@
                 <h2>VortexSub</h2>
             </div>
             <nav>
-                <a href="#" class="nav-item active" onclick="switchTab('criar')">Criar campanha</a>
-                <a href="#" class="nav-item" onclick="switchTab('minhas')">Minhas campanhas</a>
-                <a href="#" class="nav-item" onclick="switchTab('config')">Configurações</a>
+                <a href="#" class="nav-item active">Criar campanha</a>
             </nav>
         </aside>
 
         <main class="content">
-            <section id="secao-criar" class="tab-content active">
+            <section class="tab-content active">
                 <h2>Criar campanha</h2>
-                <p>Configure as ações e o link a desbloquear.</p>
+                <p>Configure o link de destino e salve diretamente no banco de dados.</p>
 
                 <div class="form-group">
-                    <label>URL de destino (link a desbloquear)*</label>
-                    <input type="text" id="linkDestino" placeholder="https://exemplo.com">
-                </div>
-
-                <div class="form-group">
-                    <label>Título*</label>
-                    <input type="text" id="tituloCampanha" placeholder="Título da sua campanha">
+                    <label>URL de destino (Link que será liberado)*</label>
+                    <input type="text" id="linkDestino" placeholder="https://seu-link-aqui.com">
                 </div>
 
                 <div class="form-group">
-                    <label>Descrição (opcional)</label>
-                    <textarea id="descricaoCampanha" placeholder="Escreva uma breve descrição"></textarea>
+                    <label>Título da Campanha*</label>
+                    <input type="text" id="tituloCampanha" placeholder="Ex: Baixar E-book Grátis">
                 </div>
 
-                <div class="acoes-section">
-                    <h3>Ações</h3>
-                    <div id="listaAcoes"></div>
-                    <button class="btn-secundario" onclick="adicionarAcao()">+ Adicionar ação</button>
+                <div class="form-group">
+                    <label>Descrição (Opcional)</label>
+                    <textarea id="descricaoCampanha" placeholder="Instruções para o usuário..."></textarea>
                 </div>
 
-                <button class="btn-principal" onclick="publicarCampanha()">Criar campanha</button>
+                <button class="btn-principal" id="btnPublicar">Criar e Salvar Campanha</button>
             </section>
         </main>
     </div>
 
-    <script src="js/painel.js"></script>
+    <script type="module" src="js/painel.js"></script>
 </body>
 </html>
