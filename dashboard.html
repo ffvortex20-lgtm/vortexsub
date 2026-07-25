@@ -508,22 +508,25 @@
                 });
             });
 
+            // Gerador de ID Único e Link Personalizado com Hash Router
+            const randomId = editId ? null : Math.random().toString(36).substring(2, 8);
+            const generatedShortUrl = editId ? null : `https://www.vortexsub.shop/#/campaign/${randomId}`;
+
             const campaignData = {
                 userId: currentUser.uid,
                 title,
                 targetUrl,
                 tasks,
-                shortUrl: editId ? undefined : `https://vortexsub.pages.dev/campaign.html?id=${Math.random().toString(36).substring(7)}`,
                 updatedAt: Date.now()
             };
 
             if(editId) {
-                delete campaignData.shortUrl; 
                 await update(ref(db, 'campaigns/' + editId), campaignData);
             } else {
                 campaignData.createdAt = Date.now();
-                const newRef = push(ref(db, 'campaigns'));
-                await set(newRef, campaignData);
+                campaignData.shortUrl = generatedShortUrl;
+                // Salvamos usando o mesmo randomId como a chave no banco de dados para facilitar a leitura no index.html
+                await set(ref(db, 'campaigns/' + randomId), campaignData);
             }
 
             switchTab('list');
@@ -543,14 +546,15 @@
                     const camp = childSnap.val();
                     
                     if(camp.userId === currentUser.uid) {
+                        const displayLink = camp.shortUrl || `https://www.vortexsub.shop/#/campaign/${id}`;
                         html += `
                             <div class="campaign-card">
                                 <div class="campaign-info">
                                     <h3>${camp.title}</h3>
-                                    <p>${camp.shortUrl || 'Link personalizado'}</p>
+                                    <p>${displayLink}</p>
                                 </div>
                                 <div class="campaign-actions">
-                                    <button class="btn-secondary" onclick="navigator.clipboard.writeText('${camp.shortUrl || ''}'); alert('Link copiado com sucesso!');" title="Copiar Link"><i class="fa-solid fa-copy"></i></button>
+                                    <button class="btn-secondary" onclick="navigator.clipboard.writeText('${displayLink}'); alert('Link copiado com sucesso!');" title="Copiar Link"><i class="fa-solid fa-copy"></i></button>
                                     <button class="btn-secondary" onclick="editCampaign('${id}')" style="border-color:rgba(59,130,246,0.4); color:#60a5fa;" title="Editar"><i class="fa-solid fa-pen"></i></button>
                                     <button class="btn-secondary" onclick="deleteCampaign('${id}')" style="border-color:rgba(239,68,68,0.4); color:#fca5a5;" title="Apagar"><i class="fa-solid fa-trash"></i></button>
                                 </div>
