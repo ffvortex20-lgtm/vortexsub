@@ -33,6 +33,7 @@
             display: flex;
             flex-direction: column;
             border-right: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
         }
 
         .brand {
@@ -85,6 +86,7 @@
         }
 
         .tab-btn {
+            flex: 1;
             background: var(--panel-bg);
             color: var(--text-muted);
             border: 1px solid rgba(255,255,255,0.1);
@@ -93,6 +95,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            text-align: center;
         }
 
         .tab-btn:hover {
@@ -161,6 +164,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
+            width: 100%;
         }
 
         .btn-primary:hover {
@@ -175,6 +179,10 @@
             border-radius: 8px;
             cursor: pointer;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         /* Cards de Campanha */
@@ -188,11 +196,17 @@
             align-items: center;
             margin-bottom: 15px;
             transition: transform 0.2s;
+            word-break: break-all;
         }
 
         .campaign-card:hover {
             transform: translateX(5px);
             border-color: rgba(255,255,255,0.1);
+        }
+
+        .campaign-info {
+            flex: 1;
+            padding-right: 15px;
         }
 
         .campaign-info h3 {
@@ -213,6 +227,96 @@
 
         .campaign-actions .btn-secondary {
             padding: 10px 15px;
+        }
+
+        /* ========================================= */
+        /* RESPONSIVIDADE PARA CELULARES (MOBILE)    */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+                box-sizing: border-box;
+            }
+            
+            .brand {
+                margin-bottom: 0;
+                font-size: 20px;
+            }
+            
+            .user-info {
+                margin-top: 0;
+                padding: 0;
+                background: none;
+                display: flex;
+                align-items: center;
+            }
+            
+            #userEmailDisplay {
+                display: none; /* Oculta o email na barra superior para não quebrar o layout */
+            }
+            
+            .btn-logout {
+                margin-top: 0;
+                padding: 8px 16px;
+                width: auto;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .panel {
+                padding: 20px 15px;
+            }
+
+            .task-row {
+                flex-direction: column;
+                background: rgba(0,0,0,0.2);
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid rgba(255,255,255,0.05);
+                margin-bottom: 15px;
+            }
+            
+            .task-row select {
+                width: 100% !important;
+            }
+            
+            .task-row button {
+                width: 100%;
+            }
+
+            .campaign-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .campaign-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .campaign-actions button {
+                flex: 1;
+            }
         }
     </style>
 </head>
@@ -248,7 +352,7 @@
                 <input type="hidden" id="editCampaignId">
                 
                 <input type="text" id="campTitle" class="form-control" placeholder="Nome da Campanha (Ex: Vídeo Novo)" required>
-                <input type="url" id="targetUrl" class="form-control" placeholder="URL de Destino Final (Para onde o usuário vai no fim)" required>
+                <input type="url" id="targetUrl" class="form-control" placeholder="URL de Destino Final (Link bloqueado)" required>
                 
                 <h3 style="margin-top: 25px; margin-bottom: 15px; font-size: 16px;">Passos/Tarefas Obrigatórias</h3>
                 <div id="tasksContainer">
@@ -259,12 +363,11 @@
                     <i class="fa-solid fa-plus"></i> Adicionar Tarefa
                 </button>
 
-                <button type="submit" class="btn-primary" style="width: 100%;">Salvar Campanha</button>
+                <button type="submit" class="btn-primary">Salvar Campanha</button>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT DO FIREBASE (CORRIGIDO) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -286,25 +389,22 @@
 
         let currentUser = null;
 
-        // Verifica o Login e Carrega os dados
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('userEmailDisplay').innerText = user.email;
                 loadUserCampaigns();
             } else {
-                window.location.href = 'index.html'; // Manda pro login se não estiver logado
+                window.location.href = 'index.html';
             }
         });
 
-        // Função de Sair
         window.logout = function() {
             signOut(auth).then(() => {
                 window.location.href = 'index.html';
             });
         }
 
-        // Sistema de Abas
         window.switchTab = function(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -325,7 +425,6 @@
             }
         }
 
-        // Adicionar Tarefa
         window.addTaskField = function(type = 'youtube', url = '') {
             const container = document.getElementById('tasksContainer');
             const div = document.createElement('div');
@@ -336,15 +435,14 @@
                     <option value="whatsapp" ${type==='whatsapp'?'selected':''}>WhatsApp</option>
                     <option value="telegram" ${type==='telegram'?'selected':''}>Telegram</option>
                 </select>
-                <input type="url" class="form-control" placeholder="URL da tarefa" value="${url}" name="taskUrl" required>
+                <input type="url" class="form-control" placeholder="URL da tarefa (Ex: link do canal)" value="${url}" name="taskUrl" required>
                 <button type="button" class="btn-secondary" onclick="this.parentElement.remove()" style="color:#ef4444; border-color:rgba(239,68,68,0.3); background:rgba(239,68,68,0.1); flex-shrink: 0;">
-                    <i class="fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-trash"></i> Remover
                 </button>
             `;
             container.appendChild(div);
         }
 
-        // Salvar Campanha no Firebase
         window.saveCampaign = async function(e) {
             e.preventDefault();
             const editId = document.getElementById('editCampaignId').value;
@@ -370,7 +468,7 @@
             };
 
             if(editId) {
-                delete campaignData.shortUrl; // Não altera a URL encurtada ao editar
+                delete campaignData.shortUrl; 
                 await update(ref(db, 'campaigns/' + editId), campaignData);
             } else {
                 campaignData.createdAt = Date.now();
@@ -382,7 +480,6 @@
             loadUserCampaigns();
         }
 
-        // Carregar Campanhas do Firebase
         async function loadUserCampaigns() {
             const container = document.getElementById('campaignsContainer');
             container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Sincronizando dados...</p>`;
@@ -415,7 +512,6 @@
             container.innerHTML = html || `<p style="color:var(--text-muted); font-size:14px;">Você ainda não tem nenhuma campanha criada.</p>`;
         }
 
-        // Editar
         window.editCampaign = async function(id) {
             const snap = await get(child(ref(db), 'campaigns/' + id));
             if(!snap.exists()) return;
@@ -439,7 +535,6 @@
             switchTab('create');
         }
 
-        // Excluir
         window.deleteCampaign = async function(id) {
             if(confirm('Tem certeza que deseja excluir esta campanha? Os links vão parar de funcionar.')) {
                 await remove(ref(db, 'campaigns/' + id));
