@@ -126,43 +126,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .form-control {
-            width: 100%;
-            padding: 13px 15px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--text-main);
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-            background: rgba(0, 0, 0, 0.6);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .btn-primary:hover {
-            background: #dc2626;
-            box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
-        }
-
         .btn-secondary {
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -182,7 +145,6 @@
             background: rgba(239, 68, 68, 0.05);
         }
 
-        /* Lista de Usuários / Registros no Admin */
         .admin-card {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -218,7 +180,6 @@
             gap: 8px;
         }
 
-        /* Responsividade Mobile */
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -309,10 +270,10 @@
     <div class="main-content">
         <div class="panel">
             <h2 style="margin-top: 0; font-size: 18px; margin-bottom: 20px; letter-spacing: 0.5px;">Gerenciamento Geral do Sistema</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Área restrita para controle de campanhas e registros do banco de dados.</p>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Área restrita para controle global de campanhas e registros do banco de dados.</p>
             
             <div id="adminContainer">
-                <p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando dados administrativos...</p>
+                <p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Verificando permissões...</p>
             </div>
         </div>
     </div>
@@ -321,6 +282,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, get, child, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // COLOQUE O SEU E-MAIL DE ADMINISTRADOR ABAIXO ENTRE AS ASPAS:
+        const ADMIN_EMAIL = "ffvortex20@gmail.com";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
@@ -338,6 +302,13 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // TRAVA DE SEGURANÇA: Se o e-mail logado não for o seu, manda direto para o dashboard comum!
+                if (user.email !== ADMIN_EMAIL) {
+                    alert("Acesso negado! Apenas o administrador pode acessar esta página.");
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
                 document.getElementById('userEmailDisplay').innerHTML = `<strong>Admin</strong>${user.email}`;
                 loadAllSystemData();
             } else {
@@ -353,7 +324,7 @@
 
         async function loadAllSystemData() {
             const container = document.getElementById('adminContainer');
-            container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Buscando registros...</p>`;
+            container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Buscando registros do sistema...</p>`;
             
             const snap = await get(child(ref(db), 'campaigns'));
             let html = '';
