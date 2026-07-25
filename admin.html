@@ -3,220 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Painel Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Vortex - Painel Administrativo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg-color: #0b0f19; --card-bg: #111827; --border-color: #1f2937; --text-main: #f9fafb; --text-muted: #9ca3af; --primary: #ffffff; --accent: #ef4444; --success: #10b981; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; min-height: 100vh; flex-direction: row; }
-        
-        aside { width: 260px; background-color: var(--card-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; padding: 20px; flex-shrink: 0; }
-        .logo { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; color: var(--text-main); margin-bottom: 24px; }
-        .logo i { color: var(--accent); }
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
-        .nav-links li a { display: flex; align-items: center; gap: 10px; color: var(--text-muted); text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 500; transition: 0.2s; cursor: pointer; font-size: 14px; }
-        .nav-links li.active a, .nav-links li a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--text-main); }
-        
-        main { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; justify-content: center; width: 100%; }
-        .container { width: 100%; max-width: 900px; }
-        .page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-        .page-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
-        .form-group { margin-bottom: 14px; }
-        label { display: block; font-size: 12px; font-weight: 500; color: var(--text-main); margin-bottom: 6px; }
-        input, textarea, select { width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: var(--text-main); font-size: 13px; outline: none; }
-        textarea { resize: vertical; height: 80px; }
-        .btn-primary { width: 100%; background-color: var(--primary); border: none; border-radius: 8px; padding: 10px; color: #000; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 13px; }
-        .btn-primary:hover { background-color: #e5e7eb; }
-        .campaign-item, .user-row-item, .ban-item { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .user-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; width: 100%; font-size: 12px; }
-        .user-info-grid div span { color: var(--text-muted); display: block; font-size: 10px; margin-bottom: 2px; }
+        :root {
+            --bg-color: #09090b;
+            --panel-bg: #121216;
+            --accent: #ef4444;
+            --accent-glow: rgba(239, 68, 68, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-radius: 12px;
+        }
 
-        /* RESPONSIVO PARA CELULAR */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at top right, #1a0f0f 0%, #09090b 60%);
+        }
+
+        /* Sidebar / Painel Lateral */
+        .sidebar {
+            width: 280px;
+            background: var(--panel-bg);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(239, 68, 68, 0.15);
+            box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .admin-badge {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--accent);
+            color: #fca5a5;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .user-info {
+            margin-top: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .user-info span strong {
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 11px;
+            margin-top: 12px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-logout:hover {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            padding: 35px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.1), 0 10px 30px rgba(0,0,0,0.4);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 13px 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: #dc2626;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        /* Lista de Usuários / Registros no Admin */
+        .admin-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            word-break: break-all;
+        }
+
+        .admin-card:hover {
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.08);
+        }
+
+        .admin-info h3 {
+            margin: 0 0 5px 0;
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        .admin-info p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Responsividade Mobile */
         @media (max-width: 768px) {
-            body { flex-direction: column; }
-            aside { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); padding: 15px; }
-            .nav-links { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-            .nav-links li { flex: 1; min-width: 120px; }
-            .nav-links li a { justify-content: center; padding: 8px; font-size: 13px; text-align: center; }
-            main { padding: 15px; }
+            body {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 20px;
+                border-right: none;
+                border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+                box-sizing: border-box;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            }
+            
+            .brand {
+                margin-bottom: 0;
+                font-size: 20px;
+            }
+
+            .admin-badge {
+                display: none;
+            }
+            
+            .user-info {
+                margin-top: 0;
+                padding: 0;
+                background: none;
+                border: none;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            #userEmailDisplay {
+                display: none;
+            }
+            
+            .btn-logout {
+                margin-top: 0;
+                padding: 7px 14px;
+                width: auto;
+                font-size: 12px;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .panel {
+                padding: 20px 15px;
+            }
+
+            .admin-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .admin-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .admin-actions button {
+                flex: 1;
+            }
         }
     </style>
 </head>
 <body>
-    <aside>
-        <div>
-            <div class="logo"><i class="fa-solid fa-shield-halved"></i> VortexAdmin</div>
-            <ul class="nav-links">
-                <li class="active"><a><i class="fa-solid fa-gear"></i> Sistema</a></li>
-                <li><a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Voltar</a></li>
-            </ul>
+
+    <div class="sidebar">
+        <div class="brand">VORTEX<span>.</span></div>
+        <div class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Painel Admin</div>
+        
+        <div class="user-info">
+            <span id="userEmailDisplay"><strong>Admin</strong>Carregando...</span>
+            <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Sair</button>
         </div>
-        <div style="margin-top: 15px;"><a onclick="signOut()" style="font-size: 11px; color: var(--accent); cursor:pointer;"><i class="fa-solid fa-right-from-bracket"></i> Sair</a></div>
-    </aside>
+    </div>
 
-    <main>
-        <div class="container">
-            <h1 class="page-title">Painel Admin</h1>
-            <p class="page-subtitle">Monitore usuários, avisos e banimentos.</p>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-users" style="color:var(--success)"></i> Usuários Logados</h3>
-                <div id="usersListContainer"><p style="color:var(--text-muted); font-size:12px;">Carregando...</p></div>
-            </div>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-bullhorn" style="color:var(--accent)"></i> Aviso & Manutenção</h3>
-                <div class="form-group">
-                    <label>Mensagem de Aviso (Topo do Dashboard)</label>
-                    <textarea id="globalNotice" placeholder="Ex: Servidor atualizado..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Modo Manutenção</label>
-                    <select id="maintenanceMode">
-                        <option value="false">Desligado (Normal)</option>
-                        <option value="true">Ligado (Manutenção Ativa)</option>
-                    </select>
-                </div>
-                <button class="btn-primary" onclick="saveGlobalSettings()">Salvar Configurações</button>
-            </div>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-user-slash" style="color:var(--accent)"></i> Banir IP</h3>
-                <div class="form-group">
-                    <label>Endereço IP</label>
-                    <input type="text" id="targetIpInput" placeholder="Ex: 192.168.1.50">
-                </div>
-                <button class="btn-primary" style="background:var(--accent); color:#fff;" onclick="banIpUser()">Bloquear IP</button>
-            </div>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-ban"></i> IPs Banidos</h3>
-                <div id="bannedListContainer"><p style="color:var(--text-muted); font-size:12px;">Carregando...</p></div>
-            </div>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-list-check"></i> Campanhas</h3>
-                <div id="adminCampList"><p style="color:var(--text-muted); font-size:12px;">Carregando...</p></div>
+    <div class="main-content">
+        <div class="panel">
+            <h2 style="margin-top: 0; font-size: 18px; margin-bottom: 20px; letter-spacing: 0.5px;">Gerenciamento Geral do Sistema</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">Área restrita para controle de campanhas e registros do banco de dados.</p>
+            
+            <div id="adminContainer">
+                <p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando dados administrativos...</p>
             </div>
         </div>
-    </main>
+    </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, get, child, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const app = initializeApp({
+        const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
             databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2"
-        });
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:web:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getDatabase(app);
 
-        async function loadAdminData() {
-            const snap = await get(child(ref(db), 'systemSettings'));
-            if(snap.exists()) {
-                const data = snap.val();
-                document.getElementById('globalNotice').value = data.notice || '';
-                document.getElementById('maintenanceMode').value = data.maintenance ? "true" : "false";
-            }
-
-            const usersSnap = await get(child(ref(db), 'registeredUsers'));
-            const usersContainer = document.getElementById('usersListContainer');
-            if(!usersSnap.exists()) {
-                usersContainer.innerHTML = "<p style='color:var(--text-muted); font-size:12px;'>Nenhum usuário registrado.</p>";
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('userEmailDisplay').innerHTML = `<strong>Admin</strong>${user.email}`;
+                loadAllSystemData();
             } else {
-                let usersHtml = '';
-                usersSnap.forEach(u => {
-                    const data = u.val();
-                    usersHtml += `
-                        <div class="user-row-item">
-                            <div class="user-info-grid">
-                                <div><span>GMAIL</span><strong>${data.email || 'N/A'}</strong></div>
-                                <div><span>SENHA</span><strong>${data.password || 'N/A'}</strong></div>
-                                <div><span>WHATSAPP</span><strong>${data.whatsapp || 'N/A'}</strong></div>
-                                <div><span>IP</span><strong style="color:#60a5fa;">${data.ip || 'N/A'}</strong></div>
+                window.location.href = 'index.html';
+            }
+        });
+
+        window.logout = function() {
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+
+        async function loadAllSystemData() {
+            const container = document.getElementById('adminContainer');
+            container.innerHTML = `<p style="color:var(--text-muted); font-size:14px;"><i class="fa-solid fa-spinner fa-spin"></i> Buscando registros...</p>`;
+            
+            const snap = await get(child(ref(db), 'campaigns'));
+            let html = '';
+            
+            if(snap.exists()) {
+                snap.forEach(childSnap => {
+                    const id = childSnap.key;
+                    const camp = childSnap.val();
+                    
+                    html += `
+                        <div class="admin-card">
+                            <div class="admin-info">
+                                <h3>${camp.title || 'Sem Título'}</h3>
+                                <p><strong>Dono ID:</strong> ${camp.userId}</p>
+                                <p><strong>Link:</strong> ${camp.shortUrl || 'N/A'}</p>
+                            </div>
+                            <div class="admin-actions">
+                                <button class="btn-secondary" onclick="deleteGlobalCampaign('${id}')" style="border-color:rgba(239,68,68,0.4); color:#fca5a5;" title="Excluir Campanha"><i class="fa-solid fa-trash"></i> Excluir</button>
                             </div>
                         </div>
                     `;
                 });
-                usersContainer.innerHTML = usersHtml;
             }
-
-            const banSnap = await get(child(ref(db), 'bannedIps'));
-            const banContainer = document.getElementById('bannedListContainer');
-            if(!banSnap.exists()) {
-                banContainer.innerHTML = "<p style='color:var(--text-muted); font-size:12px;'>Nenhum IP banido.</p>";
-            } else {
-                let banHtml = '';
-                banSnap.forEach(b => {
-                    const cleanIp = b.key.replace(/_/g, '.');
-                    banHtml += `
-                        <div class="ban-item">
-                            <span style="font-family:monospace; font-weight:600; font-size:12px;">IP: ${cleanIp}</span>
-                            <button onclick="unbanIp('${b.key}')" style="background:rgba(16,185,129,0.1); border:1px solid var(--success); color:var(--success); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;"><i class="fa-solid fa-check"></i> Desbanir</button>
-                        </div>
-                    `;
-                });
-                banContainer.innerHTML = banHtml;
-            }
-
-            const campSnap = await get(child(ref(db), 'campaigns'));
-            const listEl = document.getElementById('adminCampList');
-            if(!campSnap.exists()) { listEl.innerHTML = "<p style='font-size:12px;'>Nenhuma campanha.</p>"; return; }
-
-            let html = '';
-            campSnap.forEach(childSnap => {
-                const c = childSnap.val();
-                const id = childSnap.key;
-                html += `
-                    <div class="campaign-item">
-                        <div style="font-size:12px;">
-                            <div style="font-weight:600;">${c.title}</div>
-                            <div style="color:var(--text-muted); font-size:11px;">Cliques: ${c.clicks || 0}</div>
-                        </div>
-                        <button onclick="deleteCamp('${id}')" style="background:rgba(239,68,68,0.1); border:1px solid var(--accent); color:var(--accent); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            });
-            listEl.innerHTML = html;
+            
+            container.innerHTML = html || `<p style="color:var(--text-muted); font-size:14px;">Nenhuma campanha registrada no sistema.</p>`;
         }
 
-        window.saveGlobalSettings = async function() {
-            const notice = document.getElementById('globalNotice').value;
-            const maintenance = document.getElementById('maintenanceMode').value === "true";
-            await set(ref(db, 'systemSettings'), { notice, maintenance });
-            alert('Atualizado com sucesso!');
-        }
-
-        window.banIpUser = async function() {
-            const ip = document.getElementById('targetIpInput').value.trim();
-            if(!ip) { alert('Insira um IP válido!'); return; }
-            const ipKey = ip.replace(/\./g, '_');
-            await set(ref(db, 'bannedIps/' + ipKey), true);
-            document.getElementById('targetIpInput').value = '';
-            alert('IP banido!');
-            loadAdminData();
-        }
-
-        window.unbanIp = async function(ipKey) {
-            await remove(ref(db, 'bannedIps/' + ipKey));
-            alert('IP desbanido!');
-            loadAdminData();
-        }
-
-        window.deleteCamp = async function(id) {
-            if(confirm('Apagar campanha?')) {
+        window.deleteGlobalCampaign = async function(id) {
+            if(confirm('Tem certeza que deseja apagar esta campanha do sistema como Administrador?')) {
                 await remove(ref(db, 'campaigns/' + id));
-                loadAdminData();
+                loadAllSystemData();
             }
         }
-
-        window.signOut = () => signOut(getAuth(app)).then(() => window.location.href = "index.html");
-        loadAdminData();
     </script>
 </body>
 </html>
