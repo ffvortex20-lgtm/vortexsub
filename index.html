@@ -16,7 +16,7 @@
 <body class="min-h-screen flex flex-col">
 
     <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="flex-grow flex items-center justify-center p-4">
+    <div id="login-screen" class="hidden flex-grow flex items-center justify-center p-4">
         <div class="custom-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
             <div class="mb-6">
                 <i class="fa-solid fa-bolt text-4xl text-white mb-2"></i>
@@ -191,7 +191,7 @@
     <!-- Firebase & GitHub SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -213,7 +213,13 @@
         let editingFileName = null;
         window.userApisCache = {};
 
-        // Ouvinte otimizado para evitar atrasos na interface
+        // Processa o retorno do login por redirecionamento do Google
+        getRedirectResult(auth).catch((error) => {
+            console.error("Erro no redirecionamento do login:", error);
+            alert("Erro ao autenticar com o Google: " + error.message);
+        });
+
+        // Monitora o estado da sessão em tempo real
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.currentUser = user;
@@ -230,18 +236,14 @@
                 loadShortLinks();
             } else {
                 window.currentUser = null;
-                document.getElementById('login-screen').classList.remove('hidden');
                 document.getElementById('app-screen').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
             }
         });
 
-        // Login otimizado com feedback instantâneo
-        window.loginWithGoogle = async () => {
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (e) {
-                alert("Erro ao fazer login: " + e.message);
-            }
+        // Login via redirecionamento (Evita bloqueios de pop-up e falhas de persistência)
+        window.loginWithGoogle = () => {
+            signInWithRedirect(auth, provider);
         };
 
         window.logout = () => signOut(auth);
@@ -354,7 +356,7 @@
                     updatedAt: Date.now()
                 });
 
-                alert('API criada/atualizada com sucesso no GitHub Pages! (Nota: pode levar alguns segundos para o GitHub atualizar o link público)');
+                alert('API criada/atualizada com sucesso no GitHub Pages!');
                 resetForm();
                 switchTab('list');
             } else {
@@ -364,6 +366,7 @@
         };
 
         window.loadUserApis = async () => {
+            if (!window.currentUser) return;
             const userId = window.currentUser.uid;
             const container = document.getElementById('apis-container');
             container.innerHTML = '<p class="text-zinc-500 text-sm">Carregando...</p>';
@@ -465,12 +468,13 @@
         };
 
         window.loadShortLinks = async () => {
+            if (!window.currentUser) return;
             const userId = window.currentUser.uid;
             const container = document.getElementById('short-links-container');
             container.innerHTML = '<p class="text-zinc-500 text-xs">Carregando...</p>';
 
             get(child(ref(db), `shortLinks`)).then((snapshot) => {
-                container.innerHTML = '',
+                container.innerHTML = '';
                 if (snapshot.exists()) {
                     let count = 0;
                     const links = snapshot.val();
