@@ -136,7 +136,7 @@
             <div id="tab-shortener" class="max-w-4xl mx-auto hidden">
                 <div class="mb-6">
                     <h2 class="text-xl font-bold text-white">Encurtador de Links</h2>
-                    <p class="text-sm text-zinc-400">Gere links curtos personalizados utilizando o seu domínio.</p>
+                    <p class="text-sm text-zinc-400">Gere links curtos instantâneos utilizando o seu domínio.</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -213,15 +213,29 @@
         let editingFileName = null;
         window.userApisCache = {};
 
-        // Monitora o estado da autenticação instantaneamente
+        // REDIRECIONAMENTO INSTANTÂNEO DE LINKS CURTOS SE HOUVER PARAMETRO ?s=
+        const urlParams = new URLSearchParams(window.location.search);
+        const shortSlug = urlParams.get('s');
+        if (shortSlug) {
+            get(child(ref(db), `shortLinks/${shortSlug}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    window.location.replace(snapshot.val().target);
+                } else {
+                    document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>404 - Link não encontrado</h2><p style="color:#71717a;font-size:14px;margin-top:5px;">Este link curto não existe ou foi removido.</p></div>`;
+                }
+            });
+        }
+
         onAuthStateChanged(auth, (user) => {
             const loginScreen = document.getElementById('login-screen');
             const appScreen = document.getElementById('app-screen');
 
             if (user) {
                 window.currentUser = user;
-                loginScreen.classList.add('hidden');
-                appScreen.classList.remove('hidden');
+                if (!shortSlug) {
+                    loginScreen.classList.add('hidden');
+                    appScreen.classList.remove('hidden');
+                }
                 document.getElementById('user-name').innerText = user.displayName || "Usuário";
                 document.getElementById('user-email').innerText = user.email || "";
                 document.getElementById('user-photo').src = user.photoURL || "";
@@ -233,18 +247,19 @@
                 loadShortLinks();
             } else {
                 window.currentUser = null;
-                appScreen.classList.add('hidden');
-                loginScreen.classList.remove('hidden');
+                if (!shortSlug) {
+                    appScreen.classList.add('hidden');
+                    loginScreen.classList.remove('hidden');
+                }
             }
         });
 
-        // Login via Pop-up configurado com tratamento de erros de domínio
         window.loginWithGoogle = async () => {
             try {
                 await signInWithPopup(auth, provider);
             } catch (e) {
                 console.error("Erro no login Google:", e);
-                alert("Erro ao fazer login com o Google: " + e.message + "\n\nVerifique se o domínio 'www.vortexsub.shop' está adicionado em 'Authentication > Settings > Authorized domains' no seu Console do Firebase.");
+                alert("Erro ao fazer login com o Google: " + e.message);
             }
         };
 
@@ -299,6 +314,7 @@
             alert('Configurações do GitHub salvas com sucesso!');
         };
 
+        // FUNÇÃO DE COMMIT CORRIGIDA PARA SUPORTAR ACENTOS E CARACTERES ESPECIAIS
         window.saveApiToGitHub = async () => {
             let fileName = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_.]/g, '');
             const jsonInput = document.getElementById('api-json').value.trim();
@@ -326,7 +342,11 @@
                 return;
             }
 
-            const contentBase64 = btoa(unescape(encodeURIComponent(jsonInput)));
+            // Conversão segura em Base64 UTF-8
+            const utf8Bytes = new TextEncoder().encode(jsonInput);
+            let binaryString = '';
+            utf8Bytes.forEach(b => binaryString += String.fromCharCode(b));
+            const contentBase64 = btoa(binaryString);
 
             let fileSha = null;
             const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
@@ -433,7 +453,7 @@
             }
         };
 
-        // ENCURTADOR DE LINKS
+        // ENCURTADOR DE LINKS CORRIGIDO PARA FORMATO /?s=
         window.createShortLink = async () => {
             let target = document.getElementById('short-target').value.trim();
             let slug = document.getElementById('short-slug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
@@ -484,7 +504,7 @@
                         const link = links[key];
                         if (link.owner === userId) {
                             count++;
-                            const shortUrl = `https://www.vortexsub.shop/s/?u=${link.slug}`;
+                            const shortUrl = `https://www.vortexsub.shop/?s=${link.slug}`;
                             container.innerHTML += `
                                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 flex justify-between items-center gap-2">
                                     <div class="overflow-hidden">
