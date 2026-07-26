@@ -3,29 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexHub - Gerador de APIs & Encurtador</title>
-    <!-- Tailwind CSS -->
+    <title>VortexHub - Plataforma Completa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            background-color: #0b0b0c;
-            color: #e4e4e7;
-            font-family: 'Inter', sans-serif;
-        }
-        .custom-card {
-            background-color: #121214;
-            border: 1px solid #27272a;
-        }
-        .custom-input {
-            background-color: #18181b;
-            border: 1px solid #27272a;
-            color: #f4f4f5;
-        }
-        .custom-input:focus {
-            border-color: #3f3f46;
-            outline: none;
-        }
+        body { background-color: #0b0b0c; color: #e4e4e7; font-family: 'Inter', sans-serif; }
+        .custom-card { background-color: #121214; border: 1px solid #27272a; }
+        .custom-input { background-color: #18181b; border: 1px solid #27272a; color: #f4f4f5; }
+        .custom-input:focus { border-color: #3f3f46; outline: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -63,6 +48,9 @@
                     <button onclick="switchTab('shortener')" id="nav-shortener" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
                         <i class="fa-solid fa-link"></i> Encurtador (TinyURL)
                     </button>
+                    <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
+                        <i class="fa-solid fa-gear"></i> Config. GitHub
+                    </button>
                 </nav>
             </div>
             <!-- Perfil do Usuário -->
@@ -82,7 +70,6 @@
 
         <!-- Conteúdo Principal -->
         <main class="flex-grow p-6 md:p-10 overflow-y-auto">
-            <!-- Header Mobile -->
             <div class="flex justify-between items-center mb-8 md:hidden">
                 <span class="font-bold text-lg text-white">VortexHub</span>
                 <button onclick="logout()" class="text-sm text-zinc-400"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
@@ -93,7 +80,7 @@
                 <div class="mb-6 flex justify-between items-center">
                     <div>
                         <h2 id="form-title" class="text-xl font-bold text-white">Criar Nova API</h2>
-                        <p class="text-sm text-zinc-400">Editor estilo GitHub para configurar o endpoint e o JSON.</p>
+                        <p class="text-sm text-zinc-400">Editor para gerar o arquivo JSON direto no repositório do GitHub Pages.</p>
                     </div>
                     <button id="cancel-edit-btn" onclick="resetForm()" class="hidden text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
                         Cancelar Edição
@@ -103,8 +90,8 @@
                 <div class="custom-card rounded-2xl overflow-hidden shadow-2xl border border-zinc-800">
                     <div class="bg-[#18181b] px-4 py-3 border-b border-zinc-800 flex flex-col md:flex-row gap-3 justify-between items-center">
                         <div class="flex items-center gap-2 w-full md:w-auto">
-                            <span class="text-xs font-mono text-zinc-400">vortexsub /</span>
-                            <input type="text" id="api-name" placeholder="Name your file (ex: dados)" class="custom-input px-3 py-1.5 rounded-lg text-xs font-mono w-full md:w-64">
+                            <span class="text-xs font-mono text-zinc-400">api /</span>
+                            <input type="text" id="api-name" placeholder="nome-da-api.json" class="custom-input px-3 py-1.5 rounded-lg text-xs font-mono w-full md:w-64">
                         </div>
                         <div class="flex bg-zinc-900 p-1 rounded-lg border border-zinc-800 text-xs">
                             <button onclick="switchEditorTab('edit')" id="editor-tab-edit" class="px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition">Edit</button>
@@ -113,22 +100,22 @@
                     </div>
 
                     <div id="editor-pane-edit" class="p-4">
-                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Enter file contents here (JSON format):</label>
+                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Conteúdo JSON da API:</label>
                         <textarea id="api-json" rows="10" placeholder='{\n  "status": "success",\n  "message": "Hello World"\n}' class="w-full bg-[#0d0d0f] p-4 rounded-xl custom-input text-xs font-mono resize-y"></textarea>
                     </div>
 
                     <div id="editor-pane-preview" class="p-4 hidden min-h-[220px]">
-                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Endpoint URL Gerada:</label>
+                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">URL Final da API no Domínio:</label>
                         <div class="bg-[#0d0d0f] p-3 rounded-xl border border-zinc-800 text-xs font-mono text-zinc-300 mb-4 break-all" id="preview-url-box">
                             https://www.vortexsub.shop/api/...
                         </div>
-                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">JSON Preview:</label>
+                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Visualização do JSON:</label>
                         <pre id="preview-json-box" class="bg-[#0d0d0f] p-4 rounded-xl border border-zinc-800 text-xs font-mono text-emerald-400 overflow-x-auto min-h-[80px]"></pre>
                     </div>
 
                     <div class="bg-[#18181b] px-4 py-3 border-t border-zinc-800 flex justify-end gap-3">
-                        <button onclick="saveApi()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
-                            <i class="fa-solid fa-check"></i> Commit changes...
+                        <button onclick="saveApiToGitHub()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Commit no GitHub & Salvar
                         </button>
                     </div>
                 </div>
@@ -138,10 +125,10 @@
             <div id="tab-list" class="max-w-4xl mx-auto hidden">
                 <div class="mb-6">
                     <h2 class="text-xl font-bold text-white">Minhas APIs</h2>
-                    <p class="text-sm text-zinc-400">Gerencie, edite e teste todas as suas APIs criadas.</p>
+                    <p class="text-sm text-zinc-400">Gerencie, edite e acesse todas as suas APIs criadas.</p>
                 </div>
                 <div id="apis-container" class="space-y-4">
-                    <!-- Lista injetada via JS -->
+                    <p class="text-zinc-500 text-sm">Carregando...</p>
                 </div>
             </div>
 
@@ -157,7 +144,7 @@
                         <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Criar Novo Link Curto</h3>
                         <div>
                             <label class="block text-xs font-medium text-zinc-400 mb-1">URL de Destino (Longo)*</label>
-                            <input type="url" id="short-target" placeholder="https://seu-site.com/link-muito-longo" class="w-full px-4 py-3 rounded-xl custom-input text-xs">
+                            <input type="url" id="short-target" placeholder="https://seu-site.com/link-longo" class="w-full px-4 py-3 rounded-xl custom-input text-xs">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-zinc-400 mb-1">Apelido Personalizado (Opcional)</label>
@@ -176,10 +163,32 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ABA 4: CONFIGURAÇÕES DO GITHUB -->
+            <div id="tab-settings" class="max-w-xl mx-auto hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-white">Configurações do GitHub</h2>
+                    <p class="text-sm text-zinc-400">Insira suas credenciais do GitHub para permitir o commit automático dos arquivos de API.</p>
+                </div>
+                <div class="custom-card p-6 rounded-2xl space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-400 mb-1">Repositório (ex: usuario/vortexsub)*</label>
+                        <input type="text" id="gh-repo" placeholder="seu-usuario/vortexsub" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-400 mb-1">GitHub Personal Access Token (PAT)*</label>
+                        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
+                        <p class="text-[10px] text-zinc-500 mt-1">O token é salvo apenas no seu navegador para realizar os commits na pasta api/.</p>
+                    </div>
+                    <button onclick="saveGitHubConfig()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs">
+                        Salvar Configurações
+                    </button>
+                </div>
+            </div>
         </main>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase & GitHub SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -201,8 +210,8 @@
         const provider = new GoogleAuthProvider();
 
         window.currentUser = null;
-        let editingApiName = null;
-        window.userApisCache = {}; // Cache local para evitar falhas no botão de editar
+        let editingFileName = null;
+        window.userApisCache = {};
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -212,6 +221,10 @@
                 document.getElementById('user-name').innerText = user.displayName;
                 document.getElementById('user-email').innerText = user.email;
                 document.getElementById('user-photo').src = user.photoURL;
+                
+                if(localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
+                if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
+
                 loadUserApis();
                 loadShortLinks();
             } else {
@@ -221,15 +234,11 @@
             }
         });
 
-        window.loginWithGoogle = () => {
-            signInWithPopup(auth, provider).catch((error) => alert("Erro ao fazer login: " + error.message));
-        };
-
+        window.loginWithGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Erro ao fazer login: " + e.message));
         window.logout = () => signOut(auth);
 
-        // Alternar Abas
         window.switchTab = (tab) => {
-            ['create', 'list', 'shortener'].forEach(t => {
+            ['create', 'list', 'shortener', 'settings'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
                 document.getElementById(`nav-${t}`).className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition";
             });
@@ -252,10 +261,10 @@
                 document.getElementById('editor-tab-preview').className = "px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition";
                 document.getElementById('editor-tab-edit').className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition";
                 
-                const name = document.getElementById('api-name').value.trim() || 'sua-api';
-                const userId = window.currentUser ? window.currentUser.uid : 'seu-uid';
-                document.getElementById('preview-url-box').innerText = `https://www.vortexsub.shop/api/${userId}/${name}`;
+                let fileName = document.getElementById('api-name').value.trim() || 'api.json';
+                if(!fileName.endsWith('.json')) fileName += '.json';
                 
+                document.getElementById('preview-url-box').innerText = `https://www.vortexsub.shop/api/${fileName}`;
                 try {
                     const parsed = JSON.parse(document.getElementById('api-json').value.trim() || '{}');
                     document.getElementById('preview-json-box').innerText = JSON.stringify(parsed, null, 2);
@@ -265,37 +274,84 @@
             }
         };
 
-        window.saveApi = async () => {
-            const nameInput = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
-            const jsonInput = document.getElementById('api-json').value.trim();
+        window.saveGitHubConfig = () => {
+            const repo = document.getElementById('gh-repo').value.trim();
+            const token = document.getElementById('gh-token').value.trim();
+            if(!repo || !token) {
+                alert('Preencha o repositório e o token do GitHub.');
+                return;
+            }
+            localStorage.setItem('gh_repo', repo);
+            localStorage.setItem('gh_token', token);
+            alert('Configurações do GitHub salvas com sucesso!');
+        };
 
-            if (!nameInput || !jsonInput) {
-                alert('Preencha o nome da API e o conteúdo JSON.');
+        window.saveApiToGitHub = async () => {
+            let fileName = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_.]/g, '');
+            const jsonInput = document.getElementById('api-json').value.trim();
+            const repo = localStorage.getItem('gh_repo');
+            const token = localStorage.getItem('gh_token');
+
+            if(!repo || !token) {
+                alert('Configure suas credenciais do GitHub na aba "Config. GitHub" primeiro!');
+                switchTab('settings');
                 return;
             }
 
+            if(!fileName || !jsonInput) {
+                alert('Preencha o nome do arquivo e o conteúdo JSON.');
+                return;
+            }
+
+            if(!fileName.endsWith('.json')) fileName += '.json';
+            const fullPath = `api/${fileName}`;
+
             try {
                 JSON.parse(jsonInput);
-            } catch (e) {
+            } catch(e) {
                 alert('O conteúdo inserido não é um JSON válido!');
                 return;
             }
 
-            const userId = window.currentUser.uid;
-            if (editingApiName && editingApiName !== nameInput) {
-                await remove(ref(db, `apis/${userId}/${editingApiName}`));
+            const contentBase64 = btoa(unescape(encodeURIComponent(jsonInput)));
+
+            let fileSha = null;
+            const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+            if(getRes.ok) {
+                const fileData = await getRes.json();
+                fileSha = fileData.sha;
             }
 
-            const apiRef = ref(db, `apis/${userId}/${nameInput}`);
-            await set(apiRef, {
-                name: nameInput,
-                data: jsonInput,
-                updatedAt: Date.now()
+            const commitRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: `VortexHub: update ${fileName}`,
+                    content: contentBase64,
+                    sha: fileSha
+                })
             });
 
-            alert(editingApiName ? 'API atualizada com sucesso!' : 'API criada com sucesso!');
-            resetForm();
-            switchTab('list');
+            if(commitRes.ok) {
+                const userId = window.currentUser.uid;
+                await set(ref(db, `apis/${userId}/${fileName.replace('.json','')}`), {
+                    name: fileName,
+                    data: jsonInput,
+                    updatedAt: Date.now()
+                });
+
+                alert('API criada/atualizada com sucesso no GitHub Pages!');
+                resetForm();
+                switchTab('list');
+            } else {
+                const err = await commitRes.json();
+                alert('Erro ao commitar no GitHub: ' + (err.message || 'Erro desconhecido'));
+            }
         };
 
         window.loadUserApis = async () => {
@@ -303,25 +359,24 @@
             const container = document.getElementById('apis-container');
             container.innerHTML = '<p class="text-zinc-500 text-sm">Carregando...</p>';
 
-            const dbRef = ref(db);
-            get(child(dbRef, `apis/${userId}`)).then((snapshot) => {
+            get(child(ref(db), `apis/${userId}`)).then((snapshot) => {
                 container.innerHTML = '';
-                if (snapshot.exists()) {
+                if(snapshot.exists()) {
                     const apis = snapshot.val();
-                    window.userApisCache = apis; // Salva no cache para uso do botão de editar
+                    window.userApisCache = apis;
                     Object.keys(apis).forEach((key) => {
                         const api = apis[key];
-                        const domainUrl = `https://www.vortexsub.shop/api/${userId}/${api.name}`;
+                        const fileUrl = `https://www.vortexsub.shop/api/${api.name}`;
                         
                         container.innerHTML += `
                             <div class="custom-card p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                 <div class="space-y-1 overflow-hidden">
                                     <h3 class="font-bold text-white text-sm">/${api.name}</h3>
-                                    <p class="text-xs text-zinc-400 font-mono truncate max-w-md">${domainUrl}</p>
+                                    <p class="text-xs text-zinc-400 font-mono truncate max-w-md">${fileUrl}</p>
                                 </div>
                                 <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                                    <a href="${domainUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-external-link"></i> Acessar</a>
-                                    <button onclick="editApi('${api.name}')" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-pen"></i> Editar</button>
+                                    <a href="${fileUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-external-link"></i> Acessar</a>
+                                    <button onclick="editApi('${key}')" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-pen"></i> Editar</button>
                                     <button onclick="deleteApi('${api.name}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -333,14 +388,14 @@
             });
         };
 
-        window.editApi = (name) => {
-            const api = window.userApisCache[name];
-            if (!api) return;
-            editingApiName = name;
+        window.editApi = (key) => {
+            const api = window.userApisCache[key];
+            if(!api) return;
+            editingFileName = api.name;
             
-            document.getElementById('api-name').value = name;
+            document.getElementById('api-name').value = api.name;
             document.getElementById('api-json').value = api.data;
-            document.getElementById('form-title').innerText = `Editar API: /${name}`;
+            document.getElementById('form-title').innerText = `Editar API: /${api.name}`;
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             
             switchTab('create');
@@ -348,7 +403,7 @@
         };
 
         window.resetForm = () => {
-            editingApiName = null;
+            editingFileName = null;
             document.getElementById('api-name').value = '';
             document.getElementById('api-json').value = '';
             document.getElementById('form-title').innerText = 'Criar Nova API';
@@ -356,15 +411,15 @@
             switchEditorTab('edit');
         };
 
-        window.deleteApi = async (apiName) => {
-            if (confirm(`Deseja realmente excluir a API ${apiName}?`)) {
+        window.deleteApi = async (fileName) => {
+            if(confirm(`Deseja excluir a API ${fileName}?`)) {
                 const userId = window.currentUser.uid;
-                await remove(ref(db, `apis/${userId}/${apiName}`));
+                await remove(ref(db, `apis/${userId}/${fileName.replace('.json','')}`));
                 loadUserApis();
             }
         };
 
-        // FUNÇÕES DO ENCURTADOR DE LINKS (TINYURL)
+        // ENCURTADOR DE LINKS
         window.createShortLink = async () => {
             let target = document.getElementById('short-target').value.trim();
             let slug = document.getElementById('short-slug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
@@ -375,13 +430,12 @@
             }
 
             if (!slug) {
-                slug = Math.random().toString(36.substring(2, 8)); // Gera slug aleatório se não informado
+                slug = Math.random().toString(36).substring(2, 8);
             }
 
             const userId = window.currentUser.uid;
             const linkRef = ref(db, `shortLinks/${slug}`);
 
-            // Verificar se já existe
             const snapshot = await get(linkRef);
             if (snapshot.exists()) {
                 alert('Esse apelido de link curto já está em uso. Escolha outro.');
@@ -406,8 +460,7 @@
             const container = document.getElementById('short-links-container');
             container.innerHTML = '<p class="text-zinc-500 text-xs">Carregando...</p>';
 
-            const dbRef = ref(db);
-            get(child(dbRef, `shortLinks`)).then((snapshot) => {
+            get(child(ref(db), `shortLinks`)).then((snapshot) => {
                 container.innerHTML = '';
                 if (snapshot.exists()) {
                     let count = 0;
