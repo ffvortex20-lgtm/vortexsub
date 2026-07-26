@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexHub - Gerador de APIs</title>
-    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -30,7 +30,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- TELA DE LOGIN (Mostrada se não estiver logado) -->
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="flex-grow flex items-center justify-center p-4">
         <div class="custom-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
             <div class="mb-6">
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <!-- PAINEL PRINCIPAL (Mostrado após o login) -->
+    <!-- PAINEL PRINCIPAL -->
     <div id="app-screen" class="hidden flex-grow flex">
         <!-- Sidebar -->
         <aside class="w-64 custom-card border-r border-zinc-800 flex flex-col justify-between hidden md:flex">
@@ -55,7 +55,7 @@
                 </div>
                 <nav class="p-4 space-y-1">
                     <button onclick="switchTab('create')" id="nav-create" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition">
-                        <i class="fa-solid fa-plus"></i> Criar API
+                        <i class="fa-solid fa-plus"></i> Criar / Editar API
                     </button>
                     <button onclick="switchTab('list')" id="nav-list" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
                         <i class="fa-solid fa-code"></i> Minhas APIs
@@ -85,39 +85,54 @@
                 <button onclick="logout()" class="text-sm text-zinc-400"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
             </div>
 
-            <!-- ABA 1: CRIAR API -->
+            <!-- ABA 1: CRIAR / EDITAR API (Estilo Editor GitHub) -->
             <div id="tab-create" class="max-w-4xl mx-auto">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-white">Criar Nova API</h2>
-                    <p class="text-sm text-zinc-400">Configure o endpoint e o retorno JSON da sua API personalizada.</p>
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 id="form-title" class="text-xl font-bold text-white">Criar Nova API</h2>
+                        <p class="text-sm text-zinc-400">Editor estilo GitHub para configurar o endpoint e o JSON.</p>
+                    </div>
+                    <button id="cancel-edit-btn" onclick="resetForm()" class="hidden text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
+                        Cancelar Edição
+                    </button>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Formulário -->
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="custom-card p-5 rounded-2xl space-y-4">
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">Nome da Rota / Endpoint*</label>
-                                <input type="text" id="api-name" placeholder="ex: dados-usuario" class="w-full px-4 py-3 rounded-xl custom-input text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-1">Conteúdo JSON de Retorno*</label>
-                                <textarea id="api-json" rows="6" placeholder='{"status": "sucesso", "mensagem": "Olá mundo!"}' class="w-full px-4 py-3 rounded-xl custom-input text-sm font-mono"></textarea>
-                            </div>
-                            <button onclick="createApi()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-sm">
-                                Gerar API
-                            </button>
+                <!-- Caixa Estilo Editor GitHub -->
+                <div class="custom-card rounded-2xl overflow-hidden shadow-2xl border border-zinc-800">
+                    <!-- Barra superior do Editor -->
+                    <div class="bg-[#18181b] px-4 py-3 border-b border-zinc-800 flex flex-col md:flex-row gap-3 justify-between items-center">
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <span class="text-xs font-mono text-zinc-400">vortexsub /</span>
+                            <input type="text" id="api-name" placeholder="Name your file (ex: dados)" class="custom-input px-3 py-1.5 rounded-lg text-xs font-mono w-full md:w-64">
+                        </div>
+                        <!-- Abas Edit / Preview -->
+                        <div class="flex bg-zinc-900 p-1 rounded-lg border border-zinc-800 text-xs">
+                            <button onclick="switchEditorTab('edit')" id="editor-tab-edit" class="px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition">Edit</button>
+                            <button onclick="switchEditorTab('preview')" id="editor-tab-preview" class="px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition">Preview</button>
                         </div>
                     </div>
 
-                    <!-- Preview -->
-                    <div>
-                        <div class="custom-card p-5 rounded-2xl">
-                            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Preview da API</h3>
-                            <div class="bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-xs font-mono text-zinc-300 min-h-[140px] break-all" id="preview-box">
-                                Preencha os campos para visualizar o endpoint gerado.
-                            </div>
+                    <!-- Área de Edição (Edit) -->
+                    <div id="editor-pane-edit" class="p-4">
+                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Enter file contents here (JSON format):</label>
+                        <textarea id="api-json" rows="10" placeholder='{\n  "status": "success",\n  "message": "Hello World"\n}' class="w-full bg-[#0d0d0f] p-4 rounded-xl custom-input text-xs font-mono resize-y"></textarea>
+                    </div>
+
+                    <!-- Área de Pré-visualização (Preview) -->
+                    <div id="editor-pane-preview" class="p-4 hidden min-h-[220px]">
+                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Endpoint URL Gerada:</label>
+                        <div class="bg-[#0d0d0f] p-3 rounded-xl border border-zinc-800 text-xs font-mono text-zinc-300 mb-4 break-all" id="preview-url-box">
+                            https://www.vortexsub.shop/api/...
                         </div>
+                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">JSON Preview:</label>
+                        <pre id="preview-json-box" class="bg-[#0d0d0f] p-4 rounded-xl border border-zinc-800 text-xs font-mono text-emerald-400 overflow-x-auto min-h-[80px]"></pre>
+                    </div>
+
+                    <!-- Rodapé do Editor (Botão de Commit / Salvar) -->
+                    <div class="bg-[#18181b] px-4 py-3 border-t border-zinc-800 flex justify-end gap-3">
+                        <button onclick="saveApi()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
+                            <i class="fa-solid fa-check"></i> Commit changes...
+                        </button>
                     </div>
                 </div>
             </div>
@@ -126,7 +141,7 @@
             <div id="tab-list" class="max-w-4xl mx-auto hidden">
                 <div class="mb-6">
                     <h2 class="text-xl font-bold text-white">Minhas APIs</h2>
-                    <p class="text-sm text-zinc-400">Gerencie e teste todas as suas APIs criadas.</p>
+                    <p class="text-sm text-zinc-400">Gerencie, edite e teste todas as suas APIs criadas.</p>
                 </div>
                 <div id="apis-container" class="space-y-4">
                     <!-- Lista injetada via JS -->
@@ -141,7 +156,6 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Configuração do Firebase extraída do arquivo fornecido
         const firebaseConfig = {
             apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
             authDomain: "vortexdev2.firebaseapp.com",
@@ -158,8 +172,8 @@
         const provider = new GoogleAuthProvider();
 
         window.currentUser = null;
+        let editingApiName = null; // Controla se estamos editando uma API existente
 
-        // Monitorar estado de autenticação
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.currentUser = user;
@@ -177,16 +191,12 @@
         });
 
         window.loginWithGoogle = () => {
-            signInWithPopup(auth, provider).catch((error) => {
-                alert("Erro ao fazer login: " + error.message);
-            });
+            signInWithPopup(auth, provider).catch((error) => alert("Erro ao fazer login: " + error.message));
         };
 
-        window.logout = () => {
-            signOut(auth);
-        };
+        window.logout = () => signOut(auth);
 
-        // Alternar Abas
+        // Alternar Abas Principais
         window.switchTab = (tab) => {
             if (tab === 'create') {
                 document.getElementById('tab-create').classList.remove('hidden');
@@ -202,39 +212,70 @@
             }
         };
 
-        // Criar API
-        window.createApi = async () => {
+        // Alternar Abas do Editor (Edit / Preview)
+        window.switchEditorTab = (mode) => {
+            if (mode === 'edit') {
+                document.getElementById('editor-pane-edit').classList.remove('hidden');
+                document.getElementById('editor-pane-preview').classList.add('hidden');
+                document.getElementById('editor-tab-edit').className = "px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition";
+                document.getElementById('editor-tab-preview').className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition";
+            } else {
+                document.getElementById('editor-pane-edit').classList.add('hidden');
+                document.getElementById('editor-pane-preview').classList.remove('hidden');
+                document.getElementById('editor-tab-preview').className = "px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition";
+                document.getElementById('editor-tab-edit').className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition";
+                
+                // Atualizar dados do Preview
+                const name = document.getElementById('api-name').value.trim() || 'sua-api';
+                const userId = window.currentUser ? window.currentUser.uid : 'seu-uid';
+                document.getElementById('preview-url-box').innerText = `https://www.vortexsub.shop/api/${userId}/${name}`;
+                
+                try {
+                    const parsed = JSON.parse(document.getElementById('api-json').value.trim() || '{}');
+                    document.getElementById('preview-json-box').innerText = JSON.stringify(parsed, null, 2);
+                } catch(e) {
+                    document.getElementById('preview-json-box').innerText = "Erro: JSON inválido!";
+                }
+            }
+        };
+
+        // Salvar / Criar ou Atualizar API
+        window.saveApi = async () => {
             const nameInput = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
             const jsonInput = document.getElementById('api-json').value.trim();
 
             if (!nameInput || !jsonInput) {
-                alert('Preencha todos os campos corretamente.');
+                alert('Preencha o nome da API e o conteúdo JSON.');
                 return;
             }
 
             try {
-                JSON.parse(jsonInput); // Validar se é um JSON válido
+                JSON.parse(jsonInput);
             } catch (e) {
                 alert('O conteúdo inserido não é um JSON válido!');
                 return;
             }
 
             const userId = window.currentUser.uid;
-            const apiRef = ref(db, `apis/${userId}/${nameInput}`);
 
+            // Se mudou o nome e estava editando, remover a antiga
+            if (editingApiName && editingApiName !== nameInput) {
+                await remove(ref(db, `apis/${userId}/${editingApiName}`));
+            }
+
+            const apiRef = ref(db, `apis/${userId}/${nameInput}`);
             await set(apiRef, {
                 name: nameInput,
                 data: jsonInput,
-                createdAt: Date.now()
+                updatedAt: Date.now()
             });
 
-            alert('API criada com sucesso!');
-            document.getElementById('api-name').value = '';
-            document.getElementById('api-json').value = '';
+            alert(editingApiName ? 'API atualizada com sucesso!' : 'API criada com sucesso!');
+            resetForm();
             switchTab('list');
         };
 
-        // Carregar APIs do usuário
+        // Carregar APIs do Usuário
         window.loadUserApis = async () => {
             const userId = window.currentUser.uid;
             const container = document.getElementById('apis-container');
@@ -257,6 +298,7 @@
                                 </div>
                                 <div class="flex items-center gap-2 w-full md:w-auto justify-end">
                                     <a href="${domainUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-external-link"></i> Acessar</a>
+                                    <button onclick="editApi('${api.name}', ${encodeURIComponent(JSON.stringify(api.data))})" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-pen"></i> Editar</button>
                                     <button onclick="deleteApi('${api.name}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -265,9 +307,31 @@
                 } else {
                     container.innerHTML = '<p class="text-zinc-500 text-sm">Nenhuma API criada ainda.</p>';
                 }
-            }).catch((error) => {
-                console.error(error);
             });
+        };
+
+        // Carregar dados para edição
+        window.editApi = (name, encodedData) => {
+            const data = JSON.parse(decodeURIComponent(encodedData));
+            editingApiName = name;
+            
+            document.getElementById('api-name').value = name;
+            document.getElementById('api-json').value = data;
+            document.getElementById('form-title').innerText = `Editar API: /${name}`;
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+            
+            switchTab('create');
+            switchEditorTab('edit');
+        };
+
+        // Resetar Formulário
+        window.resetForm = () => {
+            editingApiName = null;
+            document.getElementById('api-name').value = '';
+            document.getElementById('api-json').value = '';
+            document.getElementById('form-title').innerText = 'Criar Nova API';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            switchEditorTab('edit');
         };
 
         // Deletar API
@@ -278,14 +342,6 @@
                 loadUserApis();
             }
         };
-
-        // Atualizar Preview em tempo real
-        document.getElementById('api-name').addEventListener('input', updatePreview);
-        function updatePreview() {
-            const name = document.getElementById('api-name').value.trim() || 'sua-api';
-            const userId = window.currentUser ? window.currentUser.uid : 'seu-uid';
-            document.getElementById('preview-box').innerText = `https://www.vortexsub.shop/api/${userId}/${name}`;
-        }
     </script>
 </body>
 </html>
