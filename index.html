@@ -23,7 +23,7 @@
                 <h1 class="text-2xl font-bold text-white">VortexHub Platform</h1>
                 <p class="text-sm text-zinc-400 mt-1">Faça login com sua conta Google para gerenciar seus recursos.</p>
             </div>
-            <button onclick="loginWithGoogle()" class="w-full bg-white text-black font-medium py-3 px-4 rounded-xl hover:bg-zinc-200 transition flex items-center justify-center gap-3">
+            <button onclick="loginWithGoogle()" class="w-full bg-white text-black font-medium py-3 px-4 rounded-xl hover:bg-zinc-200 transition flex items-center justify-center gap-3 cursor-pointer">
                 <i class="fa-brands fa-google text-lg"></i> Continuar com o Google
             </button>
         </div>
@@ -114,7 +114,7 @@
                     </div>
 
                     <div class="bg-[#18181b] px-4 py-3 border-t border-zinc-800 flex justify-end gap-3">
-                        <button onclick="saveApiToGitHub()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
+                        <button onclick="saveApiToGitHub()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer">
                             <i class="fa-solid fa-cloud-arrow-up"></i> Commit no GitHub & Salvar
                         </button>
                     </div>
@@ -150,7 +150,7 @@
                             <label class="block text-xs font-medium text-zinc-400 mb-1">Apelido Personalizado (Opcional)</label>
                             <input type="text" id="short-slug" placeholder="ex: promocao" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
                         </div>
-                        <button onclick="createShortLink()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs">
+                        <button onclick="createShortLink()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs cursor-pointer">
                             Gerar Link Curto
                         </button>
                     </div>
@@ -180,7 +180,7 @@
                         <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
                         <p class="text-[10px] text-zinc-500 mt-1">O token é salvo apenas no seu navegador para realizar os commits na pasta api/.</p>
                     </div>
-                    <button onclick="saveGitHubConfig()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs">
+                    <button onclick="saveGitHubConfig()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs cursor-pointer">
                         Salvar Configurações
                     </button>
                 </div>
@@ -191,7 +191,7 @@
     <!-- Firebase & GitHub SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -213,18 +213,15 @@
         let editingFileName = null;
         window.userApisCache = {};
 
-        // Processa o retorno do login por redirecionamento do Google
-        getRedirectResult(auth).catch((error) => {
-            console.error("Erro no redirecionamento do login:", error);
-            alert("Erro ao autenticar com o Google: " + error.message);
-        });
-
-        // Monitora o estado da sessão em tempo real
+        // Monitora o estado da autenticação instantaneamente
         onAuthStateChanged(auth, (user) => {
+            const loginScreen = document.getElementById('login-screen');
+            const appScreen = document.getElementById('app-screen');
+
             if (user) {
                 window.currentUser = user;
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('app-screen').classList.remove('hidden');
+                loginScreen.classList.add('hidden');
+                appScreen.classList.remove('hidden');
                 document.getElementById('user-name').innerText = user.displayName || "Usuário";
                 document.getElementById('user-email').innerText = user.email || "";
                 document.getElementById('user-photo').src = user.photoURL || "";
@@ -236,14 +233,19 @@
                 loadShortLinks();
             } else {
                 window.currentUser = null;
-                document.getElementById('app-screen').classList.add('hidden');
-                document.getElementById('login-screen').classList.remove('hidden');
+                appScreen.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
             }
         });
 
-        // Login via redirecionamento (Evita bloqueios de pop-up e falhas de persistência)
-        window.loginWithGoogle = () => {
-            signInWithRedirect(auth, provider);
+        // Login via Pop-up configurado com tratamento de erros de domínio
+        window.loginWithGoogle = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (e) {
+                console.error("Erro no login Google:", e);
+                alert("Erro ao fazer login com o Google: " + e.message + "\n\nVerifique se o domínio 'www.vortexsub.shop' está adicionado em 'Authentication > Settings > Authorized domains' no seu Console do Firebase.");
+            }
         };
 
         window.logout = () => signOut(auth);
@@ -489,7 +491,7 @@
                                         <p class="text-xs font-bold text-white font-mono">${shortUrl}</p>
                                         <p class="text-[10px] text-zinc-500 truncate max-w-[200px]">${link.target}</p>
                                     </div>
-                                    <button onclick="navigator.clipboard.writeText('${shortUrl}'); alert('Link copiado!');" class="bg-zinc-800 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs transition"><i class="fa-solid fa-copy"></i></button>
+                                    <button onclick="navigator.clipboard.writeText('${shortUrl}'); alert('Link copiado!');" class="bg-zinc-800 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer"><i class="fa-solid fa-copy"></i></button>
                                 </div>
                             `;
                         }
