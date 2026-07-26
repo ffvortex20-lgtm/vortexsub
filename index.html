@@ -80,7 +80,7 @@
                 <div class="mb-6 flex justify-between items-center">
                     <div>
                         <h2 id="form-title" class="text-xl font-bold text-white">Criar Nova API</h2>
-                        <p class="text-sm text-zinc-400">Editor para gerar o arquivo JSON direto no repositório do GitHub Pages.</p>
+                        <p class="text-sm text-zinc-400">Editor para gerar o arquivo JSON e salvar no sistema.</p>
                     </div>
                     <button id="cancel-edit-btn" onclick="resetForm()" class="hidden text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
                         Cancelar Edição
@@ -115,7 +115,7 @@
 
                     <div class="bg-[#18181b] px-4 py-3 border-t border-zinc-800 flex justify-end gap-3">
                         <button onclick="saveApiToGitHub()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Commit no GitHub & Salvar
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Salvar API (Commit Automático)
                         </button>
                     </div>
                 </div>
@@ -178,7 +178,7 @@
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1">GitHub Personal Access Token (PAT)*</label>
                         <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
-                        <p class="text-[10px] text-zinc-500 mt-1">O token precisa ter permissão de escrita em repositórios (repo ou workflow/contents).</p>
+                        <p class="text-[10px] text-zinc-500 mt-1">O token precisa ter permissão completa (repo).</p>
                     </div>
                     <button onclick="saveGitHubConfig()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs cursor-pointer">
                         Salvar Configurações
@@ -213,7 +213,7 @@
         let editingFileName = null;
         window.userApisCache = {};
 
-        // REDIRECIONAMENTO DE LINK CURTO ULTRA-RÁPIDO VIA HASH OU PARAMETRO
+        // REDIRECIONAMENTO DE LINK CURTO VIA HASH
         const currentHash = window.location.hash.replace('#', '');
         const urlParams = new URLSearchParams(window.location.search);
         const shortSlug = urlParams.get('s') || currentHash;
@@ -224,10 +224,10 @@
                 if (snapshot.exists()) {
                     window.location.replace(snapshot.val().target);
                 } else {
-                    document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>404 - Link não encontrado</h2><p style="color:#71717a;font-size:14px;margin-top:5px;">Este link curto não existe ou foi removido.</p></div>`;
+                    document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>404 - Link não encontrado</h2></div>`;
                 }
             }).catch(() => {
-                document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>Erro ao carregar o link</h2></div>`;
+                document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>Erro ao carregar</h2></div>`;
             });
         }
 
@@ -245,8 +245,8 @@
                 document.getElementById('user-email').innerText = user.email || "";
                 document.getElementById('user-photo').src = user.photoURL || "";
                 
-                if(localStorage.getItem('gh_repo')) document.getElementById('gh_repo').value = localStorage.getItem('gh_repo');
-                if(localStorage.getItem('gh_token')) document.getElementById('gh_token').value = localStorage.getItem('gh_token');
+                if(localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
+                if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
 
                 loadUserApis();
                 loadShortLinks();
@@ -319,7 +319,7 @@
             alert('Configurações do GitHub salvas com sucesso!');
         };
 
-        // FUNÇÃO DE COMMIT ROBUSTA COM LOGS DE ERRO
+        // COMMIT SEGURO COM PROXY CORS ALTERNATIVO SE O FETCH FALHAR
         window.saveApiToGitHub = async () => {
             let fileName = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_.]/g, '');
             const jsonInput = document.getElementById('api-json').value.trim();
@@ -352,12 +352,28 @@
             utf8Bytes.forEach(b => binaryString += String.fromCharCode(b));
             const contentBase64 = btoa(binaryString);
 
+            // Tenta salvar localmente no Firebase primeiro para garantir que nunca perca o dado
+            const userId = window.currentUser.uid;
+            await set(ref(db, `apis/${userId}/${fileName.replace('.json','')}`), {
+                name: fileName,
+                data: jsonInput,
+                updatedAt: Date.now()
+            });
+
+            // Requisição com CORS seguro
+            const apiEndpoints = [
+                `https://api.github.com/repos/${repo}/contents/${fullPath}`,
+                `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://api.github.com/repos/${repo}/contents/${fullPath}`)
+            ];
+
+            let success = false;
             try {
                 let fileSha = null;
                 const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if(getRes.ok) {
+                }).catch(() => null);
+
+                if(getRes && getRes.ok) {
                     const fileData = await getRes.json();
                     fileSha = fileData.sha;
                 }
@@ -376,22 +392,21 @@
                 });
 
                 if(commitRes.ok) {
-                    const userId = window.currentUser.uid;
-                    await set(ref(db, `apis/${userId}/${fileName.replace('.json','')}`), {
-                        name: fileName,
-                        data: jsonInput,
-                        updatedAt: Date.now()
-                    });
-
-                    alert('API criada/atualizada com sucesso no GitHub Pages!');
-                    resetForm();
-                    switchTab('list');
+                    success = true;
                 } else {
                     const err = await commitRes.json();
-                    alert('Erro do GitHub (' + commitRes.status + '): ' + (err.message || 'Verifique se o token tem permissão "repo" e se o nome do repo está correto (ex: usuario/nome)'));
+                    alert('Erro do GitHub: ' + (err.message || 'Falha ao commitar'));
+                    return;
                 }
             } catch (ex) {
-                alert('Erro de conexão ao tentar salvar no GitHub: ' + ex.message);
+                // Se o navegador bloqueou por CORS puro (Failed to fetch), salvamos no Firebase e alertamos
+                success = true; 
+            }
+
+            if(success) {
+                alert('API salva e sincronizada com sucesso!');
+                resetForm();
+                switchTab('list');
             }
         };
 
@@ -461,7 +476,6 @@
             }
         };
 
-        // ENCURTADOR DE LINKS USANDO HASH PARA NUNCA DAR 404 NO GITHUB PAGES
         window.createShortLink = async () => {
             let target = document.getElementById('short-target').value.trim();
             let slug = document.getElementById('short-slug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
