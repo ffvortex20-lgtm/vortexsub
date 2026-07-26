@@ -178,7 +178,7 @@
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1">GitHub Personal Access Token (PAT)*</label>
                         <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
-                        <p class="text-[10px] text-zinc-500 mt-1">O token é salvo apenas no seu navegador para realizar os commits na pasta api/.</p>
+                        <p class="text-[10px] text-zinc-500 mt-1">O token precisa ter permissão de escrita em repositórios (repo ou workflow/contents).</p>
                     </div>
                     <button onclick="saveGitHubConfig()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs cursor-pointer">
                         Salvar Configurações
@@ -213,16 +213,21 @@
         let editingFileName = null;
         window.userApisCache = {};
 
-        // REDIRECIONAMENTO INSTANTÂNEO DE LINKS CURTOS SE HOUVER PARAMETRO ?s=
+        // REDIRECIONAMENTO DE LINK CURTO ULTRA-RÁPIDO VIA HASH OU PARAMETRO
+        const currentHash = window.location.hash.replace('#', '');
         const urlParams = new URLSearchParams(window.location.search);
-        const shortSlug = urlParams.get('s');
-        if (shortSlug) {
+        const shortSlug = urlParams.get('s') || currentHash;
+
+        if (shortSlug && shortSlug !== '') {
+            document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>Redirecionando...</h2></div>`;
             get(child(ref(db), `shortLinks/${shortSlug}`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     window.location.replace(snapshot.val().target);
                 } else {
                     document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>404 - Link não encontrado</h2><p style="color:#71717a;font-size:14px;margin-top:5px;">Este link curto não existe ou foi removido.</p></div>`;
                 }
+            }).catch(() => {
+                document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>Erro ao carregar o link</h2></div>`;
             });
         }
 
@@ -240,8 +245,8 @@
                 document.getElementById('user-email').innerText = user.email || "";
                 document.getElementById('user-photo').src = user.photoURL || "";
                 
-                if(localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
-                if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
+                if(localStorage.getItem('gh_repo')) document.getElementById('gh_repo').value = localStorage.getItem('gh_repo');
+                if(localStorage.getItem('gh_token')) document.getElementById('gh_token').value = localStorage.getItem('gh_token');
 
                 loadUserApis();
                 loadShortLinks();
@@ -314,7 +319,7 @@
             alert('Configurações do GitHub salvas com sucesso!');
         };
 
-        // FUNÇÃO DE COMMIT CORRIGIDA PARA SUPORTAR ACENTOS E CARACTERES ESPECIAIS
+        // FUNÇÃO DE COMMIT ROBUSTA COM LOGS DE ERRO
         window.saveApiToGitHub = async () => {
             let fileName = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_.]/g, '');
             const jsonInput = document.getElementById('api-json').value.trim();
@@ -342,48 +347,51 @@
                 return;
             }
 
-            // Conversão segura em Base64 UTF-8
             const utf8Bytes = new TextEncoder().encode(jsonInput);
             let binaryString = '';
             utf8Bytes.forEach(b => binaryString += String.fromCharCode(b));
             const contentBase64 = btoa(binaryString);
 
-            let fileSha = null;
-            const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
-                headers: { 'Authorization': `token ${token}` }
-            });
-            if(getRes.ok) {
-                const fileData = await getRes.json();
-                fileSha = fileData.sha;
-            }
+            try {
+                let fileSha = null;
+                const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if(getRes.ok) {
+                    const fileData = await getRes.json();
+                    fileSha = fileData.sha;
+                }
 
-            const commitRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: `VortexHub: update ${fileName}`,
-                    content: contentBase64,
-                    sha: fileSha
-                })
-            });
-
-            if(commitRes.ok) {
-                const userId = window.currentUser.uid;
-                await set(ref(db, `apis/${userId}/${fileName.replace('.json','')}`), {
-                    name: fileName,
-                    data: jsonInput,
-                    updatedAt: Date.now()
+                const commitRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `VortexHub: update ${fileName}`,
+                        content: contentBase64,
+                        sha: fileSha
+                    })
                 });
 
-                alert('API criada/atualizada com sucesso no GitHub Pages!');
-                resetForm();
-                switchTab('list');
-            } else {
-                const err = await commitRes.json();
-                alert('Erro ao commitar no GitHub: ' + (err.message || 'Erro desconhecido'));
+                if(commitRes.ok) {
+                    const userId = window.currentUser.uid;
+                    await set(ref(db, `apis/${userId}/${fileName.replace('.json','')}`), {
+                        name: fileName,
+                        data: jsonInput,
+                        updatedAt: Date.now()
+                    });
+
+                    alert('API criada/atualizada com sucesso no GitHub Pages!');
+                    resetForm();
+                    switchTab('list');
+                } else {
+                    const err = await commitRes.json();
+                    alert('Erro do GitHub (' + commitRes.status + '): ' + (err.message || 'Verifique se o token tem permissão "repo" e se o nome do repo está correto (ex: usuario/nome)'));
+                }
+            } catch (ex) {
+                alert('Erro de conexão ao tentar salvar no GitHub: ' + ex.message);
             }
         };
 
@@ -453,7 +461,7 @@
             }
         };
 
-        // ENCURTADOR DE LINKS CORRIGIDO PARA FORMATO /?s=
+        // ENCURTADOR DE LINKS USANDO HASH PARA NUNCA DAR 404 NO GITHUB PAGES
         window.createShortLink = async () => {
             let target = document.getElementById('short-target').value.trim();
             let slug = document.getElementById('short-slug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
@@ -504,7 +512,7 @@
                         const link = links[key];
                         if (link.owner === userId) {
                             count++;
-                            const shortUrl = `https://www.vortexsub.shop/?s=${link.slug}`;
+                            const shortUrl = `https://www.vortexsub.shop/#${link.slug}`;
                             container.innerHTML += `
                                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 flex justify-between items-center gap-2">
                                     <div class="overflow-hidden">
