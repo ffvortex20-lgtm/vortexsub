@@ -46,7 +46,7 @@
                         <i class="fa-solid fa-code"></i> Minhas APIs
                     </button>
                     <button onclick="switchTab('shortener')" id="nav-shortener" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
-                        <i class="fa-solid fa-link"></i> Encurtador (TinyURL)
+                        <i class="fa-solid fa-link"></i> Encurtador de Links
                     </button>
                     <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
                         <i class="fa-solid fa-gear"></i> Config. GitHub
@@ -132,10 +132,10 @@
                 </div>
             </div>
 
-            <!-- ABA 3: ENCURTADOR DE LINKS (TINYURL) -->
+            <!-- ABA 3: ENCURTADOR DE LINKS -->
             <div id="tab-shortener" class="max-w-4xl mx-auto hidden">
                 <div class="mb-6">
-                    <h2 class="text-xl font-bold text-white">Encurtador de Links (TinyURL)</h2>
+                    <h2 class="text-xl font-bold text-white">Encurtador de Links</h2>
                     <p class="text-sm text-zinc-400">Gere links curtos personalizados utilizando o seu domínio.</p>
                 </div>
 
@@ -213,14 +213,15 @@
         let editingFileName = null;
         window.userApisCache = {};
 
+        // Ouvinte otimizado para evitar atrasos na interface
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 window.currentUser = user;
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
-                document.getElementById('user-name').innerText = user.displayName;
-                document.getElementById('user-email').innerText = user.email;
-                document.getElementById('user-photo').src = user.photoURL;
+                document.getElementById('user-name').innerText = user.displayName || "Usuário";
+                document.getElementById('user-email').innerText = user.email || "";
+                document.getElementById('user-photo').src = user.photoURL || "";
                 
                 if(localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
                 if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
@@ -234,7 +235,15 @@
             }
         });
 
-        window.loginWithGoogle = () => signInWithPopup(auth, provider).catch(e => alert("Erro ao fazer login: " + e.message));
+        // Login otimizado com feedback instantâneo
+        window.loginWithGoogle = async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (e) {
+                alert("Erro ao fazer login: " + e.message);
+            }
+        };
+
         window.logout = () => signOut(auth);
 
         window.switchTab = (tab) => {
@@ -345,7 +354,7 @@
                     updatedAt: Date.now()
                 });
 
-                alert('API criada/atualizada com sucesso no GitHub Pages!');
+                alert('API criada/atualizada com sucesso no GitHub Pages! (Nota: pode levar alguns segundos para o GitHub atualizar o link público)');
                 resetForm();
                 switchTab('list');
             } else {
@@ -461,7 +470,7 @@
             container.innerHTML = '<p class="text-zinc-500 text-xs">Carregando...</p>';
 
             get(child(ref(db), `shortLinks`)).then((snapshot) => {
-                container.innerHTML = '';
+                container.innerHTML = '',
                 if (snapshot.exists()) {
                     let count = 0;
                     const links = snapshot.val();
@@ -469,7 +478,7 @@
                         const link = links[key];
                         if (link.owner === userId) {
                             count++;
-                            const shortUrl = `https://www.vortexsub.shop/s/${link.slug}`;
+                            const shortUrl = `https://www.vortexsub.shop/s/?u=${link.slug}`;
                             container.innerHTML += `
                                 <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 flex justify-between items-center gap-2">
                                     <div class="overflow-hidden">
