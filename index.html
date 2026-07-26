@@ -3,11 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSub - Campanhas Virais</title>
-    <meta http-equiv="refresh" content="0; url=painel.html">
+    <title>VortexHub - Gerador de APIs</title>
+    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0b0b0c;
+            color: #e4e4e7;
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-card {
+            background-color: #121214;
+            border: 1px solid #27272a;
+        }
+        .custom-input {
+            background-color: #18181b;
+            border: 1px solid #27272a;
+            color: #f4f4f5;
+        }
+        .custom-input:focus {
+            border-color: #3f3f46;
+            outline: none;
+        }
+    </style>
 </head>
-<body style="background-color: #0f0f0f; color: #fff; font-family: sans-serif; text-align: center; padding-top: 100px;">
-    <h2>Carregando VortexSub...</h2>
-    <p>Se você não for redirecionado automaticamente, <a href="painel.html" style="color: #a855f7;">clique aqui</a>.</p>
+<body class="min-h-screen flex flex-col">
+
+    <!-- TELA DE LOGIN (Mostrada se não estiver logado) -->
+    <div id="login-screen" class="flex-grow flex items-center justify-center p-4">
+        <div class="custom-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
+            <div class="mb-6">
+                <i class="fa-solid fa-bolt text-4xl text-white mb-2"></i>
+                <h1 class="text-2xl font-bold text-white">VortexHub APIs</h1>
+                <p class="text-sm text-zinc-400 mt-1">Faça login com sua conta Google para gerenciar suas APIs.</p>
+            </div>
+            <button onclick="loginWithGoogle()" class="w-full bg-white text-black font-medium py-3 px-4 rounded-xl hover:bg-zinc-200 transition flex items-center justify-center gap-3">
+                <i class="fa-brands fa-google text-lg"></i> Continuar com o Google
+            </button>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL (Mostrado após o login) -->
+    <div id="app-screen" class="hidden flex-grow flex">
+        <!-- Sidebar -->
+        <aside class="w-64 custom-card border-r border-zinc-800 flex flex-col justify-between hidden md:flex">
+            <div>
+                <div class="p-6 flex items-center gap-3 border-b border-zinc-800/60">
+                    <i class="fa-solid fa-bolt text-xl text-white"></i>
+                    <span class="font-bold text-lg tracking-wide text-white">VortexHub</span>
+                </div>
+                <nav class="p-4 space-y-1">
+                    <button onclick="switchTab('create')" id="nav-create" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition">
+                        <i class="fa-solid fa-plus"></i> Criar API
+                    </button>
+                    <button onclick="switchTab('list')" id="nav-list" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
+                        <i class="fa-solid fa-code"></i> Minhas APIs
+                    </button>
+                </nav>
+            </div>
+            <!-- Perfil do Usuário -->
+            <div class="p-4 border-t border-zinc-800/60 flex items-center justify-between">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <img id="user-photo" src="" alt="User" class="w-9 h-9 rounded-full bg-zinc-800 object-cover">
+                    <div class="truncate">
+                        <p id="user-name" class="text-xs font-semibold text-white truncate"></p>
+                        <p id="user-email" class="text-[10px] text-zinc-400 truncate"></p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="text-zinc-400 hover:text-white p-2" title="Sair">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="flex-grow p-6 md:p-10 overflow-y-auto">
+            <!-- Header Mobile -->
+            <div class="flex justify-between items-center mb-8 md:hidden">
+                <span class="font-bold text-lg text-white">VortexHub</span>
+                <button onclick="logout()" class="text-sm text-zinc-400"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+            </div>
+
+            <!-- ABA 1: CRIAR API -->
+            <div id="tab-create" class="max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-white">Criar Nova API</h2>
+                    <p class="text-sm text-zinc-400">Configure o endpoint e o retorno JSON da sua API personalizada.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Formulário -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="custom-card p-5 rounded-2xl space-y-4">
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Nome da Rota / Endpoint*</label>
+                                <input type="text" id="api-name" placeholder="ex: dados-usuario" class="w-full px-4 py-3 rounded-xl custom-input text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-zinc-400 mb-1">Conteúdo JSON de Retorno*</label>
+                                <textarea id="api-json" rows="6" placeholder='{"status": "sucesso", "mensagem": "Olá mundo!"}' class="w-full px-4 py-3 rounded-xl custom-input text-sm font-mono"></textarea>
+                            </div>
+                            <button onclick="createApi()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-sm">
+                                Gerar API
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div>
+                        <div class="custom-card p-5 rounded-2xl">
+                            <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">Preview da API</h3>
+                            <div class="bg-zinc-950 p-4 rounded-xl border border-zinc-800 text-xs font-mono text-zinc-300 min-h-[140px] break-all" id="preview-box">
+                                Preencha os campos para visualizar o endpoint gerado.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 2: MINHAS APIS -->
+            <div id="tab-list" class="max-w-4xl mx-auto hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-white">Minhas APIs</h2>
+                    <p class="text-sm text-zinc-400">Gerencie e teste todas as suas APIs criadas.</p>
+                </div>
+                <div id="apis-container" class="space-y-4">
+                    <!-- Lista injetada via JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Configuração do Firebase extraída do arquivo fornecido
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const provider = new GoogleAuthProvider();
+
+        window.currentUser = null;
+
+        // Monitorar estado de autenticação
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentUser = user;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('user-name').innerText = user.displayName;
+                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('user-photo').src = user.photoURL;
+                loadUserApis();
+            } else {
+                window.currentUser = null;
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
+            }
+        });
+
+        window.loginWithGoogle = () => {
+            signInWithPopup(auth, provider).catch((error) => {
+                alert("Erro ao fazer login: " + error.message);
+            });
+        };
+
+        window.logout = () => {
+            signOut(auth);
+        };
+
+        // Alternar Abas
+        window.switchTab = (tab) => {
+            if (tab === 'create') {
+                document.getElementById('tab-create').classList.remove('hidden');
+                document.getElementById('tab-list').classList.add('hidden');
+                document.getElementById('nav-create').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition";
+                document.getElementById('nav-list').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition";
+            } else {
+                document.getElementById('tab-create').classList.add('hidden');
+                document.getElementById('tab-list').classList.remove('hidden');
+                document.getElementById('nav-list').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition";
+                document.getElementById('nav-create').className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition";
+                loadUserApis();
+            }
+        };
+
+        // Criar API
+        window.createApi = async () => {
+            const nameInput = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
+            const jsonInput = document.getElementById('api-json').value.trim();
+
+            if (!nameInput || !jsonInput) {
+                alert('Preencha todos os campos corretamente.');
+                return;
+            }
+
+            try {
+                JSON.parse(jsonInput); // Validar se é um JSON válido
+            } catch (e) {
+                alert('O conteúdo inserido não é um JSON válido!');
+                return;
+            }
+
+            const userId = window.currentUser.uid;
+            const apiRef = ref(db, `apis/${userId}/${nameInput}`);
+
+            await set(apiRef, {
+                name: nameInput,
+                data: jsonInput,
+                createdAt: Date.now()
+            });
+
+            alert('API criada com sucesso!');
+            document.getElementById('api-name').value = '';
+            document.getElementById('api-json').value = '';
+            switchTab('list');
+        };
+
+        // Carregar APIs do usuário
+        window.loadUserApis = async () => {
+            const userId = window.currentUser.uid;
+            const container = document.getElementById('apis-container');
+            container.innerHTML = '<p class="text-zinc-500 text-sm">Carregando...</p>';
+
+            const dbRef = ref(db);
+            get(child(dbRef, `apis/${userId}`)).then((snapshot) => {
+                container.innerHTML = '';
+                if (snapshot.exists()) {
+                    const apis = snapshot.val();
+                    Object.keys(apis).forEach((key) => {
+                        const api = apis[key];
+                        const domainUrl = `https://www.vortexsub.shop/api/${userId}/${api.name}`;
+                        
+                        container.innerHTML += `
+                            <div class="custom-card p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div class="space-y-1 overflow-hidden">
+                                    <h3 class="font-bold text-white text-sm">/${api.name}</h3>
+                                    <p class="text-xs text-zinc-400 font-mono truncate max-w-md">${domainUrl}</p>
+                                </div>
+                                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                                    <a href="${domainUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-external-link"></i> Acessar</a>
+                                    <button onclick="deleteApi('${api.name}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<p class="text-zinc-500 text-sm">Nenhuma API criada ainda.</p>';
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
+        };
+
+        // Deletar API
+        window.deleteApi = async (apiName) => {
+            if (confirm(`Deseja realmente excluir a API ${apiName}?`)) {
+                const userId = window.currentUser.uid;
+                await remove(ref(db, `apis/${userId}/${apiName}`));
+                loadUserApis();
+            }
+        };
+
+        // Atualizar Preview em tempo real
+        document.getElementById('api-name').addEventListener('input', updatePreview);
+        function updatePreview() {
+            const name = document.getElementById('api-name').value.trim() || 'sua-api';
+            const userId = window.currentUser ? window.currentUser.uid : 'seu-uid';
+            document.getElementById('preview-box').innerText = `https://www.vortexsub.shop/api/${userId}/${name}`;
+        }
+    </script>
 </body>
 </html>
