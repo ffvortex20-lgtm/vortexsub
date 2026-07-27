@@ -3,549 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexHub - Plataforma Completa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Comunicação Não-Verbal & Linguagem Corporal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0b0b0c; color: #e4e4e7; font-family: 'Inter', sans-serif; }
-        .custom-card { background-color: #121214; border: 1px solid #27272a; }
-        .custom-input { background-color: #18181b; border: 1px solid #27272a; color: #f4f4f5; }
-        .custom-input:focus { border-color: #3f3f46; outline: none; }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col">
-
-    <!-- TELA DE LOGIN -->
-    <div id="login-screen" class="hidden flex-grow flex items-center justify-center p-4">
-        <div class="custom-card p-8 rounded-2xl max-w-md w-full text-center shadow-2xl">
-            <div class="mb-6">
-                <i class="fa-solid fa-bolt text-4xl text-white mb-2"></i>
-                <h1 class="text-2xl font-bold text-white">VortexHub Platform</h1>
-                <p class="text-sm text-zinc-400 mt-1">Faça login com sua conta Google para gerenciar seus recursos.</p>
-            </div>
-            <button onclick="loginWithGoogle()" class="w-full bg-white text-black font-medium py-3 px-4 rounded-xl hover:bg-zinc-200 transition flex items-center justify-center gap-3 cursor-pointer">
-                <i class="fa-brands fa-google text-lg"></i> Continuar com o Google
-            </button>
-        </div>
-    </div>
-
-    <!-- PAINEL PRINCIPAL -->
-    <div id="app-screen" class="hidden flex-grow flex">
-        <!-- Sidebar -->
-        <aside class="w-64 custom-card border-r border-zinc-800 flex flex-col justify-between hidden md:flex">
-            <div>
-                <div class="p-6 flex items-center gap-3 border-b border-zinc-800/60">
-                    <i class="fa-solid fa-bolt text-xl text-white"></i>
-                    <span class="font-bold text-lg tracking-wide text-white">VortexHub</span>
-                </div>
-                <nav class="p-4 space-y-1">
-                    <button onclick="switchTab('create')" id="nav-create" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition">
-                        <i class="fa-solid fa-plus"></i> Criar / Editar API
-                    </button>
-                    <button onclick="switchTab('list')" id="nav-list" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
-                        <i class="fa-solid fa-code"></i> Minhas APIs
-                    </button>
-                    <button onclick="switchTab('shortener')" id="nav-shortener" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
-                        <i class="fa-solid fa-link"></i> Encurtador de Links
-                    </button>
-                    <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition">
-                        <i class="fa-solid fa-gear"></i> Config. GitHub
-                    </button>
-                </nav>
-            </div>
-            <!-- Perfil do Usuário -->
-            <div class="p-4 border-t border-zinc-800/60 flex items-center justify-between">
-                <div class="flex items-center gap-3 overflow-hidden">
-                    <img id="user-photo" src="" alt="User" class="w-9 h-9 rounded-full bg-zinc-800 object-cover">
-                    <div class="truncate">
-                        <p id="user-name" class="text-xs font-semibold text-white truncate"></p>
-                        <p id="user-email" class="text-[10px] text-zinc-400 truncate"></p>
-                    </div>
-                </div>
-                <button onclick="logout()" class="text-zinc-400 hover:text-white p-2" title="Sair">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
-            </div>
-        </aside>
-
-        <!-- Conteúdo Principal -->
-        <main class="flex-grow p-6 md:p-10 overflow-y-auto">
-            <div class="flex justify-between items-center mb-8 md:hidden">
-                <span class="font-bold text-lg text-white">VortexHub</span>
-                <button onclick="logout()" class="text-sm text-zinc-400"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
-            </div>
-
-            <!-- ABA 1: CRIAR / EDITAR API -->
-            <div id="tab-create" class="max-w-4xl mx-auto">
-                <div class="mb-6 flex justify-between items-center">
-                    <div>
-                        <h2 id="form-title" class="text-xl font-bold text-white">Criar Nova API</h2>
-                        <p class="text-sm text-zinc-400">Editor para gerar o arquivo JSON e salvar no sistema.</p>
-                    </div>
-                    <button id="cancel-edit-btn" onclick="resetForm()" class="hidden text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl transition">
-                        Cancelar Edição
-                    </button>
-                </div>
-
-                <div class="custom-card rounded-2xl overflow-hidden shadow-2xl border border-zinc-800">
-                    <div class="bg-[#18181b] px-4 py-3 border-b border-zinc-800 flex flex-col md:flex-row gap-3 justify-between items-center">
-                        <div class="flex items-center gap-2 w-full md:w-auto">
-                            <span class="text-xs font-mono text-zinc-400">api /</span>
-                            <input type="text" id="api-name" placeholder="nome-da-api.json" class="custom-input px-3 py-1.5 rounded-lg text-xs font-mono w-full md:w-64">
-                        </div>
-                        <div class="flex bg-zinc-900 p-1 rounded-lg border border-zinc-800 text-xs">
-                            <button onclick="switchEditorTab('edit')" id="editor-tab-edit" class="px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition">Edit</button>
-                            <button onclick="switchEditorTab('preview')" id="editor-tab-preview" class="px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition">Preview</button>
-                        </div>
-                    </div>
-
-                    <div id="editor-pane-edit" class="p-4">
-                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Conteúdo JSON da API:</label>
-                        <textarea id="api-json" rows="10" placeholder='{\n  "status": "success",\n  "message": "Hello World"\n}' class="w-full bg-[#0d0d0f] p-4 rounded-xl custom-input text-xs font-mono resize-y"></textarea>
-                    </div>
-
-                    <div id="editor-pane-preview" class="p-4 hidden min-h-[220px]">
-                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">URL Final da API no Domínio:</label>
-                        <div class="bg-[#0d0d0f] p-3 rounded-xl border border-zinc-800 text-xs font-mono text-zinc-300 mb-4 break-all" id="preview-url-box">
-                            https://www.vortexsub.shop/api/...
-                        </div>
-                        <label class="block text-[11px] font-mono text-zinc-500 mb-2">Visualização do JSON:</label>
-                        <pre id="preview-json-box" class="bg-[#0d0d0f] p-4 rounded-xl border border-zinc-800 text-xs font-mono text-emerald-400 overflow-x-auto min-h-[80px]"></pre>
-                    </div>
-
-                    <div class="bg-[#18181b] px-4 py-3 border-t border-zinc-800 flex justify-end gap-3">
-                        <button onclick="saveApiToGitHub()" class="bg-white hover:bg-zinc-200 text-black font-medium px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Salvar API (Commit Automático)
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA 2: MINHAS APIS -->
-            <div id="tab-list" class="max-w-4xl mx-auto hidden">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-white">Minhas APIs</h2>
-                    <p class="text-sm text-zinc-400">Gerencie, edite e acesse todas as suas APIs criadas.</p>
-                </div>
-                <div id="apis-container" class="space-y-4">
-                    <p class="text-zinc-500 text-sm">Carregando...</p>
-                </div>
-            </div>
-
-            <!-- ABA 3: ENCURTADOR DE LINKS -->
-            <div id="tab-shortener" class="max-w-4xl mx-auto hidden">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-white">Encurtador de Links</h2>
-                    <p class="text-sm text-zinc-400">Gere links curtos instantâneos utilizando o seu domínio.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="custom-card p-5 rounded-2xl space-y-4">
-                        <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Criar Novo Link Curto</h3>
-                        <div>
-                            <label class="block text-xs font-medium text-zinc-400 mb-1">URL de Destino (Longo)*</label>
-                            <input type="url" id="short-target" placeholder="https://seu-site.com/link-longo" class="w-full px-4 py-3 rounded-xl custom-input text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-zinc-400 mb-1">Apelido Personalizado (Opcional)</label>
-                            <input type="text" id="short-slug" placeholder="ex: promocao" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
-                        </div>
-                        <button onclick="createShortLink()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs cursor-pointer">
-                            Gerar Link Curto
-                        </button>
-                    </div>
-
-                    <div class="custom-card p-5 rounded-2xl space-y-4">
-                        <h3 class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Seus Links Curtos</h3>
-                        <div id="short-links-container" class="space-y-3 max-h-[300px] overflow-y-auto">
-                            <p class="text-zinc-500 text-xs">Carregando...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA 4: CONFIGURAÇÕES DO GITHUB -->
-            <div id="tab-settings" class="max-w-xl mx-auto hidden">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-white">Configurações do GitHub</h2>
-                    <p class="text-sm text-zinc-400">Insira suas credenciais do GitHub para permitir o commit automático dos arquivos de API.</p>
-                </div>
-                <div class="custom-card p-6 rounded-2xl space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1">Repositório (ex: usuario/vortexsub)*</label>
-                        <input type="text" id="gh-repo" placeholder="seu-usuario/vortexsub" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1">GitHub Personal Access Token (PAT)*</label>
-                        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-3 rounded-xl custom-input text-xs font-mono">
-                        <p class="text-[10px] text-zinc-500 mt-1">O token precisa ter permissão completa (repo).</p>
-                    </div>
-                    <button onclick="saveGitHubConfig()" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-xs cursor-pointer">
-                        Salvar Configurações
-                    </button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Firebase & GitHub SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
-            authDomain: "vortexdev2.firebaseapp.com",
-            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
-            projectId: "vortexdev2",
-            storageBucket: "vortexdev2.firebasestorage.app",
-            messagingSenderId: "755839099190",
-            appId: "1:755839099190:android:f97e6d0dc860177306d397"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        const provider = new GoogleAuthProvider();
-
-        window.currentUser = null;
-        let editingFileName = null;
-        window.userApisCache = {};
-
-        // REDIRECIONAMENTO DE LINK CURTO VIA HASH
-        const currentHash = window.location.hash.replace('#', '');
-        const urlParams = new URLSearchParams(window.location.search);
-        const shortSlug = urlParams.get('s') || currentHash;
-
-        if (shortSlug && shortSlug !== '') {
-            document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>Redirecionando...</h2></div>`;
-            get(child(ref(db), `shortLinks/${shortSlug}`)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    window.location.replace(snapshot.val().target);
-                } else {
-                    document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>404 - Link não encontrado</h2></div>`;
-                }
-            }).catch(() => {
-                document.body.innerHTML = `<div style="background:#0b0b0c;color:#fff;display:flex;height:100vh;align-items:center;justify-content:center;font-family:sans-serif;flex-direction:column;"><h2>Erro ao carregar</h2></div>`;
-            });
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
         }
 
-        onAuthStateChanged(auth, (user) => {
-            const loginScreen = document.getElementById('login-screen');
-            const appScreen = document.getElementById('app-screen');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            if (user) {
-                window.currentUser = user;
-                if (!shortSlug) {
-                    loginScreen.classList.add('hidden');
-                    appScreen.classList.remove('hidden');
-                }
-                document.getElementById('user-name').innerText = user.displayName || "Usuário";
-                document.getElementById('user-email').innerText = user.email || "";
-                document.getElementById('user-photo').src = user.photoURL || "";
-                
-                if(localStorage.getItem('gh_repo')) document.getElementById('gh-repo').value = localStorage.getItem('gh_repo');
-                if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
 
-                loadUserApis();
-                loadShortLinks();
-            } else {
-                window.currentUser = null;
-                if (!shortSlug) {
-                    appScreen.classList.add('hidden');
-                    loginScreen.classList.remove('hidden');
-                }
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        header h1 span {
+            color: var(--accent-color);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .card ul {
+            list-style-type: none;
+        }
+
+        .card ul li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.2rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .card ul li::before {
+            content: "•";
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .highlight-box h2 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            background-color: var(--card-bg);
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
             }
-        });
+        }
+    </style>
+</head>
+<body>
 
-        window.loginWithGoogle = async () => {
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (e) {
-                console.error("Erro no login Google:", e);
-                alert("Erro ao fazer login com o Google: " + e.message);
-            }
-        };
+    <header>
+        <h1>Domine a <span>Linguagem Corporal</span></h1>
+        <p>A ciência da comunicação humana, leitura comportamental e inteligência emocional aplicada ao ambiente profissional e pessoal.</p>
+    </header>
 
-        window.logout = () => signOut(auth);
+    <div class="container">
 
-        window.switchTab = (tab) => {
-            ['create', 'list', 'shortener', 'settings'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                document.getElementById(`nav-${t}`).className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-zinc-400 hover:bg-zinc-900 hover:text-white transition";
-            });
-            document.getElementById(`tab-${tab}`).classList.remove('hidden');
-            document.getElementById(`nav-${tab}`).className = "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-zinc-800 text-white transition";
-            
-            if (tab === 'list') loadUserApis();
-            if (tab === 'shortener') loadShortLinks();
-        };
+        <!-- Seção 1: Fundamentos -->
+        <h2 class="section-title">Fundamentos da Linguagem Humana</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Postura e Alinhamento</h3>
+                <p>A forma como ocupamos o espaço diz muito sobre nossa autoconfiança e estado de espírito.</p>
+                <ul>
+                    <li><strong>Postura Aberta:</strong> Transmite segurança, acessibilidade e liderança.</li>
+                    <li><strong>Postura Fechada:</strong> Braços cruzados ou ombros caídos indicam defesa ou desconforto.</li>
+                    <li><strong>Espelhamento:</strong> Copiar sutilmente os gestos de alguém cria rapport e conexão instantânea.</li>
+                </ul>
+            </div>
 
-        window.switchEditorTab = (mode) => {
-            if (mode === 'edit') {
-                document.getElementById('editor-pane-edit').classList.remove('hidden');
-                document.getElementById('editor-pane-preview').classList.add('hidden');
-                document.getElementById('editor-tab-edit').className = "px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition";
-                document.getElementById('editor-tab-preview').className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition";
-            } else {
-                document.getElementById('editor-pane-edit').classList.add('hidden');
-                document.getElementById('editor-pane-preview').classList.remove('hidden');
-                document.getElementById('editor-tab-preview').className = "px-3 py-1.5 rounded-md bg-zinc-800 text-white font-medium transition";
-                document.getElementById('editor-tab-edit').className = "px-3 py-1.5 rounded-md text-zinc-400 hover:text-white transition";
-                
-                let fileName = document.getElementById('api-name').value.trim() || 'api.json';
-                if(!fileName.endsWith('.json')) fileName += '.json';
-                
-                document.getElementById('preview-url-box').innerText = `https://www.vortexsub.shop/api/${fileName}`;
-                try {
-                    const parsed = JSON.parse(document.getElementById('api-json').value.trim() || '{}');
-                    document.getElementById('preview-json-box').innerText = JSON.stringify(parsed, null, 2);
-                } catch(e) {
-                    document.getElementById('preview-json-box').innerText = "Erro: JSON inválido!";
-                }
-            }
-        };
+            <div class="card">
+                <h3>Expressões Faciais e Microexpressões</h3>
+                <p>Movimentos faciais involuntários que duram frações de segundo e revelam emoções genuínas.</p>
+                <ul>
+                    <li><strong>Alegria:</strong> Pés de galinha ao redor dos olhos (Sorriso de Duchenne).</li>
+                    <li><strong>Raiva:</strong> Sobrancelhas abaixadas e unidas, lábios tensionados.</li>
+                    <li><strong>Meduto/Surpresa:</strong> Sobrancelhas erguidas e olhos arregalados.</li>
+                </ul>
+            </div>
 
-        window.saveGitHubConfig = () => {
-            const repo = document.getElementById('gh-repo').value.trim();
-            const token = document.getElementById('gh-token').value.trim();
-            if(!repo || !token) {
-                alert('Preencha o repositório e o token do GitHub.');
-                return;
-            }
-            localStorage.setItem('gh_repo', repo);
-            localStorage.setItem('gh_token', token);
-            alert('Configurações do GitHub salvas com sucesso!');
-        };
+            <div class="card">
+                <h3>Proxêmica (Uso do Espaço)</h3>
+                <p>A distância física que mantemos das pessoas demonstra o nível de intimidade e hierarquia.</p>
+                <ul>
+                    <li><strong>Zona Íntima:</strong> Até 45 cm (Pessoas muito próximas).</li>
+                    <li><strong>Zona Pessoal:</strong> 45 cm a 1,2 m (Amigos e conversas cotidianas).</li>
+                    <li><strong>Zona Social/Profissional:</strong> Acima de 1,2 m (Negócios e desconhecidos).</li>
+                </ul>
+            </div>
+        </div>
 
-        // COMMIT SEGURO COM PROXY CORS ALTERNATIVO SE O FETCH FALHAR
-        window.saveApiToGitHub = async () => {
-            let fileName = document.getElementById('api-name').value.trim().toLowerCase().replace(/[^a-z0-9-_.]/g, '');
-            const jsonInput = document.getElementById('api-json').value.trim();
-            const repo = localStorage.getItem('gh_repo');
-            const token = localStorage.getItem('gh_token');
+        <!-- Seção 2: Como Identificar Mentiras -->
+        <h2 class="section-title">Saber Quando Alguém Mente</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>Mudança de Linha de Base</h3>
+                <p>O segredo número um para detectar mentiras não é um gesto isolado, mas a mudança de comportamento padrão.</p>
+                <ul>
+                    <li>Observe como a pessoa age quando está relaxada e falando a verdade.</li>
+                    <li>Desvios súbitos nesse padrão sob perguntas específicas merecem atenção.</li>
+                </ul>
+            </div>
 
-            if(!repo || !token) {
-                alert('Configure suas credenciais do GitHub na aba "Config. GitHub" primeiro!');
-                switchTab('settings');
-                return;
-            }
+            <div class="card">
+                <h3>Indicadores Fisiológicos e Gestuais</h3>
+                <p>Sinais corporais comuns que frequentemente (mas não sempre) acompanham a falsidade:</p>
+                <ul>
+                    <li><strong>Micro-coceiras:</strong> Tocar o nariz ou cobrir a boca ao falar.</li>
+                    <li><strong>Incongruência:</strong> Dizer "sim" com a cabeça enquanto verbaliza "não" (ou vice-versa).</li>
+                    <li><strong>Rigidez Excessiva:</strong> Pessoas mentindo tendem a se movimentar menos para não parecerem suspeitas.</li>
+                </ul>
+            </div>
 
-            if(!fileName || !jsonInput) {
-                alert('Preencha o nome do arquivo e o conteúdo JSON.');
-                return;
-            }
+            <div class="card">
+                <h3>Padrões de Fala e Resposta</h3>
+                <p>O comportamento verbal também entrega a desonestidade estrutural:</p>
+                <ul>
+                    <li>Excesso de detalhes desnecessários para forçar credibilidade.</li>
+                    <li>Repetição exata da pergunta feita antes de responder.</li>
+                    <li>Pausas prolongadas antes de frases defensivas.</li>
+                </ul>
+            </div>
+        </div>
 
-            if(!fileName.endsWith('.json')) fileName += '.json';
-            const fullPath = `api/${fileName}`;
+        <!-- Destaque Profissional -->
+        <div class="highlight-box">
+            <h2>Aplicação no Ambiente Profissional</h2>
+            <p>No mundo corporativo, saber ler sinais não-verbais é uma habilidade de liderança indispensável. Em negociações, entrevistas de emprego ou reuniões de feedback, prestar atenção ao subtexto ajuda a fechar melhores acordos, identificar insatisfações ocultas antes que virem crises e projetar autoridade e empatia através da sua própria postura.</p>
+        </div>
 
-            try {
-                JSON.parse(jsonInput);
-            } catch(e) {
-                alert('O conteúdo inserido não é um JSON válido!');
-                return;
-            }
+    </div>
 
-            const utf8Bytes = new TextEncoder().encode(jsonInput);
-            let binaryString = '';
-            utf8Bytes.forEach(b => binaryString += String.fromCharCode(b));
-            const contentBase64 = btoa(binaryString);
+    <footer>
+        <p>&copy; 2026 Guia de Linguagem Corporal & Comportamento Humano. Desenvolvido para fins educacionais.</p>
+    </footer>
 
-            // Tenta salvar localmente no Firebase primeiro para garantir que nunca perca o dado
-            const userId = window.currentUser.uid;
-            await set(ref(db, `apis/${userId}/${fileName.replace('.json','')}`), {
-                name: fileName,
-                data: jsonInput,
-                updatedAt: Date.now()
-            });
-
-            // Requisição com CORS seguro
-            const apiEndpoints = [
-                `https://api.github.com/repos/${repo}/contents/${fullPath}`,
-                `https://api.allorigins.win/raw?url=` + encodeURIComponent(`https://api.github.com/repos/${repo}/contents/${fullPath}`)
-            ];
-
-            let success = false;
-            try {
-                let fileSha = null;
-                const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }).catch(() => null);
-
-                if(getRes && getRes.ok) {
-                    const fileData = await getRes.json();
-                    fileSha = fileData.sha;
-                }
-
-                const commitRes = await fetch(`https://api.github.com/repos/${repo}/contents/${fullPath}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `VortexHub: update ${fileName}`,
-                        content: contentBase64,
-                        sha: fileSha
-                    })
-                });
-
-                if(commitRes.ok) {
-                    success = true;
-                } else {
-                    const err = await commitRes.json();
-                    alert('Erro do GitHub: ' + (err.message || 'Falha ao commitar'));
-                    return;
-                }
-            } catch (ex) {
-                // Se o navegador bloqueou por CORS puro (Failed to fetch), salvamos no Firebase e alertamos
-                success = true; 
-            }
-
-            if(success) {
-                alert('API salva e sincronizada com sucesso!');
-                resetForm();
-                switchTab('list');
-            }
-        };
-
-        window.loadUserApis = async () => {
-            if (!window.currentUser) return;
-            const userId = window.currentUser.uid;
-            const container = document.getElementById('apis-container');
-            container.innerHTML = '<p class="text-zinc-500 text-sm">Carregando...</p>';
-
-            get(child(ref(db), `apis/${userId}`)).then((snapshot) => {
-                container.innerHTML = '';
-                if(snapshot.exists()) {
-                    const apis = snapshot.val();
-                    window.userApisCache = apis;
-                    Object.keys(apis).forEach((key) => {
-                        const api = apis[key];
-                        const fileUrl = `https://www.vortexsub.shop/api/${api.name}`;
-                        
-                        container.innerHTML += `
-                            <div class="custom-card p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                <div class="space-y-1 overflow-hidden">
-                                    <h3 class="font-bold text-white text-sm">/${api.name}</h3>
-                                    <p class="text-xs text-zinc-400 font-mono truncate max-w-md">${fileUrl}</p>
-                                </div>
-                                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                                    <a href="${fileUrl}" target="_blank" class="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-external-link"></i> Acessar</a>
-                                    <button onclick="editApi('${key}')" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-pen"></i> Editar</button>
-                                    <button onclick="deleteApi('${api.name}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-2 rounded-xl text-xs transition"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    container.innerHTML = '<p class="text-zinc-500 text-sm">Nenhuma API criada ainda.</p>';
-                }
-            });
-        };
-
-        window.editApi = (key) => {
-            const api = window.userApisCache[key];
-            if(!api) return;
-            editingFileName = api.name;
-            
-            document.getElementById('api-name').value = api.name;
-            document.getElementById('api-json').value = api.data;
-            document.getElementById('form-title').innerText = `Editar API: /${api.name}`;
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-            
-            switchTab('create');
-            switchEditorTab('edit');
-        };
-
-        window.resetForm = () => {
-            editingFileName = null;
-            document.getElementById('api-name').value = '';
-            document.getElementById('api-json').value = '';
-            document.getElementById('form-title').innerText = 'Criar Nova API';
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
-            switchEditorTab('edit');
-        };
-
-        window.deleteApi = async (fileName) => {
-            if(confirm(`Deseja excluir a API ${fileName}?`)) {
-                const userId = window.currentUser.uid;
-                await remove(ref(db, `apis/${userId}/${fileName.replace('.json','')}`));
-                loadUserApis();
-            }
-        };
-
-        window.createShortLink = async () => {
-            let target = document.getElementById('short-target').value.trim();
-            let slug = document.getElementById('short-slug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
-
-            if (!target) {
-                alert('Informe a URL de destino.');
-                return;
-            }
-
-            if (!slug) {
-                slug = Math.random().toString(36).substring(2, 8);
-            }
-
-            const userId = window.currentUser.uid;
-            const linkRef = ref(db, `shortLinks/${slug}`);
-
-            const snapshot = await get(linkRef);
-            if (snapshot.exists()) {
-                alert('Esse apelido de link curto já está em uso. Escolha outro.');
-                return;
-            }
-
-            await set(linkRef, {
-                target: target,
-                slug: slug,
-                owner: userId,
-                createdAt: Date.now()
-            });
-
-            alert('Link curto criado com sucesso!');
-            document.getElementById('short-target').value = '';
-            document.getElementById('short-slug').value = '';
-            loadShortLinks();
-        };
-
-        window.loadShortLinks = async () => {
-            if (!window.currentUser) return;
-            const userId = window.currentUser.uid;
-            const container = document.getElementById('short-links-container');
-            container.innerHTML = '<p class="text-zinc-500 text-xs">Carregando...</p>';
-
-            get(child(ref(db), `shortLinks`)).then((snapshot) => {
-                container.innerHTML = '';
-                if (snapshot.exists()) {
-                    let count = 0;
-                    const links = snapshot.val();
-                    Object.keys(links).forEach((key) => {
-                        const link = links[key];
-                        if (link.owner === userId) {
-                            count++;
-                            const shortUrl = `https://www.vortexsub.shop/#${link.slug}`;
-                            container.innerHTML += `
-                                <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 flex justify-between items-center gap-2">
-                                    <div class="overflow-hidden">
-                                        <p class="text-xs font-bold text-white font-mono">${shortUrl}</p>
-                                        <p class="text-[10px] text-zinc-500 truncate max-w-[200px]">${link.target}</p>
-                                    </div>
-                                    <button onclick="navigator.clipboard.writeText('${shortUrl}'); alert('Link copiado!');" class="bg-zinc-800 hover:bg-zinc-700 text-white px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer"><i class="fa-solid fa-copy"></i></button>
-                                </div>
-                            `;
-                        }
-                    });
-                    if (count === 0) {
-                        container.innerHTML = '<p class="text-zinc-500 text-xs">Nenhum link curto criado.</p>';
-                    }
-                } else {
-                    container.innerHTML = '<p class="text-zinc-500 text-xs">Nenhum link curto criado.</p>';
-                }
-            });
-        };
-    </script>
 </body>
 </html>
