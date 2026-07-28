@@ -31,48 +31,42 @@
                 <i class="fa-solid fa-plus-circle"></i> Criar Nova Página Personalizada
             </h2>
             <input type="hidden" id="editKey">
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Identificador (Slug)</label>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Identificador (Slug) *Obrigatório</label>
                     <input type="text" id="slug" placeholder="ex: 07cabelinn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Título Exibido no Topo</label>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Título Exibido no Topo *Opcional</label>
                     <input type="text" id="pageTitle" placeholder="ex: 07cabelinn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-solid fa-download text-indigo-400"></i> Link de Download [ DOWNLOAD ]</label>
-                    <input type="url" id="linkDownload" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Foto do Perfil (Avatar) *Opcional</label>
+                    <input type="file" id="inputAvatar" accept="image/*" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+                    <input type="hidden" id="avatarBase64">
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-solid fa-circle-play text-slate-400"></i> Link de Tutorial [ TUTORIAL ]</label>
-                    <input type="url" id="linkTutorial" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Link de Download *Opcional</label>
+                    <input type="url" id="linkDownload" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Link de Tutorial *Opcional</label>
+                    <input type="url" id="linkTutorial" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
-            
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-                <div>
-                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-whatsapp text-emerald-500"></i> WhatsApp</label>
-                    <input type="url" id="linkWhatsapp" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+
+            <!-- Seção de Links Dinâmicos / Redes Inferiores -->
+            <div class="border-t border-slate-800 pt-4 mb-6">
+                <div class="flex justify-between items-center mb-3">
+                    <label class="text-xs font-bold uppercase tracking-wider text-indigo-300"><i class="fa-solid fa-link"></i> Links e Ícones Inferiores (Adicione quantos quiser)</label>
+                    <button type="button" onclick="adicionarCampoLink()" class="bg-indigo-600/20 border border-indigo-500/40 text-indigo-400 hover:bg-indigo-600 hover:text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">+ Adicionar Link</button>
                 </div>
-                <div>
-                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-discord text-indigo-400"></i> Discord</label>
-                    <input type="url" id="linkDiscord" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-telegram text-sky-400"></i> Telegram</label>
-                    <input type="url" id="linkTelegram" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-sky-500">
-                </div>
-                <div>
-                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-tiktok text-pink-500"></i> TikTok</label>
-                    <input type="url" id="linkTiktok" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
-                </div>
-                <div>
-                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-youtube text-red-500"></i> YouTube</label>
-                    <input type="url" id="linkYoutube" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-red-500">
+                <div id="containerLinksDinamicos" class="space-y-3">
+                    <!-- Campos adicionados via JS -->
                 </div>
             </div>
 
@@ -85,9 +79,7 @@
         <!-- Lista de Páginas -->
         <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl backdrop-blur-md">
             <h2 class="text-base font-bold mb-4 text-slate-200">Páginas Gerenciadas</h2>
-            <div id="listaPaginas" class="space-y-3">
-                <!-- Carregado via script -->
-            </div>
+            <div id="listaPaginas" class="space-y-3"></div>
         </div>
     </div>
 
@@ -109,25 +101,75 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Converter foto para Base64 para salvar no Realtime Database sem erros
+        document.getElementById('inputAvatar').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(uploadEvent) {
+                    document.getElementById('avatarBase64').value = uploadEvent.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        window.adicionarCampoLink = function(nome = '', url = '', iconeBase64 = '') {
+            const container = document.getElementById('containerLinksDinamicos');
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-3 bg-slate-950 p-3 rounded-2xl border border-slate-800 item-link-dinamico";
+            div.innerHTML = `
+                <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center overflow-hidden shrink-0">
+                    ${iconeBase64 ? `<img src="${iconeBase64}" class="w-full h-full object-cover preview-icone">` : `<i class="fa-solid fa-image text-slate-500 text-xs"></i>`}
+                </div>
+                <input type="file" accept="image/*" class="input-icone-file hidden" onchange="processarIcone(this)">
+                <button type="button" onclick="this.previousElementSibling.click()" class="bg-slate-900 border border-slate-800 hover:border-indigo-500 text-slate-300 text-xs px-3 py-2 rounded-xl transition shrink-0">Ícone</button>
+                <input type="text" placeholder="Nome (ex: ZAP GRUPO)" value="${nome}" class="input-nome-link w-1/3 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                <input type="url" placeholder="URL do Link" value="${url}" class="input-url-link flex-grow bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                <input type="hidden" class="input-base64-icone" value="${iconeBase64}">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 px-2 py-1 text-xs shrink-0"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        window.processarIcone = function(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const parent = input.parentElement;
+                    parent.querySelector('.input-base64-icone').value = e.target.result;
+                    parent.querySelector('.w-10').innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         window.salvarPagina = async function() {
             const slug = document.getElementById("slug").value.trim().toLowerCase().replace(/\s+/g, '-');
             const title = document.getElementById("pageTitle").value;
             const download = document.getElementById("linkDownload").value;
             const tutorial = document.getElementById("linkTutorial").value;
-            const youtube = document.getElementById("linkYoutube").value;
-            const discord = document.getElementById("linkDiscord").value;
-            const tiktok = document.getElementById("linkTiktok").value;
-            const whatsapp = document.getElementById("linkWhatsapp").value;
-            const telegram = document.getElementById("linkTelegram").value;
+            const avatar = document.getElementById("avatarBase64").value;
 
-            if(!slug || !title) {
-                alert("Preencha o identificador (slug) e o título!");
+            if(!slug) {
+                alert("Preencha o identificador (slug)!");
                 return;
             }
 
+            // Coletar links dinâmicos
+            const linksDinamicos = [];
+            document.querySelectorAll('.item-link-dinamico').forEach(item => {
+                const nome = item.querySelector('.input-nome-link').value;
+                const url = item.querySelector('.input-url-link').value;
+                const icone = item.querySelector('.input-base64-icone').value;
+                if(nome && url) {
+                    linksDinamicos.push({ nome, url, icone });
+                }
+            });
+
             try {
                 await set(ref(db, 'paginas/' + slug), {
-                    slug, title, download, tutorial, youtube, discord, tiktok, whatsapp, telegram
+                    slug, title, download, tutorial, avatar, links: linksDinamicos
                 });
                 alert("Página salva com sucesso!");
                 limparForm();
@@ -152,7 +194,7 @@
                         container.innerHTML += `
                             <div class="flex items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800">
                                 <div>
-                                    <h3 class="font-bold text-slate-100 text-sm">${data.title}</h3>
+                                    <h3 class="font-bold text-slate-100 text-sm">${data.title || data.slug}</h3>
                                     <a href="liberar.html?p=${data.slug}" target="_blank" class="text-indigo-400 text-xs hover:underline">liberar.html?p=${data.slug}</a>
                                 </div>
                                 <div class="flex gap-2">
@@ -165,22 +207,21 @@
                 } else {
                     container.innerHTML = "<p class='text-slate-500 text-xs'>Nenhuma página cadastrada.</p>";
                 }
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         window.editarPagina = function(data) {
             document.getElementById("slug").value = data.slug;
             document.getElementById("slug").disabled = true;
-            document.getElementById("pageTitle").value = data.title;
+            document.getElementById("pageTitle").value = data.title || "";
             document.getElementById("linkDownload").value = data.download || "";
             document.getElementById("linkTutorial").value = data.tutorial || "";
-            document.getElementById("linkYoutube").value = data.youtube || "";
-            document.getElementById("linkDiscord").value = data.discord || "";
-            document.getElementById("linkTiktok").value = data.tiktok || "";
-            document.getElementById("linkWhatsapp").value = data.whatsapp || "";
-            document.getElementById("linkTelegram").value = data.telegram || "";
+            document.getElementById("avatarBase64").value = data.avatar || "";
+            
+            document.getElementById("containerLinksDinamicos").innerHTML = "";
+            if(data.links && Array.isArray(data.links)) {
+                data.links.forEach(l => adicionarCampoLink(l.nome, l.url, l.icone));
+            }
             document.getElementById("formTitle").innerText = "Editando Página: " + data.slug;
         }
 
@@ -190,11 +231,9 @@
             document.getElementById("pageTitle").value = "";
             document.getElementById("linkDownload").value = "";
             document.getElementById("linkTutorial").value = "";
-            document.getElementById("linkYoutube").value = "";
-            document.getElementById("linkDiscord").value = "";
-            document.getElementById("linkTiktok").value = "";
-            document.getElementById("linkWhatsapp").value = "";
-            document.getElementById("linkTelegram").value = "";
+            document.getElementById("avatarBase64").value = "";
+            document.getElementById("inputAvatar").value = "";
+            document.getElementById("containerLinksDinamicos").innerHTML = "";
             document.getElementById("formTitle").innerHTML = "<i class='fa-solid fa-plus-circle'></i> Criar Nova Página Personalizada";
         }
 
