@@ -51,7 +51,7 @@
                 
                 // Redireciona para o painel ou página de liberação
                 localStorage.setItem("vortex_user", JSON.stringify({ name: user.displayName, email: user.email, uid: user.uid }));
-                window.location.href = "liberar.html";
+                window.location.href = "admim.html";
             } catch (error) {
                 console.error(error);
                 status.innerText = "Erro ao autenticar. Tente novamente.";
