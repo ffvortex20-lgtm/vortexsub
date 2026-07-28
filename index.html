@@ -246,9 +246,10 @@
         <!-- Card do Perfil -->
         <div class="profile-card">
             <div class="avatar-container">
-                <img src="https://avatars.githubusercontent.com/u/9919?v=4" alt="Avatar Gamer" class="avatar">
+                <!-- Foto puxada diretamente do seu GitHub -->
+                <img src="https://github.com/ffvortex20-lgtm.png" alt="Avatar Gamer" class="avatar">
             </div>
-            <h1 class="profile-name">Vortex Dev</h1>
+            <h1 class="profile-name">Vortex</h1>
             <p class="profile-bio">Redes sociais oficiais</p>
             
             <div class="badges-wrapper">
@@ -304,41 +305,63 @@
         </div>
     </div>
 
-    <!-- Script de Integração com o Firebase Realtime Database -->
+    <!-- Script de Integração com o Firebase Realtime Database (Anti-Flood por IP) -->
     <script>
         const databaseURL = "https://vortexdev2-default-rtdb.firebaseio.com";
-        const viewsRef = `${databaseURL}/visitas.json`;
 
-        async function incrementAndGetViews() {
+        async function handleUniqueVisitor() {
             try {
-                // 1. Busca o valor atual de visualizações
-                let response = await fetch(viewsRef);
-                let currentViews = await response.json();
+                // 1. Pega o IP real do usuário (funciona para PC e Celular)
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                
+                // Limpa o IP para virar uma chave válida no Firebase (substitui pontos por underlines)
+                const cleanIP = ipData.ip.replace(/\./g, '_');
 
-                // Se o nó ainda não existir, inicia com 0
-                if (currentViews === null) {
-                    currentViews = 0;
+                // 2. Verifica se este IP já visitou checando no Firebase
+                const visitCheckRef = `${databaseURL}/visitas/ips/${cleanIP}.json`;
+                const checkRes = await fetch(visitCheckRef);
+                const hasVisited = await checkRes.json();
+
+                // 3. Se for a primeira vez que esse IP acessa, incrementa o contador global
+                if (!hasVisited) {
+                    // Marca o IP no Firebase para registrar que já contou
+                    await fetch(visitCheckRef, {
+                        method: 'PUT',
+                        body: JSON.stringify(true)
+                    });
+
+                    // Pega o total de views atual
+                    const totalRes = `${databaseURL}/visitas/total.json`;
+                    const currentRes = await fetch(totalRes);
+                    let totalViews = await currentRes.json();
+                    
+                    if (totalViews === null) totalViews = 0;
+                    totalViews += 1;
+
+                    // Salva o novo total
+                    await fetch(totalRes, {
+                        method: 'PUT',
+                        body: JSON.stringify(totalViews)
+                    });
                 }
 
-                // 2. Incrementa +1
-                let newViews = currentViews + 1;
+                // 4. Pega o total atualizado para exibir na tela
+                const totalRes = `${databaseURL}/visitas/total.json`;
+                const finalRes = await fetch(totalRes);
+                let finalViews = await finalRes.json();
+                
+                if (finalViews === null) finalViews = 0;
+                document.getElementById('view-count').innerText = finalViews.toLocaleString();
 
-                // 3. Salva de volta no Firebase
-                await fetch(viewsRef, {
-                    method: 'PUT',
-                    body: JSON.stringify(newViews)
-                });
-
-                // 4. Mostra na tela formatado
-                document.getElementById('view-count').innerText = newViews.toLocaleString();
             } catch (error) {
-                console.error("Erro ao atualizar visualizações:", error);
-                document.getElementById('view-count').innerText = "Erro";
+                console.error("Erro ao processar visualização por IP:", error);
+                document.getElementById('view-count').innerText = "Indisponível";
             }
         }
 
-        // Executa a função assim que a página carregar
-        incrementAndGetViews();
+        // Executa a função ao carregar a página
+        handleUniqueVisitor();
     </script>
 </body>
 </html>
