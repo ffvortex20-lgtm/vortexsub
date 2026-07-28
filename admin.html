@@ -6,63 +6,85 @@
     <title>Vortex Hub - Painel Administrativo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #030712;
+            background-image: 
+                linear-gradient(to right, rgba(30, 41, 59, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
-    <div class="max-w-4xl mx-auto p-6">
-        <header class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
-            <h1 class="text-2xl font-bold flex items-center gap-2">
-                <i class="fa-solid fa-shield-halved text-indigo-500"></i> Painel Admin - Vortex
+<body class="text-slate-100 min-h-screen font-sans p-4 sm:p-6">
+    <div class="max-w-3xl mx-auto">
+        <header class="flex justify-between items-center mb-8 border-b border-slate-800/80 pb-4">
+            <h1 class="text-xl font-black tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-indigo-400"></i> PAINEL ADMIN
             </h1>
-            <a href="liberar.html" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition">Ver Páginas</a>
+            <a href="liberar.html" class="text-xs font-bold bg-slate-900 border border-slate-800 hover:border-indigo-500 px-4 py-2 rounded-xl transition text-slate-300">Ver Páginas</a>
         </header>
 
         <!-- Formulário de Criação/Edição -->
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl mb-8">
-            <h2 id="formTitle" class="text-lg font-semibold mb-4 text-indigo-400">Criar Nova Página Personalizada</h2>
+        <div class="bg-slate-900/90 border-2 border-indigo-500/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(99,102,241,0.15)] mb-8 backdrop-blur-md">
+            <h2 id="formTitle" class="text-base font-bold mb-4 text-indigo-400 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle"></i> Criar Nova Página Personalizada
+            </h2>
             <input type="hidden" id="editKey">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1">Identificador da URL (slug)</label>
-                    <input type="text" id="slug" placeholder="ex: meu-canal" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Identificador (Slug)</label>
+                    <input type="text" id="slug" placeholder="ex: 07cabelinn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1">Título da Página</label>
-                    <input type="text" id="pageTitle" placeholder="ex: Comunidade Oficial" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Título Exibido no Topo</label>
+                    <input type="text" id="pageTitle" placeholder="ex: 07cabelinn" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-solid fa-download text-indigo-400"></i> Link de Download [ DOWNLOAD ]</label>
+                    <input type="url" id="linkDownload" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-solid fa-circle-play text-slate-400"></i> Link de Tutorial [ TUTORIAL ]</label>
+                    <input type="url" id="linkTutorial" placeholder="https://..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-youtube text-red-500"></i> Link do Canal</label>
-                    <input type="url" id="linkYoutube" placeholder="https://youtube.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-whatsapp text-emerald-500"></i> WhatsApp</label>
+                    <input type="url" id="linkWhatsapp" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-discord text-indigo-400"></i> Link do Discord</label>
-                    <input type="url" id="linkDiscord" placeholder="https://discord.gg/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-discord text-indigo-400"></i> Discord</label>
+                    <input type="url" id="linkDiscord" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-tiktok text-pink-500"></i> Link do TikTok</label>
-                    <input type="url" id="linkTiktok" placeholder="https://tiktok.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-telegram text-sky-400"></i> Telegram</label>
+                    <input type="url" id="linkTelegram" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-sky-500">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-whatsapp text-emerald-500"></i> Link do WhatsApp</label>
-                    <input type="url" id="linkWhatsapp" placeholder="https://whatsapp.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-tiktok text-pink-500"></i> TikTok</label>
+                    <input type="url" id="linkTiktok" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-telegram text-sky-400"></i> Link do Telegram</label>
-                    <input type="url" id="linkTelegram" placeholder="https://t.me/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-[9px] uppercase font-bold text-slate-400 mb-1"><i class="fa-brands fa-youtube text-red-500"></i> YouTube</label>
+                    <input type="url" id="linkYoutube" placeholder="URL" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-red-500">
                 </div>
             </div>
 
             <div class="flex gap-3">
-                <button onclick="salvarPagina()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl transition shadow-lg">Salvar / Gerar Link</button>
-                <button onclick="limparForm()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl transition">Cancelar</button>
+                <button onclick="salvarPagina()" class="bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-black text-xs uppercase px-6 py-3 rounded-xl transition shadow-lg">Salvar Página</button>
+                <button onclick="limparForm()" class="bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-300 text-xs font-bold px-4 py-3 rounded-xl transition">Cancelar</button>
             </div>
         </div>
 
         <!-- Lista de Páginas -->
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-            <h2 class="text-lg font-semibold mb-4 text-slate-200">Páginas Gerenciadas</h2>
+        <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl shadow-xl backdrop-blur-md">
+            <h2 class="text-base font-bold mb-4 text-slate-200">Páginas Gerenciadas</h2>
             <div id="listaPaginas" class="space-y-3">
                 <!-- Carregado via script -->
             </div>
@@ -90,6 +112,8 @@
         window.salvarPagina = async function() {
             const slug = document.getElementById("slug").value.trim().toLowerCase().replace(/\s+/g, '-');
             const title = document.getElementById("pageTitle").value;
+            const download = document.getElementById("linkDownload").value;
+            const tutorial = document.getElementById("linkTutorial").value;
             const youtube = document.getElementById("linkYoutube").value;
             const discord = document.getElementById("linkDiscord").value;
             const tiktok = document.getElementById("linkTiktok").value;
@@ -103,7 +127,7 @@
 
             try {
                 await set(ref(db, 'paginas/' + slug), {
-                    slug, title, youtube, discord, tiktok, whatsapp, telegram
+                    slug, title, download, tutorial, youtube, discord, tiktok, whatsapp, telegram
                 });
                 alert("Página salva com sucesso!");
                 limparForm();
@@ -116,7 +140,7 @@
 
         window.carregarPaginas = async function() {
             const container = document.getElementById("listaPaginas");
-            container.innerHTML = "<p class='text-slate-500 text-sm'>Carregando...</p>";
+            container.innerHTML = "<p class='text-slate-500 text-xs'>Carregando...</p>";
             
             const dbRef = ref(db);
             try {
@@ -126,20 +150,20 @@
                     snapshot.forEach((childSnapshot) => {
                         const data = childSnapshot.val();
                         container.innerHTML += `
-                            <div class="flex items-center justify-between bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <div class="flex items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800">
                                 <div>
-                                    <h3 class="font-bold text-slate-100">${data.title}</h3>
-                                    <a href="liberar.html?p=${data.slug}" target="_blank" class="text-indigo-400 text-sm hover:underline">liberar.html?p=${data.slug}</a>
+                                    <h3 class="font-bold text-slate-100 text-sm">${data.title}</h3>
+                                    <a href="liberar.html?p=${data.slug}" target="_blank" class="text-indigo-400 text-xs hover:underline">liberar.html?p=${data.slug}</a>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button onclick='editarPagina(${JSON.stringify(data)})' class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm transition"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick='deletarPagina("${data.slug}")' class="bg-red-950/50 hover:bg-red-900 text-red-400 px-3 py-1.5 rounded-lg text-sm transition"><i class="fa-solid fa-trash"></i></button>
+                                    <button onclick='editarPagina(${JSON.stringify(data)})' class="bg-slate-900 border border-slate-800 hover:border-indigo-500 px-3 py-1.5 rounded-xl text-xs transition"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick='deletarPagina("${data.slug}")' class="bg-red-950/40 border border-red-900/50 hover:bg-red-900 text-red-400 px-3 py-1.5 rounded-xl text-xs transition"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
                         `;
                     });
                 } else {
-                    container.innerHTML = "<p class='text-slate-500 text-sm'>Nenhuma página cadastrada.</p>";
+                    container.innerHTML = "<p class='text-slate-500 text-xs'>Nenhuma página cadastrada.</p>";
                 }
             } catch (error) {
                 console.error(error);
@@ -150,6 +174,8 @@
             document.getElementById("slug").value = data.slug;
             document.getElementById("slug").disabled = true;
             document.getElementById("pageTitle").value = data.title;
+            document.getElementById("linkDownload").value = data.download || "";
+            document.getElementById("linkTutorial").value = data.tutorial || "";
             document.getElementById("linkYoutube").value = data.youtube || "";
             document.getElementById("linkDiscord").value = data.discord || "";
             document.getElementById("linkTiktok").value = data.tiktok || "";
@@ -162,12 +188,14 @@
             document.getElementById("slug").value = "";
             document.getElementById("slug").disabled = false;
             document.getElementById("pageTitle").value = "";
+            document.getElementById("linkDownload").value = "";
+            document.getElementById("linkTutorial").value = "";
             document.getElementById("linkYoutube").value = "";
             document.getElementById("linkDiscord").value = "";
             document.getElementById("linkTiktok").value = "";
             document.getElementById("linkWhatsapp").value = "";
             document.getElementById("linkTelegram").value = "";
-            document.getElementById("formTitle").innerText = "Criar Nova Página Personalizada";
+            document.getElementById("formTitle").innerHTML = "<i class='fa-solid fa-plus-circle'></i> Criar Nova Página Personalizada";
         }
 
         window.deletarPagina = async function(slug) {
