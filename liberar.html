@@ -6,23 +6,85 @@
     <title>Vortex Hub - Acesso Liberado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #030712;
+            background-image: 
+                linear-gradient(to right, rgba(30, 41, 59, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 font-sans">
-    <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
-        <div class="mb-6">
-            <div class="w-16 h-16 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-unlock-keyhole text-indigo-500 text-2xl"></i>
-            </div>
-            <h1 id="pageTitle" class="text-2xl font-bold tracking-wide">Carregando Links...</h1>
-            <p class="text-slate-400 text-sm mt-1">Selecione uma das opções abaixo</p>
-        </div>
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 font-sans">
 
-        <div id="linksContainer" class="space-y-3">
-            <!-- Dinâmico -->
+    <!-- Conteúdo Central -->
+    <div class="flex-grow flex items-center justify-center w-full">
+        <div class="bg-slate-900/90 border-2 border-indigo-500/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(99,102,241,0.15)] w-full max-w-sm text-center backdrop-blur-md relative">
+            
+            <!-- Avatar / Topo -->
+            <div class="mb-4">
+                <div class="w-20 h-20 bg-slate-950 border-2 border-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg overflow-hidden relative">
+                    <i class="fa-solid fa-user-secret text-indigo-400 text-3xl"></i>
+                </div>
+                <h1 id="pageTitle" class="text-xl font-black tracking-wider flex items-center justify-center gap-2">
+                    VORTEX HUB <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>
+                </h1>
+                <div class="inline-flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full mt-2 uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Servidor Online
+                </div>
+            </div>
+
+            <!-- Botão Principal / Alerta -->
+            <div id="actionContainer" class="space-y-3 mb-6">
+                <div class="border border-amber-500/30 bg-amber-950/20 rounded-2xl p-3 text-left text-xs text-amber-300/90 space-y-1">
+                    <p class="font-bold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> ALERTA DE AUTENTICAÇÃO</p>
+                    <p id="alertText">Você deve passar pelo encurtador para liberar sua chave!</p>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2">
+                        <span class="text-slate-500 block uppercase">Limpeza</span>
+                        <span class="font-bold text-slate-300">100%</span>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2">
+                        <span class="text-slate-500 block uppercase">Sistema</span>
+                        <span class="font-bold text-emerald-400">ONLINE</span>
+                    </div>
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2">
+                        <span class="text-slate-500 block uppercase">Painel</span>
+                        <span class="font-bold text-indigo-400">VORTEX PRO</span>
+                    </div>
+                </div>
+
+                <button onclick="gerarKey()" id="btnGerar" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition duration-200 flex items-center justify-center gap-2 uppercase tracking-wide">
+                    <i class="fa-solid fa-key"></i> Gerar Key
+                </button>
+
+                <a href="#" id="btnDownload" target="_blank" class="hidden w-full bg-slate-950 border border-indigo-500/50 hover:border-indigo-400 text-slate-200 font-bold py-3 px-4 rounded-2xl transition duration-200 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download text-indigo-400"></i> [ DOWNLOAD ]
+                </a>
+
+                <a href="#" id="btnTutorial" target="_blank" class="hidden w-full bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 font-bold py-2.5 px-4 rounded-2xl transition duration-200 flex items-center justify-center gap-2 text-xs">
+                    <i class="fa-solid fa-circle-play"></i> [ TUTORIAL ]
+                </a>
+            </div>
+
+            <!-- Links Dinâmicos das Redes Sociais -->
+            <div id="linksContainer" class="space-y-2.5 pt-4 border-t border-slate-800/80">
+                <!-- Inserido dinamicamente via JS -->
+            </div>
         </div>
     </div>
 
-    <!-- Firebase Script -->
+    <!-- Rodapé de Redes Estilo Ícones Flutuantes -->
+    <footer class="w-full max-w-sm py-4">
+        <div id="footerRedes" class="flex items-center justify-around bg-slate-900/90 border border-slate-800 p-3 rounded-2xl backdrop-blur-md shadow-lg">
+            <!-- Redes extras -->
+        </div>
+    </footer>
+
+    <!-- Firebase SDK e Script de Lógica -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -42,79 +104,83 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         let slug = urlParams.get('p');
+        const tokenLiberado = urlParams.get('token') === 'true';
 
-        async function carregarDadosPagina() {
-            const container = document.getElementById("linksContainer");
+        async function carregarDados() {
             const dbRef = ref(db);
-
-            // Se nenhum slug foi passado na URL, busca automaticamente a primeira página cadastrada
             if (!slug) {
                 try {
                     const snapshotGeral = await get(child(dbRef, 'paginas'));
                     if (snapshotGeral.exists()) {
-                        const primeiroSlug = Object.keys(snapshotGeral.val())[0];
-                        if (primeiroSlug) {
-                            slug = primeiroSlug;
-                        }
+                        slug = Object.keys(snapshotGeral.val())[0];
                     }
-                } catch (e) {
-                    console.error(e);
-                }
+                } catch (e) { console.error(e); }
             }
 
-            if (!slug) {
-                document.getElementById("pageTitle").innerText = "Nenhuma página configurada";
-                container.innerHTML = "<p class='text-slate-500 text-sm'>Acesse pelo link correto gerado no painel admin (ex: liberar.html?p=seu-slug).</p>";
-                return;
-            }
+            if (!slug) return;
 
             try {
                 const snapshot = await get(child(dbRef, 'paginas/' + slug));
-                container.innerHTML = "";
-
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    document.getElementById("pageTitle").innerText = data.title || "Links de Acesso";
+                    document.getElementById("pageTitle").innerHTML = `${data.title || "VORTEX HUB"} <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>`;
+
+                    // Se passou pelo encurtador (token=true), revela download e tutorial
+                    if (tokenLiberado) {
+                        document.getElementById("alertText").innerText = "Chave gerada com sucesso! Aproveite.";
+                        document.getElementById("btnGerar").classList.add("hidden");
+                        
+                        if(data.download) {
+                            const btnD = document.getElementById("btnDownload");
+                            btnD.href = data.download;
+                            btnD.classList.remove("hidden");
+                        }
+                        if(data.tutorial) {
+                            const btnT = document.getElementById("btnTutorial");
+                            btnT.href = data.tutorial;
+                            btnT.classList.remove("hidden");
+                        }
+                    }
+
+                    // Renderiza links de rodapé / redes
+                    const footerRedes = document.getElementById("footerRedes");
+                    footerRedes.innerHTML = "";
 
                     const redes = [
-                        { name: 'Canal', url: data.youtube, icon: 'fa-youtube', color: 'hover:border-red-500 text-red-500' },
-                        { name: 'Discord', url: data.discord, icon: 'fa-discord', color: 'hover:border-indigo-500 text-indigo-400' },
-                        { name: 'TikTok', url: data.tiktok, icon: 'fa-tiktok', color: 'hover:border-pink-500 text-pink-500' },
-                        { name: 'WhatsApp', url: data.whatsapp, icon: 'fa-whatsapp', color: 'hover:border-emerald-500 text-emerald-500' },
-                        { name: 'Telegram', url: data.telegram, icon: 'fa-telegram', color: 'hover:border-sky-500 text-sky-400' }
+                        { name: 'WhatsApp', url: data.whatsapp, icon: 'fa-whatsapp', label: 'ZAP GRUPO' },
+                        { name: 'Discord', url: data.discord, icon: 'fa-discord', label: 'DISCORD' },
+                        { name: 'Telegram', url: data.telegram, icon: 'fa-telegram', label: 'TELEGRAM' },
+                        { name: 'TikTok', url: data.tiktok, icon: 'fa-tiktok', label: 'TIKTOK' },
+                        { name: 'YouTube', url: data.youtube, icon: 'fa-youtube', label: 'CANAL' }
                     ];
 
-                    let count = 0;
-                    redes.forEach(rede => {
-                        if (rede.url) {
-                            count++;
-                            container.innerHTML += `
-                                <a href="${rede.url}" target="_blank" class="flex items-center justify-between bg-slate-950 border border-slate-800 ${rede.color} p-4 rounded-2xl transition duration-200 group">
-                                    <div class="flex items-center gap-3">
-                                        <i class="fa-brands ${rede.icon} text-xl"></i>
-                                        <span class="font-semibold text-slate-200">Acessar ${rede.name}</span>
-                                    </div>
-                                    <i class="fa-solid fa-arrow-right text-slate-600 group-hover:text-slate-200 transition"></i>
+                    redes.forEach(r => {
+                        if (r.url) {
+                            footerRedes.innerHTML += `
+                                <a href="${r.url}" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-indigo-400 transition text-[10px] gap-1">
+                                    <i class="fa-brands ${r.icon} text-lg"></i>
+                                    <span>${r.label}</span>
                                 </a>
                             `;
                         }
                     });
-
-                    if (count === 0) {
-                        container.innerHTML = "<p class='text-slate-500 text-sm'>Nenhum link foi preenchido nesta página.</p>";
-                    }
-                } else {
-                    document.getElementById("pageTitle").innerText = "Página não encontrada";
-                    container.innerHTML = "<p class='text-slate-500 text-sm'>O identificador informado não existe no banco de dados.</p>";
                 }
-            } catch (error) {
-                console.error(error);
-                document.getElementById("pageTitle").innerText = "Erro de Conexão";
-                container.innerHTML = "<p class='text-slate-500 text-sm'>Não foi possível carregar os dados do Firebase.</p>";
+            } catch (err) {
+                console.error(err);
             }
         }
 
-        carregarDadosPagina();
+        window.gerarKey = function() {
+            // Redireciona para o encurtador simulado/real e retorna com ?token=true
+            const linkAtual = window.location.href.split('?')[0];
+            const destinoEncurtador = linkAtual + "?p=" + (slug || '') + "&token=true";
+            
+            // Simula o fluxo idêntico ao site referência
+            alert("Redirecionando para o encurtador...");
+            window.location.href = destinoEncurtador;
+        }
+
+        carregarDados();
     </script>
 </body>
 </html>
