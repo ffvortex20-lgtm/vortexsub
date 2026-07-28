@@ -3,237 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comunicação Não-Verbal & Linguagem Corporal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-bottom: 1px solid var(--border-color);
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-main);
-        }
-
-        header h1 span {
-            color: var(--accent-color);
-        }
-
-        header p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--accent-color);
-            padding-left: 1rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-color);
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--accent-color);
-        }
-
-        .card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-
-        .card ul {
-            list-style-type: none;
-        }
-
-        .card ul li {
-            margin-bottom: 0.5rem;
-            position: relative;
-            padding-left: 1.2rem;
-            color: var(--text-main);
-            font-size: 0.9rem;
-        }
-
-        .card ul li::before {
-            content: "•";
-            color: var(--accent-color);
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .highlight-box {
-            background: linear-gradient(135deg, #1e293b 0%, #111827 100%);
-            border: 1px solid var(--accent-color);
-            border-radius: 12px;
-            padding: 2.5rem;
-            margin-top: 3rem;
-        }
-
-        .highlight-box h2 {
-            color: var(--accent-color);
-            margin-bottom: 1rem;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            background-color: var(--card-bg);
-            margin-top: 4rem;
-        }
-
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    <title>Vortex Hub - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-
-    <header>
-        <h1>Domine a <span>Linguagem Corporal</span></h1>
-        <p>A ciência da comunicação humana, leitura comportamental e inteligência emocional aplicada ao ambiente profissional e pessoal.</p>
-    </header>
-
-    <div class="container">
-
-        <!-- Seção 1: Fundamentos -->
-        <h2 class="section-title">Fundamentos da Linguagem Humana</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Postura e Alinhamento</h3>
-                <p>A forma como ocupamos o espaço diz muito sobre nossa autoconfiança e estado de espírito.</p>
-                <ul>
-                    <li><strong>Postura Aberta:</strong> Transmite segurança, acessibilidade e liderança.</li>
-                    <li><strong>Postura Fechada:</strong> Braços cruzados ou ombros caídos indicam defesa ou desconforto.</li>
-                    <li><strong>Espelhamento:</strong> Copiar sutilmente os gestos de alguém cria rapport e conexão instantânea.</li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h3>Expressões Faciais e Microexpressões</h3>
-                <p>Movimentos faciais involuntários que duram frações de segundo e revelam emoções genuínas.</p>
-                <ul>
-                    <li><strong>Alegria:</strong> Pés de galinha ao redor dos olhos (Sorriso de Duchenne).</li>
-                    <li><strong>Raiva:</strong> Sobrancelhas abaixadas e unidas, lábios tensionados.</li>
-                    <li><strong>Meduto/Surpresa:</strong> Sobrancelhas erguidas e olhos arregalados.</li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h3>Proxêmica (Uso do Espaço)</h3>
-                <p>A distância física que mantemos das pessoas demonstra o nível de intimidade e hierarquia.</p>
-                <ul>
-                    <li><strong>Zona Íntima:</strong> Até 45 cm (Pessoas muito próximas).</li>
-                    <li><strong>Zona Pessoal:</strong> 45 cm a 1,2 m (Amigos e conversas cotidianas).</li>
-                    <li><strong>Zona Social/Profissional:</strong> Acima de 1,2 m (Negócios e desconhecidos).</li>
-                </ul>
-            </div>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center font-sans">
+    <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center">
+        <div class="mb-6">
+            <i class="fa-solid fa-cube text-indigo-500 text-5xl mb-3 animate-pulse"></i>
+            <h1 class="text-2xl font-bold tracking-wide">Vortex Portal</h1>
+            <p class="text-slate-400 text-sm mt-1">Faça login com sua conta Google para continuar</p>
         </div>
 
-        <!-- Seção 2: Como Identificar Mentiras -->
-        <h2 class="section-title">Saber Quando Alguém Mente</h2>
-        <div class="grid">
-            <div class="card">
-                <h3>Mudança de Linha de Base</h3>
-                <p>O segredo número um para detectar mentiras não é um gesto isolado, mas a mudança de comportamento padrão.</p>
-                <ul>
-                    <li>Observe como a pessoa age quando está relaxada e falando a verdade.</li>
-                    <li>Desvios súbitos nesse padrão sob perguntas específicas merecem atenção.</li>
-                </ul>
-            </div>
+        <button onclick="loginGoogle()" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3 px-4 rounded-xl transition duration-200 shadow-lg">
+            <i class="fa-brands fa-google text-red-500 text-lg"></i>
+            Entrar com o Google
+        </button>
 
-            <div class="card">
-                <h3>Indicadores Fisiológicos e Gestuais</h3>
-                <p>Sinais corporais comuns que frequentemente (mas não sempre) acompanham a falsidade:</p>
-                <ul>
-                    <li><strong>Micro-coceiras:</strong> Tocar o nariz ou cobrir a boca ao falar.</li>
-                    <li><strong>Incongruência:</strong> Dizer "sim" com a cabeça enquanto verbaliza "não" (ou vice-versa).</li>
-                    <li><strong>Rigidez Excessiva:</strong> Pessoas mentindo tendem a se movimentar menos para não parecerem suspeitas.</li>
-                </ul>
-            </div>
-
-            <div class="card">
-                <h3>Padrões de Fala e Resposta</h3>
-                <p>O comportamento verbal também entrega a desonestidade estrutural:</p>
-                <ul>
-                    <li>Excesso de detalhes desnecessários para forçar credibilidade.</li>
-                    <li>Repetição exata da pergunta feita antes de responder.</li>
-                    <li>Pausas prolongadas antes de frases defensivas.</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Destaque Profissional -->
-        <div class="highlight-box">
-            <h2>Aplicação no Ambiente Profissional</h2>
-            <p>No mundo corporativo, saber ler sinais não-verbais é uma habilidade de liderança indispensável. Em negociações, entrevistas de emprego ou reuniões de feedback, prestar atenção ao subtexto ajuda a fechar melhores acordos, identificar insatisfações ocultas antes que virem crises e projetar autoridade e empatia através da sua própria postura.</p>
-        </div>
-
+        <div id="statusMessage" class="mt-4 text-sm text-slate-400"></div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 Guia de Linguagem Corporal & Comportamento Humano. Desenvolvido para fins educacionais.</p>
-    </footer>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.loginGoogle = async function() {
+            const status = document.getElementById("statusMessage");
+            try {
+                status.innerText = "Conectando...";
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                // Redireciona para o painel ou página de liberação
+                localStorage.setItem("vortex_user", JSON.stringify({ name: user.displayName, email: user.email, uid: user.uid }));
+                window.location.href = "liberar.html";
+            } catch (error) {
+                console.error(error);
+                status.innerText = "Erro ao autenticar. Tente novamente.";
+                status.classList.add("text-red-400");
+            }
+        }
+    </script>
 </body>
 </html>
