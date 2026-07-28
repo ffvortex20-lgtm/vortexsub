@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Hub - Painel Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+    <div class="max-w-4xl mx-auto p-6">
+        <header class="flex justify-between items-center mb-8 border-b border-slate-800 pb-4">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-indigo-500"></i> Painel Admin - Vortex
+            </h1>
+            <a href="liberar.html" class="text-sm bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition">Ver Páginas</a>
+        </header>
+
+        <!-- Formulário de Criação/Edição -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl mb-8">
+            <h2 id="formTitle" class="text-lg font-semibold mb-4 text-indigo-400">Criar Nova Página Personalizada</h2>
+            <input type="hidden" id="editKey">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1">Identificador da URL (slug)</label>
+                    <input type="text" id="slug" placeholder="ex: meu-canal" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1">Título da Página</label>
+                    <input type="text" id="pageTitle" placeholder="ex: Comunidade Oficial" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-youtube text-red-500"></i> Link do Canal</label>
+                    <input type="url" id="linkYoutube" placeholder="https://youtube.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-discord text-indigo-400"></i> Link do Discord</label>
+                    <input type="url" id="linkDiscord" placeholder="https://discord.gg/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-tiktok text-pink-500"></i> Link do TikTok</label>
+                    <input type="url" id="linkTiktok" placeholder="https://tiktok.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-whatsapp text-emerald-500"></i> Link do WhatsApp</label>
+                    <input type="url" id="linkWhatsapp" placeholder="https://whatsapp.com/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase text-slate-400 mb-1"><i class="fa-brands fa-telegram text-sky-400"></i> Link do Telegram</label>
+                    <input type="url" id="linkTelegram" placeholder="https://t.me/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="salvarPagina()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl transition shadow-lg">Salvar / Gerar Link</button>
+                <button onclick="limparForm()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl transition">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- Lista de Páginas -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
+            <h2 class="text-lg font-semibold mb-4 text-slate-200">Páginas Gerenciadas</h2>
+            <div id="listaPaginas" class="space-y-3">
+                <!-- Carregado via script -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.salvarPagina = async function() {
+            const slug = document.getElementById("slug").value.trim().toLowerCase().replace(/\s+/g, '-');
+            const title = document.getElementById("pageTitle").value;
+            const youtube = document.getElementById("linkYoutube").value;
+            const discord = document.getElementById("linkDiscord").value;
+            const tiktok = document.getElementById("linkTiktok").value;
+            const whatsapp = document.getElementById("linkWhatsapp").value;
+            const telegram = document.getElementById("linkTelegram").value;
+
+            if(!slug || !title) {
+                alert("Preencha o identificador (slug) e o título!");
+                return;
+            }
+
+            try {
+                await set(ref(db, 'paginas/' + slug), {
+                    slug, title, youtube, discord, tiktok, whatsapp, telegram
+                });
+                alert("Página salva com sucesso!");
+                limparForm();
+                carregarPaginas();
+            } catch (error) {
+                console.error(error);
+                alert("Erro ao salvar.");
+            }
+        }
+
+        window.carregarPaginas = async function() {
+            const container = document.getElementById("listaPaginas");
+            container.innerHTML = "<p class='text-slate-500 text-sm'>Carregando...</p>";
+            
+            const dbRef = ref(db);
+            try {
+                const snapshot = await get(child(dbRef, 'paginas'));
+                if (snapshot.exists()) {
+                    container.innerHTML = "";
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        container.innerHTML += `
+                            <div class="flex items-center justify-between bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                <div>
+                                    <h3 class="font-bold text-slate-100">${data.title}</h3>
+                                    <a href="liberar.html?p=${data.slug}" target="_blank" class="text-indigo-400 text-sm hover:underline">liberar.html?p=${data.slug}</a>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick='editarPagina(${JSON.stringify(data)})' class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-sm transition"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick='deletarPagina("${data.slug}")' class="bg-red-950/50 hover:bg-red-900 text-red-400 px-3 py-1.5 rounded-lg text-sm transition"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = "<p class='text-slate-500 text-sm'>Nenhuma página cadastrada.</p>";
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        window.editarPagina = function(data) {
+            document.getElementById("slug").value = data.slug;
+            document.getElementById("slug").disabled = true;
+            document.getElementById("pageTitle").value = data.title;
+            document.getElementById("linkYoutube").value = data.youtube || "";
+            document.getElementById("linkDiscord").value = data.discord || "";
+            document.getElementById("linkTiktok").value = data.tiktok || "";
+            document.getElementById("linkWhatsapp").value = data.whatsapp || "";
+            document.getElementById("linkTelegram").value = data.telegram || "";
+            document.getElementById("formTitle").innerText = "Editando Página: " + data.slug;
+        }
+
+        window.limparForm = function() {
+            document.getElementById("slug").value = "";
+            document.getElementById("slug").disabled = false;
+            document.getElementById("pageTitle").value = "";
+            document.getElementById("linkYoutube").value = "";
+            document.getElementById("linkDiscord").value = "";
+            document.getElementById("linkTiktok").value = "";
+            document.getElementById("linkWhatsapp").value = "";
+            document.getElementById("linkTelegram").value = "";
+            document.getElementById("formTitle").innerText = "Criar Nova Página Personalizada";
+        }
+
+        window.deletarPagina = async function(slug) {
+            if(confirm("Deseja realmente apagar esta página?")) {
+                await remove(ref(db, 'paginas/' + slug));
+                carregarPaginas();
+            }
+        }
+
+        carregarPaginas();
+    </script>
+</body>
+</html>
