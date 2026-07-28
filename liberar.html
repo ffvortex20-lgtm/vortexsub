@@ -10,76 +10,83 @@
         body {
             background-color: #030712;
             background-image: 
-                linear-gradient(to right, rgba(30, 41, 59, 0.2) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 41, 59, 0.2) 1px, transparent 1px);
+                linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
             background-size: 40px 40px;
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 35px rgba(99, 102, 241, 0.25); border-color: rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 50px rgba(99, 102, 241, 0.45); border-color: rgba(99, 102, 241, 0.8); }
+        }
+        .vortex-card {
+            animation: glowPulse 4s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 font-sans">
+<body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 font-sans selection:bg-indigo-500 selection:text-white">
 
     <!-- Conteúdo Central -->
     <div class="flex-grow flex items-center justify-center w-full py-6">
-        <div class="bg-slate-900/90 border-2 border-indigo-500/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(99,102,241,0.15)] w-full max-w-sm text-center backdrop-blur-md relative">
+        <div class="vortex-card bg-slate-900/90 border-2 border-indigo-500/40 p-6 rounded-3xl w-full max-w-sm text-center backdrop-blur-xl relative transition-all duration-300">
             
             <!-- Avatar / Topo -->
             <div class="mb-4">
-                <div id="avatarContainer" class="w-20 h-20 bg-slate-950 border-2 border-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg overflow-hidden relative">
-                    <i class="fa-solid fa-user-secret text-indigo-400 text-3xl"></i>
+                <div id="avatarContainer" class="w-20 h-20 bg-slate-950 border-2 border-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_rgba(99,102,241,0.4)] overflow-hidden relative">
+                    <i class="fa-solid fa-user-secret text-indigo-400 text-3xl animate-pulse"></i>
                 </div>
                 <h1 id="pageTitle" class="text-xl font-black tracking-wider flex items-center justify-center gap-2">
                     VORTEX HUB <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>
                 </h1>
-                <div class="inline-flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full mt-2 uppercase tracking-wider">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Servidor Online
+                <div class="inline-flex items-center gap-1.5 bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold px-3 py-1 rounded-full mt-2 uppercase tracking-wider shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Servidor Online
                 </div>
             </div>
 
             <!-- Botão Principal / Alerta -->
             <div class="space-y-3 mb-4">
-                <div class="border border-amber-500/30 bg-amber-950/20 rounded-2xl p-3 text-left text-xs text-amber-300/90 space-y-1">
+                <div class="border border-amber-500/30 bg-amber-950/20 rounded-2xl p-3 text-left text-xs text-amber-300/90 space-y-1 shadow-inner">
                     <p class="font-bold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> ALERTA DE AUTENTICAÇÃO</p>
                     <p id="alertText">Você deve passar pelo encurtador para liberar sua chave!</p>
                 </div>
 
                 <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2">
-                        <span class="text-slate-500 block uppercase">Limpeza</span>
-                        <span class="font-bold text-slate-300">100%</span>
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-2">
+                        <span class="text-slate-500 block uppercase font-semibold">Limpeza</span>
+                        <span class="font-black text-slate-300">100%</span>
                     </div>
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2">
-                        <span class="text-slate-500 block uppercase">Sistema</span>
-                        <span class="font-bold text-emerald-400">ONLINE</span>
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-2">
+                        <span class="text-slate-500 block uppercase font-semibold">Sistema</span>
+                        <span class="font-black text-emerald-400">ONLINE</span>
                     </div>
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-2">
-                        <span class="text-slate-500 block uppercase">Painel</span>
-                        <span class="font-bold text-indigo-400">VORTEX PRO</span>
+                    <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl p-2">
+                        <span class="text-slate-500 block uppercase font-semibold">Painel</span>
+                        <span class="font-black text-indigo-400">VORTEX PRO</span>
                     </div>
                 </div>
 
-                <button onclick="gerarKey()" id="btnGerar" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition duration-200 flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer">
+                <button onclick="gerarKey()" id="btnGerar" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-[0_0_25px_rgba(16,185,129,0.4)] transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer">
                     <i class="fa-solid fa-key"></i> Gerar Key
                 </button>
 
-                <a href="#" id="btnDownload" target="_blank" class="hidden w-full bg-slate-950 border border-indigo-500/50 hover:border-indigo-400 text-slate-200 font-bold py-3 px-4 rounded-2xl transition duration-200 flex items-center justify-center gap-2">
+                <a href="#" id="btnDownload" target="_blank" class="hidden w-full bg-slate-950 border border-indigo-500/50 hover:border-indigo-400 text-slate-200 font-bold py-3 px-4 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
                     <i class="fa-solid fa-download text-indigo-400"></i> [ DOWNLOAD ]
                 </a>
 
-                <a href="#" id="btnTutorial" target="_blank" class="hidden w-full bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 font-bold py-2.5 px-4 rounded-2xl transition duration-200 flex items-center justify-center gap-2 text-xs">
+                <a href="#" id="btnTutorial" target="_blank" class="hidden w-full bg-slate-950 border border-slate-800 hover:border-slate-700 text-slate-400 font-bold py-2.5 px-4 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 text-xs">
                     <i class="fa-solid fa-circle-play"></i> [ TUTORIAL ]
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Rodapé de Redes com Ícones Personalizados (Estilo Vídeo) -->
+    <!-- Rodapé de Redes com Ícones Personalizados -->
     <footer class="w-full max-w-md py-4">
-        <div id="footerRedes" class="flex items-center justify-around bg-slate-900/90 border border-slate-800 p-3 rounded-2xl backdrop-blur-md shadow-lg overflow-x-auto gap-2">
-            <!-- Inserido dinamicamente -->
+        <div id="footerRedes" class="flex items-center justify-around bg-slate-900/90 border border-slate-800/80 p-3 rounded-2xl backdrop-blur-md shadow-xl overflow-x-auto gap-2">
+            <span class="text-slate-500 text-[10px]">Carregando redes...</span>
         </div>
     </footer>
 
-    <!-- Firebase SDK e Script -->
+    <!-- Firebase SDK e Script de Roteamento -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -97,23 +104,32 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        let slug = urlParams.get('p');
-        const tokenLiberado = urlParams.get('token') === 'true';
+        // Captura correta do slug independente se usa parâmetros (?p=nome) ou caminho limpo (/nome)
+        function obterSlugAtual() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('p')) return params.get('p');
+            
+            const pathSegments = window.location.pathname.split('/').filter(Boolean);
+            if (pathSegments.length > 0) {
+                const ultimo = pathSegments[pathSegments.length - 1];
+                if (ultimo !== 'liberar.html' && ultimo !== 'index.html' && ultimo !== 'admin.html') {
+                    return ultimo;
+                }
+            }
+            return null;
+        }
 
-        async function carregarDados() {
-            const dbRef = ref(db);
+        const slug = obterSlugAtual();
+        const tokenLiberado = new URLSearchParams(window.location.search).get('token') === 'true';
+
+        async function carregarDadosPagina() {
             if (!slug) {
-                try {
-                    const snapshotGeral = await get(child(dbRef, 'paginas'));
-                    if (snapshotGeral.exists()) {
-                        slug = Object.keys(snapshotGeral.val())[0];
-                    }
-                } catch (e) { console.error(e); }
+                document.getElementById("pageTitle").innerText = "Página não encontrada";
+                document.getElementById("alertText").innerText = "Nenhum identificador de página informado na URL.";
+                return;
             }
 
-            if (!slug) return;
-
+            const dbRef = ref(db);
             try {
                 const snapshot = await get(child(dbRef, 'paginas/' + slug));
                 if (snapshot.exists()) {
@@ -121,6 +137,9 @@
                     
                     if(data.title) {
                         document.getElementById("pageTitle").innerHTML = `${data.title} <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>`;
+                        document.title = data.title + " - Vortex Hub";
+                    } else {
+                        document.getElementById("pageTitle").innerHTML = `${data.slug} <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>`;
                     }
 
                     if(data.avatar) {
@@ -143,15 +162,15 @@
                         }
                     }
 
-                    // Renderizar links dinâmicos do rodapé
+                    // Renderizar links e ícones personalizados no rodapé
                     const footerRedes = document.getElementById("footerRedes");
                     footerRedes.innerHTML = "";
 
                     if(data.links && Array.isArray(data.links) && data.links.length > 0) {
                         data.links.forEach(l => {
                             footerRedes.innerHTML += `
-                                <a href="${l.url}" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-indigo-400 transition text-[10px] gap-1 shrink-0 px-2">
-                                    <div class="w-7 h-7 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden shadow">
+                                <a href="${l.url}" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-indigo-400 transition-all hover:scale-110 text-[10px] gap-1 shrink-0 px-2 py-1">
+                                    <div class="w-7 h-7 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden shadow-md">
                                         ${l.icone ? `<img src="${l.icone}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-link text-xs"></i>`}
                                     </div>
                                     <span class="font-bold tracking-tight">${l.nome}</span>
@@ -159,18 +178,23 @@
                             `;
                         });
                     } else {
-                        footerRedes.innerHTML = "<span class='text-slate-500 text-[10px]'>Nenhum link adicionado.</span>";
+                        footerRedes.innerHTML = "<span class='text-slate-500 text-[10px]'>Nenhum link configurado para esta página.</span>";
                     }
+                } else {
+                    document.getElementById("pageTitle").innerText = "Página Inexistente";
+                    document.getElementById("alertText").innerText = "Esta página não foi encontrada no banco de dados.";
                 }
-            } catch (err) { console.error(err); }
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         window.gerarKey = function() {
-            const linkAtual = window.location.href.split('?')[0];
-            window.location.href = linkAtual + "?p=" + (slug || '') + "&token=true";
+            const urlBase = window.location.origin + window.location.pathname;
+            window.location.href = `${urlBase}?p=${slug}&token=true`;
         }
 
-        carregarDados();
+        carregarDadosPagina();
     </script>
 </body>
 </html>
