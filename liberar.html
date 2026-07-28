@@ -41,18 +41,40 @@
         const db = getDatabase(app);
 
         const urlParams = new URLSearchParams(window.location.search);
-        const slug = urlParams.get('p') || 'default';
+        let slug = urlParams.get('p');
 
         async function carregarDadosPagina() {
+            const container = document.getElementById("linksContainer");
             const dbRef = ref(db);
+
+            // Se nenhum slug foi passado na URL, busca automaticamente a primeira página cadastrada
+            if (!slug) {
+                try {
+                    const snapshotGeral = await get(child(dbRef, 'paginas'));
+                    if (snapshotGeral.exists()) {
+                        const primeiroSlug = Object.keys(snapshotGeral.val())[0];
+                        if (primeiroSlug) {
+                            slug = primeiroSlug;
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (!slug) {
+                document.getElementById("pageTitle").innerText = "Nenhuma página configurada";
+                container.innerHTML = "<p class='text-slate-500 text-sm'>Acesse pelo link correto gerado no painel admin (ex: liberar.html?p=seu-slug).</p>";
+                return;
+            }
+
             try {
                 const snapshot = await get(child(dbRef, 'paginas/' + slug));
-                const container = document.getElementById("linksContainer");
                 container.innerHTML = "";
 
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    document.getElementById("pageTitle").innerText = data.title;
+                    document.getElementById("pageTitle").innerText = data.title || "Links de Acesso";
 
                     const redes = [
                         { name: 'Canal', url: data.youtube, icon: 'fa-youtube', color: 'hover:border-red-500 text-red-500' },
@@ -79,14 +101,16 @@
                     });
 
                     if (count === 0) {
-                        container.innerHTML = "<p class='text-slate-500 text-sm'>Nenhum link cadastrado nesta página.</p>";
+                        container.innerHTML = "<p class='text-slate-500 text-sm'>Nenhum link foi preenchido nesta página.</p>";
                     }
                 } else {
                     document.getElementById("pageTitle").innerText = "Página não encontrada";
-                    container.innerHTML = "<p class='text-slate-500 text-sm'>Verifique o link acessado ou crie um no painel admin.</p>";
+                    container.innerHTML = "<p class='text-slate-500 text-sm'>O identificador informado não existe no banco de dados.</p>";
                 }
             } catch (error) {
                 console.error(error);
+                document.getElementById("pageTitle").innerText = "Erro de Conexão";
+                container.innerHTML = "<p class='text-slate-500 text-sm'>Não foi possível carregar os dados do Firebase.</p>";
             }
         }
 
