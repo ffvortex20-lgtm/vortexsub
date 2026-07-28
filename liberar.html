@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Hub - Acesso Liberado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 font-sans">
+    <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl w-full max-w-md text-center">
+        <div class="mb-6">
+            <div class="w-16 h-16 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-unlock-keyhole text-indigo-500 text-2xl"></i>
+            </div>
+            <h1 id="pageTitle" class="text-2xl font-bold tracking-wide">Carregando Links...</h1>
+            <p class="text-slate-400 text-sm mt-1">Selecione uma das opções abaixo</p>
+        </div>
+
+        <div id="linksContainer" class="space-y-3">
+            <!-- Dinâmico -->
+        </div>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyACGn5I--vTEmJ6eijN2lytZiMgo2ElnW4",
+            authDomain: "vortexdev2.firebaseapp.com",
+            databaseURL: "https://vortexdev2-default-rtdb.firebaseio.com",
+            projectId: "vortexdev2",
+            storageBucket: "vortexdev2.firebasestorage.app",
+            messagingSenderId: "755839099190",
+            appId: "1:755839099190:android:f97e6d0dc860177306d397"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const slug = urlParams.get('p') || 'default';
+
+        async function carregarDadosPagina() {
+            const dbRef = ref(db);
+            try {
+                const snapshot = await get(child(dbRef, 'paginas/' + slug));
+                const container = document.getElementById("linksContainer");
+                container.innerHTML = "";
+
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById("pageTitle").innerText = data.title;
+
+                    const redes = [
+                        { name: 'Canal', url: data.youtube, icon: 'fa-youtube', color: 'hover:border-red-500 text-red-500' },
+                        { name: 'Discord', url: data.discord, icon: 'fa-discord', color: 'hover:border-indigo-500 text-indigo-400' },
+                        { name: 'TikTok', url: data.tiktok, icon: 'fa-tiktok', color: 'hover:border-pink-500 text-pink-500' },
+                        { name: 'WhatsApp', url: data.whatsapp, icon: 'fa-whatsapp', color: 'hover:border-emerald-500 text-emerald-500' },
+                        { name: 'Telegram', url: data.telegram, icon: 'fa-telegram', color: 'hover:border-sky-500 text-sky-400' }
+                    ];
+
+                    let count = 0;
+                    redes.forEach(rede => {
+                        if (rede.url) {
+                            count++;
+                            container.innerHTML += `
+                                <a href="${rede.url}" target="_blank" class="flex items-center justify-between bg-slate-950 border border-slate-800 ${rede.color} p-4 rounded-2xl transition duration-200 group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fa-brands ${rede.icon} text-xl"></i>
+                                        <span class="font-semibold text-slate-200">Acessar ${rede.name}</span>
+                                    </div>
+                                    <i class="fa-solid fa-arrow-right text-slate-600 group-hover:text-slate-200 transition"></i>
+                                </a>
+                            `;
+                        }
+                    });
+
+                    if (count === 0) {
+                        container.innerHTML = "<p class='text-slate-500 text-sm'>Nenhum link cadastrado nesta página.</p>";
+                    }
+                } else {
+                    document.getElementById("pageTitle").innerText = "Página não encontrada";
+                    container.innerHTML = "<p class='text-slate-500 text-sm'>Verifique o link acessado ou crie um no painel admin.</p>";
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        carregarDadosPagina();
+    </script>
+</body>
+</html>
