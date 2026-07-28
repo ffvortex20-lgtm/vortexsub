@@ -19,12 +19,12 @@
 <body class="text-slate-100 min-h-screen flex flex-col items-center justify-between p-4 font-sans">
 
     <!-- Conteúdo Central -->
-    <div class="flex-grow flex items-center justify-center w-full">
+    <div class="flex-grow flex items-center justify-center w-full py-6">
         <div class="bg-slate-900/90 border-2 border-indigo-500/40 p-6 rounded-3xl shadow-[0_0_30px_rgba(99,102,241,0.15)] w-full max-w-sm text-center backdrop-blur-md relative">
             
             <!-- Avatar / Topo -->
             <div class="mb-4">
-                <div class="w-20 h-20 bg-slate-950 border-2 border-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg overflow-hidden relative">
+                <div id="avatarContainer" class="w-20 h-20 bg-slate-950 border-2 border-indigo-500 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg overflow-hidden relative">
                     <i class="fa-solid fa-user-secret text-indigo-400 text-3xl"></i>
                 </div>
                 <h1 id="pageTitle" class="text-xl font-black tracking-wider flex items-center justify-center gap-2">
@@ -36,7 +36,7 @@
             </div>
 
             <!-- Botão Principal / Alerta -->
-            <div id="actionContainer" class="space-y-3 mb-6">
+            <div class="space-y-3 mb-4">
                 <div class="border border-amber-500/30 bg-amber-950/20 rounded-2xl p-3 text-left text-xs text-amber-300/90 space-y-1">
                     <p class="font-bold flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> ALERTA DE AUTENTICAÇÃO</p>
                     <p id="alertText">Você deve passar pelo encurtador para liberar sua chave!</p>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
 
-                <button onclick="gerarKey()" id="btnGerar" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition duration-200 flex items-center justify-center gap-2 uppercase tracking-wide">
+                <button onclick="gerarKey()" id="btnGerar" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-slate-950 font-black py-3.5 px-4 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] transition duration-200 flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer">
                     <i class="fa-solid fa-key"></i> Gerar Key
                 </button>
 
@@ -69,22 +69,17 @@
                     <i class="fa-solid fa-circle-play"></i> [ TUTORIAL ]
                 </a>
             </div>
-
-            <!-- Links Dinâmicos das Redes Sociais -->
-            <div id="linksContainer" class="space-y-2.5 pt-4 border-t border-slate-800/80">
-                <!-- Inserido dinamicamente via JS -->
-            </div>
         </div>
     </div>
 
-    <!-- Rodapé de Redes Estilo Ícones Flutuantes -->
-    <footer class="w-full max-w-sm py-4">
-        <div id="footerRedes" class="flex items-center justify-around bg-slate-900/90 border border-slate-800 p-3 rounded-2xl backdrop-blur-md shadow-lg">
-            <!-- Redes extras -->
+    <!-- Rodapé de Redes com Ícones Personalizados (Estilo Vídeo) -->
+    <footer class="w-full max-w-md py-4">
+        <div id="footerRedes" class="flex items-center justify-around bg-slate-900/90 border border-slate-800 p-3 rounded-2xl backdrop-blur-md shadow-lg overflow-x-auto gap-2">
+            <!-- Inserido dinamicamente -->
         </div>
     </footer>
 
-    <!-- Firebase SDK e Script de Lógica -->
+    <!-- Firebase SDK e Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -123,9 +118,15 @@
                 const snapshot = await get(child(dbRef, 'paginas/' + slug));
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    document.getElementById("pageTitle").innerHTML = `${data.title || "VORTEX HUB"} <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>`;
+                    
+                    if(data.title) {
+                        document.getElementById("pageTitle").innerHTML = `${data.title} <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>`;
+                    }
 
-                    // Se passou pelo encurtador (token=true), revela download e tutorial
+                    if(data.avatar) {
+                        document.getElementById("avatarContainer").innerHTML = `<img src="${data.avatar}" class="w-full h-full object-cover">`;
+                    }
+
                     if (tokenLiberado) {
                         document.getElementById("alertText").innerText = "Chave gerada com sucesso! Aproveite.";
                         document.getElementById("btnGerar").classList.add("hidden");
@@ -142,42 +143,31 @@
                         }
                     }
 
-                    // Renderiza links de rodapé / redes
+                    // Renderizar links dinâmicos do rodapé
                     const footerRedes = document.getElementById("footerRedes");
                     footerRedes.innerHTML = "";
 
-                    const redes = [
-                        { name: 'WhatsApp', url: data.whatsapp, icon: 'fa-whatsapp', label: 'ZAP GRUPO' },
-                        { name: 'Discord', url: data.discord, icon: 'fa-discord', label: 'DISCORD' },
-                        { name: 'Telegram', url: data.telegram, icon: 'fa-telegram', label: 'TELEGRAM' },
-                        { name: 'TikTok', url: data.tiktok, icon: 'fa-tiktok', label: 'TIKTOK' },
-                        { name: 'YouTube', url: data.youtube, icon: 'fa-youtube', label: 'CANAL' }
-                    ];
-
-                    redes.forEach(r => {
-                        if (r.url) {
+                    if(data.links && Array.isArray(data.links) && data.links.length > 0) {
+                        data.links.forEach(l => {
                             footerRedes.innerHTML += `
-                                <a href="${r.url}" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-indigo-400 transition text-[10px] gap-1">
-                                    <i class="fa-brands ${r.icon} text-lg"></i>
-                                    <span>${r.label}</span>
+                                <a href="${l.url}" target="_blank" class="flex flex-col items-center text-slate-400 hover:text-indigo-400 transition text-[10px] gap-1 shrink-0 px-2">
+                                    <div class="w-7 h-7 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center overflow-hidden shadow">
+                                        ${l.icone ? `<img src="${l.icone}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-link text-xs"></i>`}
+                                    </div>
+                                    <span class="font-bold tracking-tight">${l.nome}</span>
                                 </a>
                             `;
-                        }
-                    });
+                        });
+                    } else {
+                        footerRedes.innerHTML = "<span class='text-slate-500 text-[10px]'>Nenhum link adicionado.</span>";
+                    }
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         window.gerarKey = function() {
-            // Redireciona para o encurtador simulado/real e retorna com ?token=true
             const linkAtual = window.location.href.split('?')[0];
-            const destinoEncurtador = linkAtual + "?p=" + (slug || '') + "&token=true";
-            
-            // Simula o fluxo idêntico ao site referência
-            alert("Redirecionando para o encurtador...");
-            window.location.href = destinoEncurtador;
+            window.location.href = linkAtual + "?p=" + (slug || '') + "&token=true";
         }
 
         carregarDados();
