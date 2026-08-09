@@ -3,30 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VORTEX HUB • Login</title>
+<title>VORTEX HUB • Gerar Key</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--c:#00eaff;--p:#863cff;--g:#00ff91;--bg:#02050b}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden;background:radial-gradient(circle at 50% -15%,rgba(0,234,255,.18),transparent 35%),radial-gradient(circle at 100% 100%,rgba(134,60,255,.16),transparent 32%),var(--bg);color:#fff;font-family:Orbitron,sans-serif}
-body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:40px 40px;animation:grid 10s linear infinite;pointer-events:none}
-@keyframes grid{to{background-position:0 40px,40px 0}}
-.bg{position:fixed;border-radius:50%;filter:blur(95px);pointer-events:none;opacity:.14}.b1{width:380px;height:380px;background:var(--c);top:-230px;left:-140px}.b2{width:400px;height:400px;background:var(--p);right:-180px;bottom:-250px}
+*{box-sizing:border-box;margin:0;padding:0}:root{--c:#00eaff;--p:#863cff;--g:#00ff91}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden;background:radial-gradient(circle at 50% -15%,rgba(0,234,255,.18),transparent 35%),radial-gradient(circle at 100% 100%,rgba(134,60,255,.16),transparent 32%),#02050b;color:#fff;font-family:Orbitron,sans-serif}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:40px 40px;animation:grid 10s linear infinite;pointer-events:none}@keyframes grid{to{background-position:0 40px,40px 0}}
+.bg{position:fixed;border-radius:50%;filter:blur(100px);opacity:.14;pointer-events:none}.b1{width:400px;height:400px;background:var(--c);top:-250px;left:-150px}.b2{width:380px;height:380px;background:var(--p);right:-160px;bottom:-230px}
 .particles{position:fixed;inset:0;pointer-events:none}.particle{position:absolute;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);animation:up linear infinite}@keyframes up{from{transform:translateY(110vh);opacity:0}15%{opacity:.8}85%{opacity:.8}to{transform:translateY(-10vh);opacity:0}}
-.card{width:min(470px,100%);padding:1px;border-radius:27px;background:linear-gradient(135deg,rgba(0,234,255,.85),rgba(134,60,255,.7),transparent 70%);box-shadow:0 25px 90px #000,0 0 50px rgba(0,234,255,.08);position:relative;z-index:2}
-.inner{position:relative;overflow:hidden;border-radius:26px;padding:30px 26px 23px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99))}
-.inner:after{content:"";position:absolute;inset:-80%;background:conic-gradient(from 90deg,transparent 0 72%,rgba(0,234,255,.055),transparent 78%);animation:spin 12s linear infinite;pointer-events:none}@keyframes spin{to{transform:rotate(360deg)}}
-.content{position:relative;z-index:2}.line{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 16px var(--c)}
+.card{position:relative;z-index:2;width:min(470px,100%);padding:1px;border-radius:27px;background:linear-gradient(135deg,rgba(0,234,255,.85),rgba(134,60,255,.7),transparent 70%);box-shadow:0 25px 90px #000,0 0 50px rgba(0,234,255,.08)}
+.inner{position:relative;overflow:hidden;border-radius:26px;padding:32px 25px 22px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99))}
+.inner:after{content:"";position:absolute;inset:-80%;background:conic-gradient(from 90deg,transparent 0 72%,rgba(0,234,255,.055),transparent 78%);animation:spin 12s linear infinite;pointer-events:none}@keyframes spin{to{transform:rotate(360deg)}}.content{position:relative;z-index:2}
+.line{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 16px var(--c)}
 .avatar{width:86px;height:86px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));box-shadow:0 0 30px rgba(0,234,255,.2);position:relative}.avatar:before{content:"";position:absolute;inset:-7px;border:1px solid rgba(0,234,255,.3);border-radius:50%;animation:spin 7s linear infinite}.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
 h1{text-align:center;margin-top:15px;font-size:27px;letter-spacing:4px;text-shadow:0 0 20px rgba(0,234,255,.4)}h1 span{color:var(--c)}.sub{text-align:center;margin-top:7px;color:#63758e;font-size:8px;letter-spacing:2px}
-.online{width:max-content;margin:15px auto 22px;display:flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid rgba(0,255,145,.25);border-radius:99px;background:rgba(0,255,145,.035);color:#4affa5;font-size:7px;letter-spacing:1.2px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:pulse 1.3s infinite}@keyframes pulse{50%{transform:scale(1.5);opacity:.5}}
-.label{display:block;margin:0 0 7px;color:#5d7089;font-size:7px;letter-spacing:1.6px}.field{position:relative;margin-bottom:11px}.field input{width:100%;height:52px;padding:0 15px;border:1px solid rgba(255,255,255,.08);border-radius:11px;outline:none;background:rgba(255,255,255,.025);color:#fff;font:600 10px Orbitron,sans-serif;transition:.25s}.field input:focus{border-color:rgba(0,234,255,.55);box-shadow:0 0 20px rgba(0,234,255,.08),inset 0 0 15px rgba(0,234,255,.025)}.field input::placeholder{color:#40516a}
-.btn{width:100%;height:56px;margin-top:4px;border:1px solid var(--c);border-radius:12px;background:linear-gradient(90deg,rgba(0,234,255,.1),rgba(134,60,255,.1));color:#fff;font:800 10px Orbitron;letter-spacing:1.3px;cursor:pointer;position:relative;overflow:hidden;transition:.25s}.btn:before{content:"";position:absolute;top:0;left:-100%;width:55%;height:100%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:.7s}.btn:hover:before{left:140%}.btn:hover{transform:translateY(-2px);border-color:#fff;box-shadow:0 0 30px rgba(0,234,255,.22)}
-.msg{min-height:18px;text-align:center;margin-top:10px;color:#ff6078;font-size:7px;letter-spacing:.6px}.msg.ok{color:#48ffa4}.footer{display:flex;justify-content:space-between;margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}
-.links{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:45px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);color:#9bacbf;text-decoration:none;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;letter-spacing:.7px;transition:.2s}.social:hover{color:#fff;border-color:rgba(0,234,255,.4);transform:translateY(-2px)}
-.overlay{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,3,8,.76);backdrop-filter:blur(12px)}.overlay.show{display:flex}.modal{width:min(420px,100%);padding:22px;border-radius:20px;border:1px solid rgba(0,234,255,.4);background:linear-gradient(145deg,rgba(7,19,35,.98),rgba(2,7,15,.99));box-shadow:0 0 55px rgba(0,234,255,.15);position:relative}.modal:before{content:"";position:absolute;left:8%;right:8%;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 15px var(--c)}.mt{font-size:11px;font-weight:800;letter-spacing:1.4px}.ms{margin-top:6px;color:#61738d;font-size:7px;letter-spacing:1px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:17px}.metric{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.metric label{display:block;color:#52657e;font-size:6px;letter-spacing:1px}.metric b{display:block;margin-top:6px;color:var(--c);font-size:10px}.metric.online b{color:var(--g)}.progress{height:3px;margin-top:17px;background:#0b1522;border-radius:9px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--c),var(--p));box-shadow:0 0 12px var(--c);animation:load 2.2s linear forwards}@keyframes load{to{width:100%}}.redirect{text-align:center;margin-top:9px;color:#50627a;font-size:6px;letter-spacing:1px}
+.online{width:max-content;margin:15px auto 23px;display:flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid rgba(0,255,145,.25);border-radius:99px;background:rgba(0,255,145,.035);color:#4affa5;font-size:7px;letter-spacing:1.2px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:pulse 1.3s infinite}@keyframes pulse{50%{transform:scale(1.5);opacity:.5}}
+.info{padding:15px;border:1px solid rgba(0,234,255,.12);border-radius:12px;background:rgba(0,234,255,.025);text-align:center;color:#71849d;font-size:7px;line-height:1.8;letter-spacing:.7px;margin-bottom:12px}
+.btn{width:100%;height:58px;border:1px solid var(--c);border-radius:12px;background:linear-gradient(90deg,rgba(0,234,255,.11),rgba(134,60,255,.12));color:white;font:800 10px Orbitron;letter-spacing:1.4px;cursor:pointer;position:relative;overflow:hidden;transition:.25s}.btn:before{content:"";position:absolute;top:0;left:-100%;width:55%;height:100%;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transition:.7s}.btn:hover:before{left:140%}.btn:hover{transform:translateY(-2px);border-color:#fff;box-shadow:0 0 30px rgba(0,234,255,.22)}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}.social{height:45px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);color:#9bacbf;text-decoration:none;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;letter-spacing:.7px;transition:.2s}.social:hover{color:#fff;border-color:rgba(0,234,255,.4);transform:translateY(-2px)}
+.footer{display:flex;justify-content:space-between;margin-top:16px;padding-top:13px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}
+.overlay{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,3,8,.76);backdrop-filter:blur(12px)}.overlay.show{display:flex}.modal{width:min(420px,100%);padding:22px;border-radius:20px;border:1px solid rgba(0,234,255,.4);background:linear-gradient(145deg,rgba(7,19,35,.98),rgba(2,7,15,.99));box-shadow:0 0 55px rgba(0,234,255,.15);position:relative}.modal:before{content:"";position:absolute;left:8%;right:8%;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 15px var(--c)}.mt{font-size:11px;font-weight:800;letter-spacing:1.4px}.ms{margin-top:6px;color:#61738d;font-size:7px;letter-spacing:1px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:17px}.metric{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.metric label{display:block;color:#52657e;font-size:6px;letter-spacing:1px}.metric b{display:block;margin-top:6px;color:var(--c);font-size:10px}.metric.green b{color:var(--g)}.progress{height:3px;margin-top:17px;background:#0b1522;border-radius:9px;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--c),var(--p));box-shadow:0 0 12px var(--c);animation:load 2.1s linear forwards}@keyframes load{to{width:100%}}.redirect{text-align:center;margin-top:9px;color:#50627a;font-size:6px;letter-spacing:1px}
 @media(max-width:450px){.inner{padding:27px 17px 20px}h1{font-size:23px}.links{grid-template-columns:1fr}}
 </style>
 </head>
@@ -34,18 +32,11 @@ h1{text-align:center;margin-top:15px;font-size:27px;letter-spacing:4px;text-shad
 <div class="bg b1"></div><div class="bg b2"></div><div class="particles" id="particles"></div>
 <main class="card"><div class="inner"><div class="line"></div><div class="content">
 <div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex"></div>
-<h1>VORTEX<span>HUB</span></h1><div class="sub">SECURE USER ACCESS SYSTEM</div>
-<div class="online"><span class="dot"></span>FIREBASE SYSTEM ONLINE</div>
-
-<form id="loginForm">
-<label class="label">USUÁRIO</label>
-<div class="field"><input id="usuario" autocomplete="username" placeholder="Digite seu usuário" required></div>
-<label class="label">SENHA</label>
-<div class="field"><input id="senha" type="password" autocomplete="current-password" placeholder="Digite sua senha" required></div>
-<button class="btn" id="loginBtn" type="submit">🔐 ENTRAR E ACESSAR KEY</button>
-<div class="msg" id="msg"></div>
-</form>
-
+<h1>VORTEX<span>HUB</span></h1>
+<div class="sub">SECURE KEY GENERATION SYSTEM</div>
+<div class="online"><span class="dot"></span>SYSTEM ONLINE</div>
+<div class="info">Gere sua key diretamente pelo Vortex Hub.<br>Não é necessário fazer login ou criar conta.</div>
+<button class="btn" id="getKey">⚡ PEGAR KEY</button>
 <div class="links">
 <a class="social" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank" rel="noopener">💬 WHATSAPP</a>
 <a class="social" href="https://t.me/vtxmdz" target="_blank" rel="noopener">✈ TELEGRAM</a>
@@ -54,72 +45,39 @@ h1{text-align:center;margin-top:15px;font-size:27px;letter-spacing:4px;text-shad
 </div></div></main>
 
 <div class="overlay" id="overlay"><div class="modal">
-<div class="mt">VALIDANDO ACESSO</div><div class="ms">PREPARANDO REDIRECIONAMENTO SEGURO</div>
+<div class="mt">ANALISANDO CONEXÃO</div><div class="ms">VERIFICANDO O SERVIÇO DE DESTINO</div>
 <div class="metrics">
-<div class="metric online"><label>STATUS</label><b id="siteStatus">TESTANDO</b></div>
+<div class="metric green"><label>STATUS</label><b id="siteStatus">TESTANDO</b></div>
 <div class="metric"><label>PAÍS</label><b id="country">--</b></div>
 <div class="metric"><label>LATÊNCIA</label><b id="latency">-- ms</b></div>
 <div class="metric"><label>RESPOSTA</label><b id="response">-- ms</b></div>
 </div>
-<div class="progress"><div class="bar"></div></div><div class="redirect">REDIRECIONANDO PARA KEY.HTML...</div>
+<div class="progress"><div class="bar"></div></div>
+<div class="redirect">ABRINDO KEY.HTML...</div>
 </div></div>
 
 <script>
-const DB_URL="https://sitevendas-26cf6-default-rtdb.firebaseio.com";
 const REDIRECT_URL="key.html";
+const particles=document.getElementById("particles");
+for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
 
-function makeParticles(){
- const box=document.getElementById("particles");
- for(let i=0;i<45;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";box.appendChild(p)}
-}
-makeParticles();
-
-async function getGeo(){
- try{const r=await fetch("https://ipapi.co/json/",{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}catch(e){return null}
-}
-
-async function login(usuario,senha){
- const msg=document.getElementById("msg"), btn=document.getElementById("loginBtn");
- msg.textContent=""; btn.disabled=true; btn.style.opacity=".55";
+async function geo(){try{const r=await fetch("https://ipapi.co/json/",{cache:"no-store"});if(!r.ok)throw 0;return await r.json()}catch(e){return null}}
+async function check(){
+ const overlay=document.getElementById("overlay"),start=performance.now(),btn=document.getElementById("getKey");
+ btn.disabled=true;btn.style.opacity=".55";overlay.classList.add("show");
  try{
-   const started=performance.now();
-   const geoPromise=getGeo();
-   const r=await fetch(DB_URL+"/Users.json",{cache:"no-store"});
-   if(!r.ok) throw new Error("Firebase indisponível");
-   const users=await r.json();
-   let found=null, childkey=null;
-   if(users){
-     for(const [key,u] of Object.entries(users)){
-       if(u && String(u.user??"")===usuario && String(u.pass??"")===senha){found=u;childkey=key;break}
-     }
-   }
-   if(!found){msg.textContent="USUÁRIO OU SENHA INVÁLIDOS";return}
-   if(String(found.status??"").toLowerCase()!=="on"){msg.textContent="CONTA SUSPENSA";return}
-   const validade=Number(found.val??0);
-   if(!Number.isFinite(validade) || validade<=Date.now()){msg.textContent="CONTA EXPIRADA";return}
-
-   sessionStorage.setItem("vortexSession",JSON.stringify({
-      user:usuario,childkey:childkey,loginAt:Date.now()
-   }));
-
-   const geo=await geoPromise;
-   const elapsed=Math.max(1,Math.round(performance.now()-started));
-   document.getElementById("siteStatus").textContent="ONLINE";
-   document.getElementById("latency").textContent=elapsed+" ms";
-   document.getElementById("response").textContent=elapsed+" ms";
-   document.getElementById("country").textContent=geo?.country_name||geo?.country_code||"N/D";
-   document.getElementById("overlay").classList.add("show");
-   setTimeout(()=>location.href=REDIRECT_URL,2300);
- }catch(e){
-   msg.textContent="ERRO AO CONECTAR AO FIREBASE";
- }finally{
-   btn.disabled=false;btn.style.opacity="1";
- }
+   const geoPromise=geo();
+   let online=false;
+   try{const r=await fetch(REDIRECT_URL+"?ping="+Date.now(),{cache:"no-store"});online=r.ok}catch(e){}
+   const ms=Math.max(1,Math.round(performance.now()-start)),g=await geoPromise;
+   document.getElementById("siteStatus").textContent=online?"ONLINE":"READY";
+   document.getElementById("latency").textContent=ms+" ms";
+   document.getElementById("response").textContent=ms+" ms";
+   document.getElementById("country").textContent=g?.country_name||g?.country_code||"N/D";
+   setTimeout(()=>location.href=REDIRECT_URL,2200);
+ }catch(e){setTimeout(()=>location.href=REDIRECT_URL,1600)}
 }
-document.getElementById("loginForm").addEventListener("submit",e=>{
- e.preventDefault();
- login(document.getElementById("usuario").value.trim(),document.getElementById("senha").value);
-});
+document.getElementById("getKey").onclick=check;
 </script>
 </body>
 </html>
