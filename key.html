@@ -40,7 +40,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 <div class="grid">
 <div class="stat green"><label>STATUS</label><b>ATIVA</b></div>
 <div class="stat"><label>GERADA EM</label><b id="time">--</b></div>
-<div class="stat warn"><label>EXPIRA EM</label><b id="countdown">--:--</b></div>
+<div class="stat warn"><label>EXPIRA EM</label><b id="countdown">Aguardando Cópia</b></div>
 <div class="stat"><label>ORIGEM / IP</label><b id="country">--</b></div>
 </div>
 <div class="socials">
@@ -60,13 +60,16 @@ for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle"
 
 function randomKey(){const a=new Uint8Array(12);crypto.getRandomValues(a);const s=Array.from(a,b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();return "VTX-"+s.slice(0,6)+"-"+s.slice(6,12)+"-"+s.slice(12,18)+"-"+s.slice(18,24)}
 
+let activeTimer = null;
+
 function startCountdown(expireTime) {
-    const timer = setInterval(() => {
+    if (activeTimer) clearInterval(activeTimer);
+    activeTimer = setInterval(() => {
         const now = new Date().getTime();
         const distance = expireTime - now;
 
         if (distance < 0) {
-            clearInterval(timer);
+            clearInterval(activeTimer);
             localStorage.removeItem("vtx_session");
             alert("Sua Key expirou! Você precisa passar pelo encurtador novamente.");
             window.location.href = "index.html";
@@ -94,9 +97,8 @@ async function verifyAndLoadKey() {
         const newKey = randomKey();
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
         const country = g?.country_code || "N/D";
-        const expireTime = now + TIME_LIMIT;
 
-        const session = { key: newKey, generatedAt, country, expireTime };
+        const session = { key: newKey, generatedAt, country, expireTime: null };
         localStorage.setItem('vtx_session', JSON.stringify(session));
 
         document.getElementById("keyText").textContent = newKey;
@@ -104,18 +106,30 @@ async function verifyAndLoadKey() {
         document.getElementById("country").textContent = country;
         document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
         
-        startCountdown(expireTime);
         document.getElementById("loading").style.display="none";
         window.history.replaceState({}, document.title, window.location.pathname);
         return;
     }
 
-    if (sessionData && sessionData.expireTime > now) {
+    if (sessionData) {
+        if (sessionData.expireTime && sessionData.expireTime < now) {
+            localStorage.removeItem("vtx_session");
+            alert("Sua Key expirou! Você precisa passar pelo encurtador novamente.");
+            window.location.href = "index.html";
+            return;
+        }
+
         document.getElementById("keyText").textContent = sessionData.key;
         document.getElementById("time").textContent = sessionData.generatedAt;
         document.getElementById("country").textContent = sessionData.country;
-        document.getElementById("msg").textContent = "SESSÃO ATIVA";
-        startCountdown(sessionData.expireTime);
+        
+        if (sessionData.expireTime) {
+            document.getElementById("msg").textContent = "SESSÃO ATIVA";
+            startCountdown(sessionData.expireTime);
+        } else {
+            document.getElementById("msg").textContent = "AGUARDANDO CÓPIA";
+        }
+
         document.getElementById("loading").style.display="none";
         return;
     }
@@ -124,14 +138,54 @@ async function verifyAndLoadKey() {
     window.location.href = "index.html";
 }
 
-async function copyKey(){
-    const k=document.getElementById("keyText").textContent;
-    if(!k||k==="GERANDO...")return;
-    try{
-        await navigator.clipboard.writeText(k);
-        document.getElementById("msg").textContent="KEY COPIADA COM SUCESSO";
-    }catch(e){
-        document.getElementById("msg").textContent="NÃO FOI POSSÍVEL COPIAR";
+function triggerSuccess() {
+    document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
+    let sessionData = JSON.parse(localStorage.getItem('vtx_session'));
+    if (sessionData && !sessionData.expireTime) {
+        const expireTime = new Date().getTime() + TIME_LIMIT;
+        sessionData.expireTime = expireTime;
+        localStorage.setItem('vtx_session', JSON.stringify(sessionData));
+        startCountdown(expireTime);
+    }
+}
+
+function copyKey(){
+    const k = document.getElementById("keyText").textContent;
+    if(!k || k === "GERANDO...") return;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(k).then(() => {
+            triggerSuccess();
+        }).catch(() => {
+            fallbackCopy(k);
+        });
+    } else {
+        fallbackCopy(k);
+    }
+}
+
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        if (successful) {
+            triggerSuccess();
+        } else {
+            document.getElementById("msg").textContent = "NÃO FOI POSSÍVEL COPIAR";
+        }
+    } catch (err) {
+        document.body.removeChild(textArea);
+        document.getElementById("msg").textContent = "NÃO FOI POSSÍVEL COPIAR";
     }
 }
 
