@@ -37,22 +37,29 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 <div class="footer"><span>VORTEX HUB • v4.0</span><span>KEY SYSTEM</span></div>
 </div></div></main>
 <script>
-const REDIRECT_URL = "https://prospexurl.com.br/r/getkey1";
+const SHORTENER_URL = "https://prospexurl.com.br/r/getkey1";
 
 const particles=document.getElementById("particles");
 for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
 
 async function clicarPegarKey() {
+    let clientIp = "unknown";
+    let countryCode = "BR";
     try {
         const response = await fetch("https://ipapi.co/json/");
         const data = await response.json();
-        localStorage.setItem("vtx_client_ip", data.ip || "unknown");
-        localStorage.setItem("vtx_authorized", "true");
+        clientIp = data.ip || "unknown";
+        countryCode = data.country_code || "BR";
     } catch (e) {
-        localStorage.setItem("vtx_client_ip", "unknown");
-        localStorage.setItem("vtx_authorized", "true");
+        clientIp = "unknown";
     }
-    window.location.href = REDIRECT_URL;
+    
+    localStorage.setItem("vtx_client_ip", clientIp);
+    localStorage.setItem("vtx_country", countryCode);
+    localStorage.setItem("vtx_authorized", "true");
+    
+    // Redireciona para o encurtador fornecido
+    window.location.href = SHORTENER_URL;
 }
 </script>
 </body>
