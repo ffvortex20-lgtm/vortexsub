@@ -24,7 +24,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.stat label{display:block;color:#50647d;font-size:6px;letter-spacing:1px}.stat b{display:block;margin-top:6px;color:var(--c);font-size:9px}.green b{color:var(--g)}.warn b{color:var(--warn)}
 .socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:44px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#9bacbf;font-size:7px;font-weight:800}.social:hover{color:#fff;border-color:rgba(0,234,255,.4)}
 .footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}.msg{text-align:center;min-height:16px;margin-top:9px;color:#4affa5;font-size:6.5px;letter-spacing:.6px}
-.loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.78);backdrop-filter:blur(8px)}.loader{text-align:center}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
+.loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.78);backdrop-filter:blur(8px);transition:opacity 0.3s ease}.loader{text-align:center}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
 @media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:15px}.grid,.socials{grid-template-columns:1fr}}
 </style>
 </head>
@@ -49,7 +49,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 </div>
 <div class="footer"><span>VORTEX HUB • v4.0</span><span>KEY SYSTEM</span></div>
 </div>
-<div class="loading" id="loading"><div class="loader"><div class="ring"></div><p>VERIFICANDO ACESSO...</p></div></div>
+<div class="loading" id="loading"><div class="loader"><div class="ring"></div><p>GERANDO SUA KEY...</p></div></div>
 </div></main>
 <script>
 const SECRET_TOKEN = "vtx_auth";
@@ -85,27 +85,15 @@ function startCountdown(expireTime) {
 }
 
 async function verifyAndLoadKey() {
-    document.getElementById("loading").style.display="flex";
-    
     const urlParams = new URLSearchParams(window.location.search);
     const hasValidToken = urlParams.get('token') === SECRET_TOKEN;
     const isAuthorized = localStorage.getItem('vtx_authorized') === 'true';
-    const savedIp = localStorage.getItem('vtx_client_ip');
+    const savedCountry = localStorage.getItem('vtx_country') || "BR";
     
     const sessionData = JSON.parse(localStorage.getItem('vtx_session'));
     const now = new Date().getTime();
 
-    const currentIpData = await fetch("https://ipapi.co/json/").then(r=>r.json()).catch(()=>null);
-    const currentIp = currentIpData?.ip || "unknown";
-    const country = currentIpData?.country_code || "N/D";
-
     if (hasValidToken && isAuthorized) {
-        if (savedIp && savedIp !== "unknown" && currentIp !== "unknown" && savedIp !== currentIp) {
-            alert("Acesso negado: IP divergente do que iniciou a sessão!");
-            window.location.href = "index.html";
-            return;
-        }
-
         const newKey = randomKey();
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
         const valTimestamp = String(now + (24 * 60 * 60 * 1000));
@@ -139,18 +127,19 @@ async function verifyAndLoadKey() {
             console.error("Erro ao salvar no Firebase:", err);
         }
 
-        await new Promise(r=>setTimeout(r,850));
-
-        const session = { key: newKey, generatedAt, country, expireTime: null };
+        const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
         localStorage.setItem('vtx_session', JSON.stringify(session));
         localStorage.removeItem('vtx_authorized');
 
         document.getElementById("keyText").textContent = newKey;
         document.getElementById("time").textContent = generatedAt;
-        document.getElementById("country").textContent = country;
+        document.getElementById("country").textContent = savedCountry;
         document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
         
-        document.getElementById("loading").style.display="none";
+        // Remove a tela de carregamento instantaneamente
+        document.getElementById("loading").style.opacity = "0";
+        setTimeout(() => document.getElementById("loading").style.display = "none", 300);
+        
         window.history.replaceState({}, document.title, window.location.pathname);
         return;
     }
@@ -165,7 +154,7 @@ async function verifyAndLoadKey() {
 
         document.getElementById("keyText").textContent = sessionData.key;
         document.getElementById("time").textContent = sessionData.generatedAt;
-        document.getElementById("country").textContent = sessionData.country;
+        document.getElementById("country").textContent = sessionData.country || "BR";
         
         if (sessionData.expireTime) {
             document.getElementById("msg").textContent = "SESSÃO ATIVA";
@@ -174,7 +163,7 @@ async function verifyAndLoadKey() {
             document.getElementById("msg").textContent = "AGUARDANDO CÓPIA";
         }
 
-        document.getElementById("loading").style.display="none";
+        document.getElementById("loading").style.display = "none";
         return;
     }
 
