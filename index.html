@@ -38,22 +38,37 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 </div></div></main>
 <script>
 const SHORTENER_URL = "https://prospexurl.com.br/r/getkey1";
+const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
 
 const particles=document.getElementById("particles");
 for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
 
 async function clicarPegarKey() {
-    let countryCode = "BR";
     try {
-        const response = await fetch("https://ipapi.co/json/");
-        const data = await response.json();
-        countryCode = data.country_code || "BR";
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        const ip = data.ip || "unknown";
+        const countryCode = data.country_code || "BR";
+        
+        localStorage.setItem("vtx_country", countryCode);
+        localStorage.setItem("vtx_ip", ip);
+
+        // Formata o IP para chave segura do Firebase (troca pontos por underscores)
+        const safeIpKey = ip.replace(/\./g, "_");
+
+        await fetch(`${FIREBASE_URL}/visitas/ips/${safeIpKey}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ip: ip,
+                country: countryCode,
+                timestamp: new Date().toISOString()
+            })
+        });
     } catch (e) {
-        countryCode = "BR";
+        console.error("Erro ao registrar IP:", e);
+        localStorage.setItem("vtx_ip", "fallback_ip");
     }
-    
-    localStorage.setItem("vtx_country", countryCode);
-    localStorage.setItem("vtx_authorized", "true");
     
     window.location.href = SHORTENER_URL;
 }
