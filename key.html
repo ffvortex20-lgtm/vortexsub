@@ -84,7 +84,7 @@ function startCountdown(expireTime) {
     }, 1000);
 }
 
-async function verifyAndLoadKey() {
+function verifyAndLoadKey() {
     const urlParams = new URLSearchParams(window.location.search);
     const hasValidToken = urlParams.get('token') === SECRET_TOKEN;
     const isAuthorized = localStorage.getItem('vtx_authorized') === 'true';
@@ -98,8 +98,11 @@ async function verifyAndLoadKey() {
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
         const valTimestamp = String(now + (24 * 60 * 60 * 1000));
 
-        try {
-            const userData = {
+        // Salva no Firebase em segundo plano (sem travar a tela)
+        fetch(`${FIREBASE_URL}/Users.json`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
                 user: newKey,
                 pass: newKey,
                 val: valTimestamp,
@@ -107,25 +110,16 @@ async function verifyAndLoadKey() {
                 disp: "",
                 login: 1,
                 childkey: ""
-            };
-
-            const response = await fetch(`${FIREBASE_URL}/Users.json`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userData)
-            });
-            const result = await response.json();
-            
+            })
+        }).then(res => res.json()).then(result => {
             if (result && result.name) {
-                await fetch(`${FIREBASE_URL}/Users/${result.name}.json`, {
+                fetch(`${FIREBASE_URL}/Users/${result.name}.json`, {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ childkey: result.name })
                 });
             }
-        } catch (err) {
-            console.error("Erro ao salvar no Firebase:", err);
-        }
+        }).catch(err => console.error("Erro Firebase:", err));
 
         const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
         localStorage.setItem('vtx_session', JSON.stringify(session));
@@ -136,7 +130,7 @@ async function verifyAndLoadKey() {
         document.getElementById("country").textContent = savedCountry;
         document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
         
-        // Remove a tela de carregamento instantaneamente
+        // Some com o loading instantaneamente
         document.getElementById("loading").style.opacity = "0";
         setTimeout(() => document.getElementById("loading").style.display = "none", 300);
         
