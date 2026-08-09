@@ -1,333 +1,113 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexHub - Liberar Acesso</title>
-    <!-- Fonte Oswald para combinar perfeitamente com a tipografia gamer do print -->
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Oswald', sans-serif;
-        }
-
-        body {
-            background-color: #030303; /* Fundo super escuro */
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            /* Grade idêntica à da imagem */
-            background-image: 
-                linear-gradient(rgba(0, 150, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 150, 255, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-
-        .panel-container {
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* Avatar com Neon Ciano */
-        .avatar-box {
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            background-color: #0a0a0a;
-            border: 2px solid #00d2ff;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.6), inset 0 0 10px rgba(0, 210, 255, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 35px;
-        }
-
-        .brand-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: #00d2ff;
-            text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .online-status {
-            font-size: 13px;
-            color: #00ff00;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00ff00;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff00;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffaa00;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        /* Container dos Botões */
-        .buttons-wrapper {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px; /* Espaçamento entre os botões */
-        }
-
-        /* Botão Principal - Neon */
-        .btn-gerar {
-            width: 100%;
-            background-color: #001018; /* Fundo azul bem escuro */
-            border: 2px solid #00d2ff;
-            color: #00d2ff;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 10px rgba(0, 210, 255, 0.1);
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            margin-bottom: 10px; /* Espaço extra abaixo do botão principal */
-        }
-
-        .btn-gerar:hover {
-            background-color: #001a2a;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6), inset 0 0 15px rgba(0, 210, 255, 0.3);
-        }
-
-        /* Botões Secundários */
-        .btn-secundario {
-            width: 100%;
-            background-color: #000812;
-            border: 1px solid #003388;
-            color: #0099ff;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-        }
-
-        .btn-secundario:hover {
-            border-color: #0055ff;
-            color: #00ccff;
-            background-color: #001122;
-        }
-
-        /* Área da Key Gerada */
-        .key-result {
-            display: none;
-            width: 100%;
-            background-color: #001500;
-            border: 1px solid #00ff00;
-            padding: 15px;
-            border-radius: 4px;
-            text-align: center;
-            margin-bottom: 15px;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
-        }
-
-        .key-result span {
-            display: block;
-            color: #00ff00;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .btn-copiar {
-            background-color: transparent;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 8px 15px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-
-        .btn-copiar:hover {
-            background-color: #00ff00;
-            color: #000;
-        }
-
-        #loading {
-            display: none;
-            color: #00d2ff;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VORTEX HUB • Key</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cyan:#00eaff;--purple:#8b35ff;--green:#00ff91}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:#02050b;color:#fff;font-family:Orbitron,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:38px 38px;animation:grid 12s linear infinite;pointer-events:none}
+@keyframes grid{to{background-position:0 38px,38px 0}}
+.wrap{width:min(470px,100%);padding:1px;border-radius:25px;background:linear-gradient(135deg,var(--cyan),var(--purple),transparent 65%);box-shadow:0 25px 80px #000}
+.card{position:relative;overflow:hidden;border-radius:24px;padding:28px 22px 22px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99));text-align:center}
+.line{height:2px;position:absolute;top:0;left:10%;right:10%;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);box-shadow:0 0 18px var(--cyan)}
+.avatar{width:82px;height:82px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));box-shadow:0 0 28px rgba(0,234,255,.2)}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
+h1{margin-top:14px;font-size:25px;letter-spacing:3px}h1 span{color:var(--cyan)}
+.sub{margin-top:7px;color:#62748e;font-size:7px;letter-spacing:1.7px}
+.online{display:inline-flex;align-items:center;gap:7px;margin:15px 0 20px;padding:7px 12px;border:1px solid rgba(0,255,145,.25);border-radius:99px;color:#4affa5;font-size:7px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+#loading{display:none;color:var(--cyan);font-size:9px;letter-spacing:1.5px;padding:15px;border:1px solid rgba(0,234,255,.2);border-radius:11px;background:rgba(0,234,255,.04)}
+.key{display:none;padding:18px;border:1px solid var(--green);border-radius:13px;background:rgba(0,255,145,.035);box-shadow:0 0 25px rgba(0,255,145,.1)}
+.key span{display:block;color:var(--green);font-size:19px;letter-spacing:2px;word-break:break-all}.copy{margin-top:12px;padding:10px 18px;border:1px solid var(--green);border-radius:9px;background:transparent;color:var(--green);font:700 9px Orbitron;cursor:pointer}.copy:hover{background:var(--green);color:#001208}
+button.main{width:100%;height:54px;border:1px solid var(--cyan);border-radius:11px;background:rgba(0,234,255,.06);color:#fff;font:800 10px Orbitron;letter-spacing:1.3px;cursor:pointer;box-shadow:0 0 20px rgba(0,234,255,.08);transition:.25s}.main:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,234,255,.2)}
+.links{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.link{padding:13px 8px;border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#9bacbf;text-decoration:none;font-size:7px;letter-spacing:.8px}.link:hover{color:#fff;border-color:rgba(0,234,255,.4)}
+footer{display:flex;justify-content:space-between;margin-top:18px;padding-top:13px;border-top:1px solid rgba(255,255,255,.05);color:#415269;font-size:5.5px;letter-spacing:1px}
+@media(max-width:420px){.links{grid-template-columns:1fr}.card{padding:24px 16px 19px}}
+</style>
 </head>
 <body>
+<div class="wrap"><div class="card">
+<div class="line"></div>
+<div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex GitHub"></div>
+<h1>VORTEX<span>HUB</span></h1>
+<div class="sub">SECURE KEY ACCESS SYSTEM</div>
+<div class="online"><span class="dot"></span>SYSTEM ONLINE</div>
 
-    <div class="panel-container">
-        <!-- Logo e Status -->
-        <div class="avatar-box">🛡️</div>
-        <div class="brand-name">VortexHub</div>
-        <div class="online-status">
-            <div class="dot"></div> USUÁRIOS ONLINE
-        </div>
+<div id="loading">AGUARDE • VALIDANDO CONEXÃO...</div>
 
-        <div class="section-title">
-            🔓 LIBERAR ACESSO
-        </div>
+<div class="key" id="keyArea">
+<span id="txtKey">VORTEX-XXXXX</span>
+<button class="copy" onclick="copiarKey()">COPIAR KEY</button>
+</div>
 
-        <div id="loading">AGUARDE, VALIDANDO IP...</div>
+<button class="main" id="btnGerar" onclick="iniciarGeracao()">🔑 GERAR KEY VORTEX</button>
 
-        <!-- Onde a Key Aparece -->
-        <div class="key-result" id="keyArea">
-            <span id="txtKey">VORTEX-XXXXX</span>
-            <button class="btn-copiar" onclick="copiarKey()">COPIAR KEY</button>
-        </div>
+<div class="links">
+<a class="link" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
+<a class="link" href="https://t.me/vtxmdz" target="_blank">✈ TELEGRAM</a>
+</div>
 
-        <!-- Botões -->
-        <div class="buttons-wrapper">
-            <button class="btn-gerar" id="btnGerar" onclick="iniciarGeracao()">
-                🔑 GERAR KEY VORTEX
-            </button>
+<footer><span>VORTEX HUB</span><span>ACCESS VERIFIED</span></footer>
+</div></div>
 
-            <button class="btn-secundario">⬇️ DOWNLOAD SCRIPT</button>
-            <button class="btn-secundario">📚 TUTORIAL SCRIPT</button>
-            <button class="btn-secundario">⏩ PASSADOR DE ENCURTADOR</button>
-            <button class="btn-secundario">📱 TUTORIAL ENCURTADOR</button>
-            <button class="btn-secundario" onclick="window.open('https://chat.whatsapp.com/SEULINK', '_blank')">💬 CANAL DO WHATSAPP</button>
-        </div>
-    </div>
+<script>
+const dbUrl="https://sitevendas-26cf6-default-rtdb.firebaseio.com";
+const urlParams=new URLSearchParams(location.search);
 
-    <script>
-        // FIREBASE E CONFIGURAÇÕES DE PROTEÇÃO
-        const dbUrl = "https://sitevendas-26cf6-default-rtdb.firebaseio.com";
-        const urlParams = new URLSearchParams(window.location.search);
+if(location.protocol==="file:"){alert("Esta página deve ser aberta por um servidor.");location.replace("index.html")}
+if(!urlParams.get("auth")){alert("Esta página expirou ou foi bloqueada.");location.replace("index.html")}
 
-        // Bloqueia se tentar salvar no PC (Anti-burla)
-        if (window.location.protocol === 'file:') {
-            alert("Essa pagina foi bloqueada por tentativa de burlacão");
-            window.location.replace("index.html");
-        }
+async function iniciarGeracao(){
+ const btn=document.getElementById("btnGerar"),loading=document.getElementById("loading");
+ btn.style.display="none";loading.style.display="block";
+ try{
+  const res=await fetch("https://api.ipify.org?format=json",{cache:"no-store"});
+  const data=await res.json();
+  const ip=data.ip;
+  await processarFirebase(ip.replace(/\./g,"_"),ip);
+ }catch(e){
+  alert("Falha na conexão. Verifique sua conexão ou bloqueador.");
+  btn.style.display="block";loading.style.display="none";
+ }
+}
 
-        // Bloqueia se não passar pelo encurtador corretamente
-        if (!urlParams.get('auth')) {
-            alert("Esta página expirou ou foi bloqueada");
-            window.location.replace("index.html");
-        }
+async function processarFirebase(safeIp,realIp){
+ const loading=document.getElementById("loading"),keyArea=document.getElementById("keyArea"),txt=document.getElementById("txtKey");
+ const now=Date.now(),validade=3600000;
+ try{
+  const res=await fetch(`${dbUrl}/ips/${safeIp}.json`,{cache:"no-store"});
+  const data=await res.json();
 
-        async function iniciarGeracao() {
-            const btn = document.getElementById('btnGerar');
-            const loading = document.getElementById('loading');
-            
-            btn.style.display = 'none';
-            loading.style.display = 'block';
+  if(data){
+   if(now-data.timestamp>validade){
+    await fetch(`${dbUrl}/ips/${safeIp}.json`,{method:"DELETE"});
+    alert("Sessão de 1 hora finalizada.");
+    location.replace("index.html");return;
+   }
+   txt.textContent=data.key;
+  }else{
+   const key="VORTEX-"+Math.random().toString(36).substring(2,10).toUpperCase();
+   await fetch(`${dbUrl}/ips/${safeIp}.json`,{
+    method:"PUT",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ip:realIp,key:key,timestamp:now})
+   });
+   txt.textContent=key;
+  }
+  loading.style.display="none";keyArea.style.display="block";
+ }catch(e){
+  alert("Erro ao validar no Firebase.");
+  location.replace("index.html");
+ }
+}
 
-            try {
-                // Pega o IP
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                const ip = data.ip;
-                const safeIp = ip.replace(/\./g, '_');
-                
-                await processarFirebase(safeIp, ip);
-            } catch (error) {
-                alert("Falha na conexão. Desative seu VPN ou Adblocker.");
-                btn.style.display = 'flex';
-                loading.style.display = 'none';
-            }
-        }
-
-        async function processarFirebase(safeIp, realIp) {
-            const loading = document.getElementById('loading');
-            const keyArea = document.getElementById('keyArea');
-            const txtKey = document.getElementById('txtKey');
-            
-            const tempoAtual = new Date().getTime();
-            const validadeMs = 3600000; // 1 Hora
-
-            try {
-                const res = await fetch(`${dbUrl}/ips/${safeIp}.json`);
-                const bancoDados = await res.json();
-
-                if (bancoDados) {
-                    // Verifica se já passou de 1 hora
-                    if ((tempoAtual - bancoDados.timestamp) > validadeMs) {
-                        await fetch(`${dbUrl}/ips/${safeIp}.json`, { method: 'DELETE' });
-                        alert("Esta página expirou ou foi bloqueada (Sessão de 1h finalizada).");
-                        window.location.replace("index.html");
-                        return;
-                    }
-
-                    // Se a Key ainda for válida
-                    loading.style.display = 'none';
-                    keyArea.style.display = 'block';
-                    txtKey.innerText = bancoDados.key;
-
-                } else {
-                    // Cria uma nova Key
-                    const novaKey = "VORTEX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-                    const registro = { ip: realIp, key: novaKey, timestamp: tempoAtual };
-
-                    await fetch(`${dbUrl}/ips/${safeIp}.json`, {
-                        method: 'PUT',
-                        body: JSON.stringify(registro),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-
-                    loading.style.display = 'none';
-                    keyArea.style.display = 'block';
-                    txtKey.innerText = novaKey;
-                }
-            } catch (error) {
-                alert("Erro ao validar no servidor Firebase.");
-                window.location.replace("index.html");
-            }
-        }
-
-        function copiarKey() {
-            const keyText = document.getElementById('txtKey').innerText;
-            navigator.clipboard.writeText(keyText).then(() => {
-                alert("Key copiada com sucesso!");
-            }).catch(() => {
-                alert("Erro ao copiar. Selecione manualmente.");
-            });
-        }
-    </script>
+function copiarKey(){
+ const key=document.getElementById("txtKey").textContent;
+ navigator.clipboard.writeText(key).then(()=>alert("Key copiada!")).catch(()=>alert("Não foi possível copiar."));
+}
+</script>
 </body>
 </html>
