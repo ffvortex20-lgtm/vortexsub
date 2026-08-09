@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Hub - Gerador</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body {
+            background-color: #09090b; color: #fff;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            background-image: radial-gradient(circle at 50% 120%, #1a1a2e, #09090b);
+        }
+        .container {
+            background: rgba(20, 20, 25, 0.8); backdrop-filter: blur(10px);
+            padding: 40px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); width: 90%; max-width: 400px;
+        }
+        h1 {
+            font-weight: 800; font-size: 28px; margin-bottom: 5px;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        p.subtitle { color: #a1a1aa; font-size: 14px; margin-bottom: 30px; }
+        .key-box {
+            background: #18181b; border: 1px solid #27272a; padding: 15px;
+            border-radius: 8px; font-family: monospace; font-size: 18px;
+            letter-spacing: 2px; color: #a855f7; margin-bottom: 20px; display: none;
+        }
+        .btn {
+            background: linear-gradient(90deg, #6366f1, #a855f7); color: white;
+            border: none; padding: 15px; font-size: 16px; font-weight: 600;
+            border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; transition: 0.3s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+        .btn-whatsapp { background: transparent; border: 1px solid #25D366; color: #25D366; }
+        .btn-whatsapp:hover { background: rgba(37, 211, 102, 0.1); }
+        .status { color: #fbbf24; font-size: 14px; margin-bottom: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>VORTEX HUB</h1>
+        <p class="subtitle">Autenticação Segura</p>
+
+        <div class="status" id="statusText">Verificando segurança...</div>
+        <div class="key-box" id="keyDisplay"></div>
+
+        <button class="btn" id="btnGetKey" onclick="iniciarProcesso()">Gerar / Ver Key</button>
+        <button class="btn btn-whatsapp" onclick="window.open('https://chat.whatsapp.com/SEULINK', '_blank')">Canal do WhatsApp</button>
+    </div>
+
+    <script>
+        // CONFIGURAÇÕES DO FIREBASE (Usando a URL fornecida)
+        const dbUrl = "https://sitevendas-26cf6-default-rtdb.firebaseio.com";
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // 1. PROTEÇÃO: Impedir de salvar a página no PC (CTRL+S)
+        if (window.location.protocol === 'file:') {
+            alert("Essa pagina foi bloqueada por tentativa de burlacão");
+            window.location.replace("index.html");
+        }
+
+        // 2. PROTEÇÃO: Impedir bypass de encurtador
+        // Se a pessoa salvar em favoritos ("estrela") a página limpa ou acessar direto, é barrada.
+        if (!urlParams.get('auth')) {
+            alert("Esta página expirou ou bloqueada");
+            window.location.replace("index.html");
+        }
+
+        async function iniciarProcesso() {
+            const btn = document.getElementById('btnGetKey');
+            const status = document.getElementById('statusText');
+            
+            btn.style.display = 'none';
+            status.style.display = 'block';
+            status.innerText = "Obtendo IP...";
+
+            try {
+                // Pegando IP do usuário
+                const resIp = await fetch('https://api.ipify.org?format=json');
+                const dataIp = await resIp.json();
+                const ip = dataIp.ip;
+                
+                // O Firebase não aceita pontos (.) nas chaves, então substituímos por underline (_)
+                const safeIp = ip.replace(/\./g, '_');
+                
+                status.innerText = "Validando no banco de dados...";
+                await verificarNoFirebase(safeIp, ip);
+
+            } catch (error) {
+                alert("Erro de conexão. Desative VPN ou AdBlock.");
+                btn.style.display = 'block';
+                status.style.display = 'none';
+            }
+        }
+
+        async function verificarNoFirebase(safeIp, realIp) {
+            const status = document.getElementById('statusText');
+            const keyDisplay = document.getElementById('keyDisplay');
+            const tempoAtual = new Date().getTime();
+            const umaHoraEmMs = 3600000; // 1 hora
+
+            try {
+                // Consulta o IP no Firebase
+                const res = await fetch(`${dbUrl}/ips/${safeIp}.json`);
+                const dados = await res.json();
+
+                if (dados) {
+                    const tempoPassado = tempoAtual - dados.timestamp;
+
+                    // Se já passou 1 hora, expira a página e apaga do banco
+                    if (tempoPassado > umaHoraEmMs) {
+                        await fetch(`${dbUrl}/ips/${safeIp}.json`, { method: 'DELETE' });
+                        alert("Esta página expirou ou bloqueada");
+                        window.location.replace("index.html");
+                        return;
+                    }
+
+                    // Se estiver no prazo, mostra a key que já existe
+                    status.style.display = 'none';
+                    keyDisplay.style.display = 'block';
+                    keyDisplay.innerText = dados.key;
+
+                } else {
+                    // Se não existe, gera uma nova Key
+                    status.innerText = "Gerando nova Key...";
+                    const novaKey = "VORTEX-" + Math.random().toString(36).substring(2, 12).toUpperCase();
+                    
+                    const novoRegistro = {
+                        ip: realIp,
+                        key: novaKey,
+                        timestamp: tempoAtual
+                    };
+
+                    // Salva no Firebase
+                    await fetch(`${dbUrl}/ips/${safeIp}.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify(novoRegistro),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    status.style.display = 'none';
+                    keyDisplay.style.display = 'block';
+                    keyDisplay.innerText = novaKey;
+                }
+            } catch (error) {
+                alert("Erro ao contatar o servidor.");
+                window.location.replace("index.html");
+            }
+        }
+    </script>
+</body>
+</html>
