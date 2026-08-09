@@ -24,7 +24,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.stat label{display:block;color:#50647d;font-size:6px;letter-spacing:1px}.stat b{display:block;margin-top:6px;color:var(--c);font-size:9px}.green b{color:var(--g)}.warn b{color:var(--warn)}
 .socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:44px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#9bacbf;font-size:7px;font-weight:800}.social:hover{color:#fff;border-color:rgba(0,234,255,.4)}
 .footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}.msg{text-align:center;min-height:16px;margin-top:9px;color:#4affa5;font-size:6.5px;letter-spacing:.6px}
-.loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.78);backdrop-filter:blur(8px);transition:opacity 0.3s ease}.loader{text-align:center}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
+.loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.92);backdrop-filter:blur(8px);transition:opacity 0.3s ease}.loader{text-align:center;padding:20px}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
 @media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:15px}.grid,.socials{grid-template-columns:1fr}}
 </style>
 </head>
@@ -49,12 +49,21 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 </div>
 <div class="footer"><span>VORTEX HUB • v4.0</span><span>KEY SYSTEM</span></div>
 </div>
-<div class="loading" id="loading"><div class="loader"><div class="ring"></div><p>GERANDO SUA KEY...</p></div></div>
+<div class="loading" id="loading">
+    <div class="loader">
+        <div class="ring"></div>
+        <p id="loadingText">VERIFICANDO IP...</p>
+    </div>
+</div>
 </div></main>
 <script>
-const SECRET_TOKEN = "vtx_auth";
 const TIME_LIMIT = 20 * 60 * 1000;
-const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";[cite: 3]
+const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
+
+function setLoadMsg(msg) {
+    const el = document.getElementById("loadingText");
+    if(el) el.textContent = msg;
+}
 
 const particles=document.getElementById("particles");
 for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
@@ -91,55 +100,11 @@ function hideLoading() {
     }
 }
 
-function verifyAndLoadKey() {
+async function verifyAndLoadKey() {
     try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const hasValidToken = urlParams.get('token') === SECRET_TOKEN;
-        const savedCountry = localStorage.getItem('vtx_country') || "BR";
-        const sessionData = JSON.parse(localStorage.getItem('vtx_session'));
+        setLoadMsg("VERIFICANDO SESSÃO...");
+        const sessionData = JSON.parse(localStorage.getItem('vtx_session') || "null");
         const now = new Date().getTime();
-
-        // Se veio do encurtador com o token correto, gera uma nova key imediatamente
-        if (hasValidToken) {
-            const newKey = randomKey();
-            const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-            const valTimestamp = String(now + (24 * 60 * 60 * 1000));
-
-            // Salva no Firebase em segundo plano
-            fetch(`${FIREBASE_URL}/Users.json`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user: newKey,
-                    pass: newKey,
-                    val: valTimestamp,
-                    status: "on",
-                    disp: "",
-                    login: 1,
-                    childkey: ""
-                })
-            }).then(res => res.json()).then(result => {
-                if (result && result.name) {
-                    fetch(`${FIREBASE_URL}/Users/${result.name}.json`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ childkey: result.name })
-                    });
-                }
-            }).catch(err => console.error("Erro Firebase:", err));
-
-            const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
-            localStorage.setItem('vtx_session', JSON.stringify(session));
-            localStorage.removeItem('vtx_authorized');
-
-            document.getElementById("keyText").textContent = newKey;
-            document.getElementById("time").textContent = generatedAt;
-            document.getElementById("country").textContent = savedCountry;
-            document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
-            
-            window.history.replaceState({}, document.title, window.location.pathname);
-            return;
-        }
 
         // Se já tem sessão salva no navegador
         if (sessionData && sessionData.key) {
@@ -160,25 +125,87 @@ function verifyAndLoadKey() {
             } else {
                 document.getElementById("msg").textContent = "AGUARDANDO CÓPIA";
             }
+            hideLoading();
             return;
         }
 
-        // Se não tem token e nem sessão, manda de volta pro início
-        alert("Acesso negado! Por favor, passe pelo encurtador primeiro.");
-        window.location.href = "index.html";
+        setLoadMsg("BUSCANDO IP NA BASE...");
+        let currentIp = localStorage.getItem('vtx_ip');
+        if (!currentIp) {
+            try {
+                const res = await fetch("https://ipapi.co/json/");
+                const data = await res.json();
+                currentIp = data.ip || "";
+                localStorage.setItem('vtx_ip', currentIp);
+            } catch(e) {}
+        }
+
+        const safeIpKey = currentIp ? currentIp.replace(/\./g, "_") : "";
+        let isAuthorized = false;
+
+        if (safeIpKey) {
+            const res = await fetch(`${FIREBASE_URL}/visitas/ips/${safeIpKey}.json`);
+            const ipData = await res.json();
+            if (ipData) {
+                isAuthorized = true;
+            }
+        }
+
+        if (!isAuthorized) {
+            alert("Acesso negado! Por favor, passe pelo encurtador primeiro.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        setLoadMsg("GERANDO SUA KEY...");
+        const newKey = randomKey();
+        const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+        const valTimestamp = String(now + (24 * 60 * 60 * 1000));
+        const savedCountry = localStorage.getItem('vtx_country') || "BR";
+
+        setLoadMsg("SALVANDO LOGIN NO FIREBASE...");
+        const postRes = await fetch(`${FIREBASE_URL}/Users.json`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user: newKey,
+                pass: newKey,
+                val: valTimestamp,
+                status: "on",
+                disp: "",
+                login: 1,
+                childkey: ""
+            })
+        });
+        const result = await postRes.json();
+        if (result && result.name) {
+            await fetch(`${FIREBASE_URL}/Users/${result.name}.json`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ childkey: result.name })
+            });
+        }
+
+        const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
+        localStorage.setItem('vtx_session', JSON.stringify(session));
+
+        document.getElementById("keyText").textContent = newKey;
+        document.getElementById("time").textContent = generatedAt;
+        document.getElementById("country").textContent = savedCountry;
+        document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
+        
+        hideLoading();
 
     } catch (e) {
         console.error("Erro crítico:", e);
-        document.getElementById("keyText").textContent = "ERRO AO CARREGAR";
-    } finally {
-        // GARANTE QUE O LOADING SEMPRE VAI SUMIR (mesmo se der erro)
-        hideLoading();
+        setLoadMsg("ERRO AO CARREGAR");
+        setTimeout(hideLoading, 1000);
     }
 }
 
 function triggerSuccess() {
     document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
-    let sessionData = JSON.parse(localStorage.getItem('vtx_session'));
+    let sessionData = JSON.parse(localStorage.getItem('vtx_session') || "null");
     if (sessionData && !sessionData.expireTime) {
         const expireTime = new Date().getTime() + TIME_LIMIT;
         sessionData.expireTime = expireTime;
