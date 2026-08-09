@@ -2,112 +2,136 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>VORTEX HUB • Key</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--cyan:#00eaff;--purple:#8b35ff;--green:#00ff91}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:#02050b;color:#fff;font-family:Orbitron,sans-serif;overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:38px 38px;animation:grid 12s linear infinite;pointer-events:none}
-@keyframes grid{to{background-position:0 38px,38px 0}}
-.wrap{width:min(470px,100%);padding:1px;border-radius:25px;background:linear-gradient(135deg,var(--cyan),var(--purple),transparent 65%);box-shadow:0 25px 80px #000}
-.card{position:relative;overflow:hidden;border-radius:24px;padding:28px 22px 22px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99));text-align:center}
-.line{height:2px;position:absolute;top:0;left:10%;right:10%;background:linear-gradient(90deg,transparent,var(--cyan),var(--purple),transparent);box-shadow:0 0 18px var(--cyan)}
-.avatar{width:82px;height:82px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));box-shadow:0 0 28px rgba(0,234,255,.2)}
-.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
-h1{margin-top:14px;font-size:25px;letter-spacing:3px}h1 span{color:var(--cyan)}
-.sub{margin-top:7px;color:#62748e;font-size:7px;letter-spacing:1.7px}
-.online{display:inline-flex;align-items:center;gap:7px;margin:15px 0 20px;padding:7px 12px;border:1px solid rgba(0,255,145,.25);border-radius:99px;color:#4affa5;font-size:7px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-#loading{display:none;color:var(--cyan);font-size:9px;letter-spacing:1.5px;padding:15px;border:1px solid rgba(0,234,255,.2);border-radius:11px;background:rgba(0,234,255,.04)}
-.key{display:none;padding:18px;border:1px solid var(--green);border-radius:13px;background:rgba(0,255,145,.035);box-shadow:0 0 25px rgba(0,255,145,.1)}
-.key span{display:block;color:var(--green);font-size:19px;letter-spacing:2px;word-break:break-all}.copy{margin-top:12px;padding:10px 18px;border:1px solid var(--green);border-radius:9px;background:transparent;color:var(--green);font:700 9px Orbitron;cursor:pointer}.copy:hover{background:var(--green);color:#001208}
-button.main{width:100%;height:54px;border:1px solid var(--cyan);border-radius:11px;background:rgba(0,234,255,.06);color:#fff;font:800 10px Orbitron;letter-spacing:1.3px;cursor:pointer;box-shadow:0 0 20px rgba(0,234,255,.08);transition:.25s}.main:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,234,255,.2)}
-.links{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.link{padding:13px 8px;border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#9bacbf;text-decoration:none;font-size:7px;letter-spacing:.8px}.link:hover{color:#fff;border-color:rgba(0,234,255,.4)}
-footer{display:flex;justify-content:space-between;margin-top:18px;padding-top:13px;border-top:1px solid rgba(255,255,255,.05);color:#415269;font-size:5.5px;letter-spacing:1px}
-@media(max-width:420px){.links{grid-template-columns:1fr}.card{padding:24px 16px 19px}}
+*{box-sizing:border-box;margin:0;padding:0}:root{--c:#00eaff;--p:#863cff;--g:#00ff91}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden;background:radial-gradient(circle at 50% -15%,rgba(0,234,255,.18),transparent 35%),radial-gradient(circle at 100% 100%,rgba(134,60,255,.16),transparent 32%),#02050b;color:#fff;font-family:Orbitron,sans-serif}
+body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:40px 40px;animation:grid 10s linear infinite;pointer-events:none}@keyframes grid{to{background-position:0 40px,40px 0}}
+.bg{position:fixed;border-radius:50%;filter:blur(100px);opacity:.14;pointer-events:none}.b1{width:400px;height:400px;background:var(--c);top:-250px;left:-150px}.b2{width:380px;height:380px;background:var(--p);right:-160px;bottom:-230px}
+.particles{position:fixed;inset:0;pointer-events:none}.particle{position:absolute;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);animation:up linear infinite}@keyframes up{from{transform:translateY(110vh);opacity:0}15%{opacity:.8}85%{opacity:.8}to{transform:translateY(-10vh);opacity:0}}
+.card{position:relative;z-index:2;width:min(470px,100%);padding:1px;border-radius:27px;background:linear-gradient(135deg,rgba(0,234,255,.85),rgba(134,60,255,.7),transparent 70%);box-shadow:0 25px 90px #000,0 0 50px rgba(0,234,255,.08)}
+.inner{position:relative;overflow:hidden;border-radius:26px;padding:30px 25px 22px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99))}
+.inner:after{content:"";position:absolute;inset:-80%;background:conic-gradient(from 90deg,transparent 0 72%,rgba(0,234,255,.055),transparent 78%);animation:spin 12s linear infinite;pointer-events:none}@keyframes spin{to{transform:rotate(360deg)}}.content{position:relative;z-index:2}
+.line{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 16px var(--c)}
+.avatar{width:78px;height:78px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));box-shadow:0 0 30px rgba(0,234,255,.2);position:relative}.avatar:before{content:"";position:absolute;inset:-7px;border:1px solid rgba(0,234,255,.3);border-radius:50%;animation:spin 7s linear infinite}.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
+h1{text-align:center;margin-top:13px;font-size:25px;letter-spacing:3px;text-shadow:0 0 20px rgba(0,234,255,.4)}h1 span{color:var(--c)}.sub{text-align:center;margin-top:6px;color:#63758e;font-size:7px;letter-spacing:1.8px}
+.userbar{margin-top:17px;padding:12px 14px;border:1px solid rgba(0,234,255,.17);border-radius:11px;background:rgba(0,234,255,.035);display:flex;justify-content:space-between;align-items:center}.userbar small{display:block;color:#566a83;font-size:6px;letter-spacing:1.2px}.userbar b{display:block;margin-top:4px;font-size:10px}.badge{color:#4affa5;font-size:7px;border:1px solid rgba(0,255,145,.25);border-radius:99px;padding:6px 8px}
+.keybox{margin-top:13px;padding:20px 13px;border:1px solid rgba(0,234,255,.35);border-radius:14px;background:linear-gradient(145deg,rgba(0,234,255,.055),rgba(134,60,255,.04));box-shadow:inset 0 0 25px rgba(0,234,255,.035),0 0 25px rgba(0,234,255,.05);text-align:center;position:relative;overflow:hidden}.keybox:before{content:"";position:absolute;top:0;left:-100%;width:70%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);animation:scan 3.5s infinite}@keyframes scan{0%,45%{left:-100%}70%,100%{left:140%}}
+.key{position:relative;z-index:2;color:var(--c);font-size:18px;font-weight:900;letter-spacing:2px;word-break:break-all;text-shadow:0 0 15px rgba(0,234,255,.5)}.keylabel{position:relative;z-index:2;color:#52667f;font-size:6px;letter-spacing:1.5px;margin-bottom:8px}
+.btn{position:relative;width:100%;height:50px;margin-top:10px;border-radius:10px;border:1px solid var(--c);background:rgba(0,234,255,.05);color:#fff;font:800 9px Orbitron;letter-spacing:1px;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(0,234,255,.18)}.btn:disabled{opacity:.5;cursor:wait}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.stat label{display:block;color:#50647d;font-size:6px;letter-spacing:1px}.stat b{display:block;margin-top:6px;color:var(--c);font-size:9px}.stat.green b{color:var(--g)}
+.socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:44px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#9bacbf;font-size:7px;font-weight:800}.social:hover{color:#fff;border-color:rgba(0,234,255,.4)}
+.msg{text-align:center;min-height:17px;margin-top:9px;color:#ff647b;font-size:6.5px;letter-spacing:.6px}.msg.ok{color:#4affa5}
+.footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}
+.loading{display:none;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.84);backdrop-filter:blur(8px)}.loading.show{display:flex}.loader{text-align:center}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
+@media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:15px}.grid{grid-template-columns:1fr}.socials{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="wrap"><div class="card">
-<div class="line"></div>
-<div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex GitHub"></div>
-<h1>VORTEX<span>HUB</span></h1>
-<div class="sub">SECURE KEY ACCESS SYSTEM</div>
-<div class="online"><span class="dot"></span>SYSTEM ONLINE</div>
+<div class="bg b1"></div><div class="bg b2"></div><div class="particles" id="particles"></div>
+<main class="card"><div class="inner"><div class="line"></div><div class="content">
+<div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex"></div>
+<h1>VORTEX<span>HUB</span></h1><div class="sub">PERSONAL KEY TERMINAL</div>
+<div class="userbar"><div><small>LOGGED USER</small><b id="userName">--</b></div><span class="badge">● VERIFIED</span></div>
 
-<div id="loading">AGUARDE • VALIDANDO CONEXÃO...</div>
+<div class="keybox"><div class="keylabel">YOUR VORTEX ACCESS KEY</div><div class="key" id="keyText">---</div></div>
+<button class="btn" id="copyBtn" onclick="copyKey()">⧉ COPIAR KEY</button>
+<button class="btn" id="generateBtn" onclick="generateKey()">⚡ GERAR / ATUALIZAR KEY</button>
+<div class="msg" id="msg"></div>
 
-<div class="key" id="keyArea">
-<span id="txtKey">VORTEX-XXXXX</span>
-<button class="copy" onclick="copiarKey()">COPIAR KEY</button>
+<div class="grid">
+<div class="stat green"><label>CONTA</label><b>ATIVA</b></div>
+<div class="stat"><label>VALIDADE</label><b id="validity">--</b></div>
+<div class="stat"><label>STATUS KEY</label><b id="keyStatus">--</b></div>
+<div class="stat"><label>CHAVE</label><b id="keyId">--</b></div>
 </div>
 
-<button class="main" id="btnGerar" onclick="iniciarGeracao()">🔑 GERAR KEY VORTEX</button>
-
-<div class="links">
-<a class="link" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
-<a class="link" href="https://t.me/vtxmdz" target="_blank">✈ TELEGRAM</a>
+<div class="socials">
+<a class="social" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
+<a class="social" href="https://t.me/vtxmdz" target="_blank">✈ TELEGRAM</a>
 </div>
-
-<footer><span>VORTEX HUB</span><span>ACCESS VERIFIED</span></footer>
-</div></div>
+<div class="footer"><span>VORTEX HUB • v4.0</span><span>FIREBASE VERIFIED</span></div>
+</div>
+<div class="loading" id="loading"><div class="loader"><div class="ring"></div><p>PROCESSANDO KEY...</p></div></div>
+</div></main>
 
 <script>
-const dbUrl="https://sitevendas-26cf6-default-rtdb.firebaseio.com";
-const urlParams=new URLSearchParams(location.search);
+const DB_URL="https://sitevendas-26cf6-default-rtdb.firebaseio.com";
+const sessionKey="vortexSession";
 
-if(location.protocol==="file:"){alert("Esta página deve ser aberta por um servidor.");location.replace("index.html")}
-if(!urlParams.get("auth")){alert("Esta página expirou ou foi bloqueada.");location.replace("index.html")}
-
-async function iniciarGeracao(){
- const btn=document.getElementById("btnGerar"),loading=document.getElementById("loading");
- btn.style.display="none";loading.style.display="block";
- try{
-  const res=await fetch("https://api.ipify.org?format=json",{cache:"no-store"});
-  const data=await res.json();
-  const ip=data.ip;
-  await processarFirebase(ip.replace(/\./g,"_"),ip);
- }catch(e){
-  alert("Falha na conexão. Verifique sua conexão ou bloqueador.");
-  btn.style.display="block";loading.style.display="none";
- }
+function particles(){
+ const box=document.getElementById("particles");
+ for(let i=0;i<45;i++){let p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";let s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";box.appendChild(p)}
 }
+particles();
 
-async function processarFirebase(safeIp,realIp){
- const loading=document.getElementById("loading"),keyArea=document.getElementById("keyArea"),txt=document.getElementById("txtKey");
- const now=Date.now(),validade=3600000;
+function session(){
+ try{return JSON.parse(sessionStorage.getItem(sessionKey)||"null")}catch(e){return null}
+}
+function fmtDate(ms){
+ if(!ms)return "--";
+ const d=new Date(Number(ms));return isNaN(d)?"--":d.toLocaleDateString("pt-BR");
+}
+function randomKey(){
+ const bytes=new Uint8Array(10);
+ crypto.getRandomValues(bytes);
+ let s=Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();
+ return "VTX-"+s.slice(0,5)+"-"+s.slice(5,10)+"-"+s.slice(10,15)+"-"+s.slice(15,20);
+}
+function showMsg(t,ok=false){const m=document.getElementById("msg");m.textContent=t;m.className="msg"+(ok?" ok":"")}
+
+async function loadUser(){
+ const s=session();
+ if(!s?.childkey){location.replace("index.html");return}
+ document.getElementById("userName").textContent=s.user||"--";
  try{
-  const res=await fetch(`${dbUrl}/ips/${safeIp}.json`,{cache:"no-store"});
-  const data=await res.json();
-
-  if(data){
-   if(now-data.timestamp>validade){
-    await fetch(`${dbUrl}/ips/${safeIp}.json`,{method:"DELETE"});
-    alert("Sessão de 1 hora finalizada.");
-    location.replace("index.html");return;
-   }
-   txt.textContent=data.key;
+  const r=await fetch(DB_URL+"/Users/"+encodeURIComponent(s.childkey)+".json",{cache:"no-store"});
+  if(!r.ok)throw 0;
+  const u=await r.json();
+  if(!u || String(u.user??"")!==String(s.user??"")){sessionStorage.removeItem(sessionKey);location.replace("index.html");return}
+  if(String(u.status??"").toLowerCase()!=="on"){showMsg("CONTA SUSPENSA");return}
+  if(Number(u.val??0)<=Date.now()){showMsg("CONTA EXPIRADA");return}
+  document.getElementById("validity").textContent=fmtDate(u.val);
+  if(u.key){
+    document.getElementById("keyText").textContent=u.key;
+    document.getElementById("keyStatus").textContent="ATIVA";
+    document.getElementById("keyId").textContent=String(u.key).slice(-5);
   }else{
-   const key="VORTEX-"+Math.random().toString(36).substring(2,10).toUpperCase();
-   await fetch(`${dbUrl}/ips/${safeIp}.json`,{
-    method:"PUT",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ip:realIp,key:key,timestamp:now})
-   });
-   txt.textContent=key;
+    document.getElementById("keyStatus").textContent="NÃO GERADA";
   }
-  loading.style.display="none";keyArea.style.display="block";
- }catch(e){
-  alert("Erro ao validar no Firebase.");
-  location.replace("index.html");
- }
+ }catch(e){showMsg("ERRO AO CONSULTAR FIREBASE")}
 }
 
-function copiarKey(){
- const key=document.getElementById("txtKey").textContent;
- navigator.clipboard.writeText(key).then(()=>alert("Key copiada!")).catch(()=>alert("Não foi possível copiar."));
+async function generateKey(){
+ const s=session();if(!s?.childkey){location.replace("index.html");return}
+ const loading=document.getElementById("loading"),btn=document.getElementById("generateBtn");
+ loading.classList.add("show");btn.disabled=true;showMsg("");
+ try{
+   const userRef=DB_URL+"/Users/"+encodeURIComponent(s.childkey)+".json";
+   const r=await fetch(userRef,{cache:"no-store"});if(!r.ok)throw 0;
+   const u=await r.json();if(!u)throw 0;
+   if(String(u.status??"").toLowerCase()!=="on"){throw new Error("Conta suspensa")}
+   if(Number(u.val??0)<=Date.now()){throw new Error("Conta expirada")}
+   const key=randomKey();
+   const wr=await fetch(userRef,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:key,keyCreatedAt:Date.now()})});
+   if(!wr.ok)throw 0;
+   document.getElementById("keyText").textContent=key;
+   document.getElementById("keyStatus").textContent="ATIVA";
+   document.getElementById("keyId").textContent=key.slice(-5);
+   showMsg("KEY GERADA E VINCULADA À SUA CONTA",true);
+ }catch(e){showMsg(e.message==="Conta suspensa"?"CONTA SUSPENSA":e.message==="Conta expirada"?"CONTA EXPIRADA":"ERRO AO GERAR KEY")}
+ finally{loading.classList.remove("show");btn.disabled=false}
 }
+
+async function copyKey(){
+ const key=document.getElementById("keyText").textContent;
+ if(!key||key==="---")return showMsg("NENHUMA KEY DISPONÍVEL");
+ try{await navigator.clipboard.writeText(key);showMsg("KEY COPIADA COM SUCESSO",true)}catch(e){showMsg("NÃO FOI POSSÍVEL COPIAR")}
+}
+loadUser();
 </script>
 </body>
 </html>
