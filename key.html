@@ -57,8 +57,10 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 </div>
 </div></main>
 <script>
-const TIME_LIMIT = 20 * 60 * 1000;
-const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
+// Limite de 24 horas (24 * 60 * 60 * 1000)
+const TIME_LIMIT = 24 * 60 * 60 * 1000;
+const FIREBASE_PROJECT_ID = "vortexdev2"; //[cite: 4]
+const FIREBASE_URL = `https://${FIREBASE_PROJECT_ID}-default-rtdb.firebaseio.com`;[cite: 4]
 
 function setLoadMsg(msg) {
     const el = document.getElementById("loadingText");
@@ -86,9 +88,10 @@ function startCountdown(expireTime) {
             return;
         }
 
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        document.getElementById("countdown").textContent = `${minutes}m ${seconds}s`;
+        document.getElementById("countdown").textContent = `${hours}h ${minutes}m ${seconds}s`;
     }, 1000);
 }
 
@@ -106,7 +109,6 @@ async function verifyAndLoadKey() {
         const sessionData = JSON.parse(localStorage.getItem('vtx_session') || "null");
         const now = new Date().getTime();
 
-        // Se já tem sessão salva no navegador
         if (sessionData && sessionData.key) {
             if (sessionData.expireTime && sessionData.expireTime < now) {
                 localStorage.removeItem("vtx_session");
@@ -160,6 +162,8 @@ async function verifyAndLoadKey() {
         setLoadMsg("GERANDO SUA KEY...");
         const newKey = randomKey();
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+        
+        // Validade exata de 24 horas no Firebase
         const valTimestamp = String(now + (24 * 60 * 60 * 1000));
         const savedCountry = localStorage.getItem('vtx_country') || "BR";
 
@@ -186,7 +190,8 @@ async function verifyAndLoadKey() {
             });
         }
 
-        const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
+        const expireTime = now + TIME_LIMIT;
+        const session = { key: newKey, generatedAt, country: savedCountry, expireTime };
         localStorage.setItem('vtx_session', JSON.stringify(session));
 
         document.getElementById("keyText").textContent = newKey;
@@ -194,6 +199,7 @@ async function verifyAndLoadKey() {
         document.getElementById("country").textContent = savedCountry;
         document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
         
+        startCountdown(expireTime);
         hideLoading();
 
     } catch (e) {
@@ -205,13 +211,6 @@ async function verifyAndLoadKey() {
 
 function triggerSuccess() {
     document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
-    let sessionData = JSON.parse(localStorage.getItem('vtx_session') || "null");
-    if (sessionData && !sessionData.expireTime) {
-        const expireTime = new Date().getTime() + TIME_LIMIT;
-        sessionData.expireTime = expireTime;
-        localStorage.setItem('vtx_session', JSON.stringify(sessionData));
-        startCountdown(expireTime);
-    }
 }
 
 function copyKey(){
