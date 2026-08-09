@@ -3,198 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VORTEX HUB - Liberar Acesso</title>
-    <!-- Fonte parecida com a do painel do vídeo -->
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <title>VortexHub - Liberar Acesso</title>
+    <!-- Fonte Oswald para combinar perfeitamente com a tipografia gamer do print -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Oswald', sans-serif;
         }
 
         body {
-            background-color: #050505;
+            background-color: #030303; /* Fundo super escuro */
             color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* Fundo com grade estilo cibernético que aparece no vídeo */
+            /* Grade idêntica à da imagem */
             background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            overflow: hidden;
+                linear-gradient(rgba(0, 150, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 150, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
         .panel-container {
             width: 100%;
-            max-width: 400px;
-            text-align: center;
+            max-width: 350px;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
         }
 
-        /* Avatar / Logo topo */
-        .avatar {
-            width: 80px;
-            height: 80px;
-            background: #111;
+        /* Avatar com Neon Ciano */
+        .avatar-box {
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
+            background-color: #0a0a0a;
             border: 2px solid #00d2ff;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
-            margin-bottom: 10px;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.6), inset 0 0 10px rgba(0, 210, 255, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 30px;
+            margin-bottom: 10px;
+            font-size: 35px;
         }
 
         .brand-name {
             font-size: 24px;
             font-weight: 700;
             color: #00d2ff;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.8);
+            text-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+            letter-spacing: 1px;
             margin-bottom: 5px;
         }
 
         .online-status {
-            font-size: 14px;
+            font-size: 13px;
             color: #00ff00;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
         }
-        
+
         .dot {
             width: 8px;
             height: 8px;
             background-color: #00ff00;
             border-radius: 50%;
             box-shadow: 0 0 8px #00ff00;
-            animation: pulse 1.5s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .title-section {
-            font-size: 20px;
+        .section-title {
+            font-size: 18px;
             font-weight: 700;
             color: #ffaa00;
-            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
         }
 
-        /* Estilo dos Botões idêntico ao vídeo (bordas azuis, fundo escuro) */
-        .btn-menu {
+        /* Container dos Botões */
+        .buttons-wrapper {
             width: 100%;
-            background: rgba(0, 20, 40, 0.6);
-            border: 1px solid #0055ff;
-            color: #0088ff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Espaçamento entre os botões */
+        }
+
+        /* Botão Principal - Neon */
+        .btn-gerar {
+            width: 100%;
+            background-color: #001018; /* Fundo azul bem escuro */
+            border: 2px solid #00d2ff;
+            color: #00d2ff;
             padding: 12px;
-            margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             border-radius: 4px;
             cursor: pointer;
-            text-transform: uppercase;
-            transition: 0.3s;
-            box-shadow: inset 0 0 10px rgba(0, 85, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-        }
-
-        .btn-menu:hover {
-            background: rgba(0, 40, 80, 0.8);
-            border-color: #00aaff;
-            color: #00aaff;
-            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4), inset 0 0 15px rgba(0, 170, 255, 0.4);
-        }
-
-        .btn-gerar {
-            border: 2px solid #00d2ff;
-            color: #00d2ff;
-            background: rgba(0, 50, 100, 0.4);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3), inset 0 0 10px rgba(0, 210, 255, 0.1);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            margin-bottom: 10px; /* Espaço extra abaixo do botão principal */
         }
 
         .btn-gerar:hover {
-            background: #00d2ff;
-            color: #000;
-            box-shadow: 0 0 25px #00d2ff;
+            background-color: #001a2a;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6), inset 0 0 15px rgba(0, 210, 255, 0.3);
+        }
+
+        /* Botões Secundários */
+        .btn-secundario {
+            width: 100%;
+            background-color: #000812;
+            border: 1px solid #003388;
+            color: #0099ff;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-secundario:hover {
+            border-color: #0055ff;
+            color: #00ccff;
+            background-color: #001122;
         }
 
         /* Área da Key Gerada */
         .key-result {
             display: none;
             width: 100%;
-            background: rgba(0, 10, 20, 0.9);
-            border: 1px solid #00ffaa;
-            border-radius: 6px;
+            background-color: #001500;
+            border: 1px solid #00ff00;
             padding: 15px;
-            margin-top: -15px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 170, 0.2);
-            text-align: left;
-        }
-
-        .key-result-title {
-            color: #00ffaa;
+            border-radius: 4px;
             text-align: center;
-            font-size: 18px;
-            font-weight: 700;
             margin-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 255, 170, 0.3);
-            padding-bottom: 5px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         }
 
-        .key-info {
-            color: #aaa;
-            font-size: 14px;
-            margin-bottom: 5px;
-            font-family: monospace;
-        }
-
-        .key-info span {
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .key-code {
+        .key-result span {
             display: block;
-            text-align: center;
+            color: #00ff00;
             font-size: 22px;
-            color: #00ffaa;
-            margin: 15px 0;
             font-weight: 700;
             letter-spacing: 2px;
-            text-shadow: 0 0 5px #00ffaa;
+            margin-bottom: 10px;
         }
 
         .btn-copiar {
-            background: transparent;
-            border: 1px solid #00ffaa;
-            color: #00ffaa;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
+            background-color: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 15px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             border-radius: 4px;
@@ -202,79 +185,73 @@
         }
 
         .btn-copiar:hover {
-            background: #00ffaa;
+            background-color: #00ff00;
             color: #000;
         }
 
         #loading {
             display: none;
             color: #00d2ff;
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 16px;
             margin-bottom: 15px;
-            text-shadow: 0 0 5px #00d2ff;
         }
     </style>
 </head>
 <body>
 
     <div class="panel-container">
-        <!-- Avatar e Nome -->
-        <div class="avatar">🛡️</div>
+        <!-- Logo e Status -->
+        <div class="avatar-box">🛡️</div>
         <div class="brand-name">VortexHub</div>
-        
         <div class="online-status">
-            <span class="dot"></span> USUÁRIOS ONLINE
+            <div class="dot"></div> USUÁRIOS ONLINE
         </div>
 
-        <div class="title-section">
+        <div class="section-title">
             🔓 LIBERAR ACESSO
         </div>
 
-        <div id="loading">GERANDO KEY VORTEX...</div>
+        <div id="loading">AGUARDE, VALIDANDO IP...</div>
 
-        <!-- Área onde a key gerada vai aparecer -->
-        <div class="key-result" id="keyResultArea">
-            <div class="key-result-title">KEY GERADA COM SUCESSO!</div>
-            
-            <div class="key-code" id="displayKey">VORTEX-XXXXX</div>
-            
-            <div class="key-info">IP: <span id="displayIp">...</span></div>
-            <div class="key-info">VÁLIDA ATÉ: <span id="displayDate">...</span></div>
-            <div class="key-info">STATUS: <span style="color: #00ffaa;">ONLINE E ATIVA</span></div>
-
+        <!-- Onde a Key Aparece -->
+        <div class="key-result" id="keyArea">
+            <span id="txtKey">VORTEX-XXXXX</span>
             <button class="btn-copiar" onclick="copiarKey()">COPIAR KEY</button>
         </div>
 
-        <!-- Botões do Menu iguais ao vídeo -->
-        <button class="btn-menu btn-gerar" id="btnGerar" onclick="iniciarProcesso()">
-            🔑 GERAR KEY VORTEX
-        </button>
+        <!-- Botões -->
+        <div class="buttons-wrapper">
+            <button class="btn-gerar" id="btnGerar" onclick="iniciarGeracao()">
+                🔑 GERAR KEY VORTEX
+            </button>
 
-        <button class="btn-menu">⬇️ DOWNLOAD SCRIPT</button>
-        <button class="btn-menu">📚 TUTORIAL SCRIPT</button>
-        <button class="btn-menu">⏩ PASSADOR DE ENCURTADOR</button>
-        <button class="btn-menu">📱 TUTORIAL ENCURTADOR</button>
-        <button class="btn-menu" onclick="window.open('https://chat.whatsapp.com/SEULINK', '_blank')">💬 CANAL DO WHATSAPP</button>
+            <button class="btn-secundario">⬇️ DOWNLOAD SCRIPT</button>
+            <button class="btn-secundario">📚 TUTORIAL SCRIPT</button>
+            <button class="btn-secundario">⏩ PASSADOR DE ENCURTADOR</button>
+            <button class="btn-secundario">📱 TUTORIAL ENCURTADOR</button>
+            <button class="btn-secundario" onclick="window.open('https://chat.whatsapp.com/SEULINK', '_blank')">💬 CANAL DO WHATSAPP</button>
+        </div>
     </div>
 
     <script>
-        // CONFIGURAÇÕES
+        // FIREBASE E CONFIGURAÇÕES DE PROTEÇÃO
         const dbUrl = "https://sitevendas-26cf6-default-rtdb.firebaseio.com";
         const urlParams = new URLSearchParams(window.location.search);
 
-        // 1. ANTI-LOCAL (CTRL+S)
+        // Bloqueia se tentar salvar no PC (Anti-burla)
         if (window.location.protocol === 'file:') {
             alert("Essa pagina foi bloqueada por tentativa de burlacão");
             window.location.replace("index.html");
         }
 
-        // 2. ANTI-FAVORITOS
+        // Bloqueia se não passar pelo encurtador corretamente
         if (!urlParams.get('auth')) {
             alert("Esta página expirou ou foi bloqueada");
             window.location.replace("index.html");
         }
 
-        async function iniciarProcesso() {
+        async function iniciarGeracao() {
             const btn = document.getElementById('btnGerar');
             const loading = document.getElementById('loading');
             
@@ -282,93 +259,73 @@
             loading.style.display = 'block';
 
             try {
-                // Pega IP
-                const resIp = await fetch('https://api.ipify.org?format=json');
-                const dataIp = await resIp.json();
-                const ip = dataIp.ip;
+                // Pega o IP
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const ip = data.ip;
                 const safeIp = ip.replace(/\./g, '_');
                 
-                await verificarNoFirebase(safeIp, ip);
+                await processarFirebase(safeIp, ip);
             } catch (error) {
-                alert("Erro de conexão. Desative VPN ou AdBlock.");
-                btn.style.display = 'block';
+                alert("Falha na conexão. Desative seu VPN ou Adblocker.");
+                btn.style.display = 'flex';
                 loading.style.display = 'none';
             }
         }
 
-        async function verificarNoFirebase(safeIp, realIp) {
+        async function processarFirebase(safeIp, realIp) {
             const loading = document.getElementById('loading');
-            const resultArea = document.getElementById('keyResultArea');
-            const displayKey = document.getElementById('displayKey');
-            const displayIp = document.getElementById('displayIp');
-            const displayDate = document.getElementById('displayDate');
+            const keyArea = document.getElementById('keyArea');
+            const txtKey = document.getElementById('txtKey');
             
             const tempoAtual = new Date().getTime();
-            const umaHoraEmMs = 3600000;
+            const validadeMs = 3600000; // 1 Hora
 
             try {
                 const res = await fetch(`${dbUrl}/ips/${safeIp}.json`);
-                const dados = await res.json();
+                const bancoDados = await res.json();
 
-                if (dados) {
-                    const tempoPassado = tempoAtual - dados.timestamp;
-
-                    if (tempoPassado > umaHoraEmMs) {
+                if (bancoDados) {
+                    // Verifica se já passou de 1 hora
+                    if ((tempoAtual - bancoDados.timestamp) > validadeMs) {
                         await fetch(`${dbUrl}/ips/${safeIp}.json`, { method: 'DELETE' });
-                        alert("Esta página expirou ou foi bloqueada");
+                        alert("Esta página expirou ou foi bloqueada (Sessão de 1h finalizada).");
                         window.location.replace("index.html");
                         return;
                     }
 
-                    // Calcula hora de expiração
-                    const dataExp = new Date(dados.timestamp + umaHoraEmMs);
-                    
+                    // Se a Key ainda for válida
                     loading.style.display = 'none';
-                    resultArea.style.display = 'block';
-                    displayKey.innerText = dados.key;
-                    displayIp.innerText = realIp;
-                    displayDate.innerText = formatarData(dataExp);
+                    keyArea.style.display = 'block';
+                    txtKey.innerText = bancoDados.key;
 
                 } else {
-                    // Gera nova
+                    // Cria uma nova Key
                     const novaKey = "VORTEX-" + Math.random().toString(36).substring(2, 10).toUpperCase();
-                    const dataExp = new Date(tempoAtual + umaHoraEmMs);
-                    
-                    const novoRegistro = { ip: realIp, key: novaKey, timestamp: tempoAtual };
+                    const registro = { ip: realIp, key: novaKey, timestamp: tempoAtual };
 
                     await fetch(`${dbUrl}/ips/${safeIp}.json`, {
                         method: 'PUT',
-                        body: JSON.stringify(novoRegistro),
+                        body: JSON.stringify(registro),
                         headers: { 'Content-Type': 'application/json' }
                     });
 
                     loading.style.display = 'none';
-                    resultArea.style.display = 'block';
-                    displayKey.innerText = novaKey;
-                    displayIp.innerText = realIp;
-                    displayDate.innerText = formatarData(dataExp);
+                    keyArea.style.display = 'block';
+                    txtKey.innerText = novaKey;
                 }
             } catch (error) {
-                alert("Erro ao contatar o servidor.");
+                alert("Erro ao validar no servidor Firebase.");
                 window.location.replace("index.html");
             }
         }
 
-        function formatarData(data) {
-            const dia = String(data.getDate()).padStart(2, '0');
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const ano = data.getFullYear();
-            const hora = String(data.getHours()).padStart(2, '0');
-            const min = String(data.getMinutes()).padStart(2, '0');
-            return `${dia}/${mes}/${ano} as ${hora}:${min}`;
-        }
-
         function copiarKey() {
-            const keyText = document.getElementById('displayKey').innerText;
+            const keyText = document.getElementById('txtKey').innerText;
             navigator.clipboard.writeText(keyText).then(() => {
-                alert("Key copiada para a área de transferência!");
+                alert("Key copiada com sucesso!");
             }).catch(() => {
-                alert("Erro ao copiar. Selecione o texto manualmente.");
+                alert("Erro ao copiar. Selecione manualmente.");
             });
         }
     </script>
