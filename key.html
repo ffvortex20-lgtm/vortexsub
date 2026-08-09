@@ -72,7 +72,6 @@ function startCountdown(expireTime) {
         if (distance < 0) {
             clearInterval(activeTimer);
             localStorage.removeItem("vtx_session");
-            localStorage.removeItem("vtx_authorized");
             alert("Sua Key expirou! Você precisa passar pelo encurtador novamente.");
             window.location.href = "index.html";
             return;
@@ -84,85 +83,97 @@ function startCountdown(expireTime) {
     }, 1000);
 }
 
-function verifyAndLoadKey() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const hasValidToken = urlParams.get('token') === SECRET_TOKEN;
-    const isAuthorized = localStorage.getItem('vtx_authorized') === 'true';
-    const savedCountry = localStorage.getItem('vtx_country') || "BR";
-    
-    const sessionData = JSON.parse(localStorage.getItem('vtx_session'));
-    const now = new Date().getTime();
-
-    if (hasValidToken && isAuthorized) {
-        const newKey = randomKey();
-        const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-        const valTimestamp = String(now + (24 * 60 * 60 * 1000));
-
-        // Salva no Firebase em segundo plano (sem travar a tela)
-        fetch(`${FIREBASE_URL}/Users.json`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user: newKey,
-                pass: newKey,
-                val: valTimestamp,
-                status: "on",
-                disp: "",
-                login: 1,
-                childkey: ""
-            })
-        }).then(res => res.json()).then(result => {
-            if (result && result.name) {
-                fetch(`${FIREBASE_URL}/Users/${result.name}.json`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ childkey: result.name })
-                });
-            }
-        }).catch(err => console.error("Erro Firebase:", err));
-
-        const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
-        localStorage.setItem('vtx_session', JSON.stringify(session));
-        localStorage.removeItem('vtx_authorized');
-
-        document.getElementById("keyText").textContent = newKey;
-        document.getElementById("time").textContent = generatedAt;
-        document.getElementById("country").textContent = savedCountry;
-        document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
-        
-        // Some com o loading instantaneamente
-        document.getElementById("loading").style.opacity = "0";
-        setTimeout(() => document.getElementById("loading").style.display = "none", 300);
-        
-        window.history.replaceState({}, document.title, window.location.pathname);
-        return;
+function hideLoading() {
+    const loader = document.getElementById("loading");
+    if (loader) {
+        loader.style.opacity = "0";
+        setTimeout(() => loader.style.display = "none", 300);
     }
+}
 
-    if (sessionData) {
-        if (sessionData.expireTime && sessionData.expireTime < now) {
-            localStorage.removeItem("vtx_session");
-            alert("Sua Key expirou! Você precisa passar pelo encurtador novamente.");
-            window.location.href = "index.html";
+function verifyAndLoadKey() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasValidToken = urlParams.get('token') === SECRET_TOKEN;
+        const savedCountry = localStorage.getItem('vtx_country') || "BR";
+        const sessionData = JSON.parse(localStorage.getItem('vtx_session'));
+        const now = new Date().getTime();
+
+        // Se veio do encurtador com o token correto, gera uma nova key imediatamente
+        if (hasValidToken) {
+            const newKey = randomKey();
+            const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+            const valTimestamp = String(now + (24 * 60 * 60 * 1000));
+
+            // Salva no Firebase em segundo plano
+            fetch(`${FIREBASE_URL}/Users.json`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user: newKey,
+                    pass: newKey,
+                    val: valTimestamp,
+                    status: "on",
+                    disp: "",
+                    login: 1,
+                    childkey: ""
+                })
+            }).then(res => res.json()).then(result => {
+                if (result && result.name) {
+                    fetch(`${FIREBASE_URL}/Users/${result.name}.json`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ childkey: result.name })
+                    });
+                }
+            }).catch(err => console.error("Erro Firebase:", err));
+
+            const session = { key: newKey, generatedAt, country: savedCountry, expireTime: null };
+            localStorage.setItem('vtx_session', JSON.stringify(session));
+            localStorage.removeItem('vtx_authorized');
+
+            document.getElementById("keyText").textContent = newKey;
+            document.getElementById("time").textContent = generatedAt;
+            document.getElementById("country").textContent = savedCountry;
+            document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
+            
+            window.history.replaceState({}, document.title, window.location.pathname);
             return;
         }
 
-        document.getElementById("keyText").textContent = sessionData.key;
-        document.getElementById("time").textContent = sessionData.generatedAt;
-        document.getElementById("country").textContent = sessionData.country || "BR";
-        
-        if (sessionData.expireTime) {
-            document.getElementById("msg").textContent = "SESSÃO ATIVA";
-            startCountdown(sessionData.expireTime);
-        } else {
-            document.getElementById("msg").textContent = "AGUARDANDO CÓPIA";
+        // Se já tem sessão salva no navegador
+        if (sessionData && sessionData.key) {
+            if (sessionData.expireTime && sessionData.expireTime < now) {
+                localStorage.removeItem("vtx_session");
+                alert("Sua Key expirou! Você precisa passar pelo encurtador novamente.");
+                window.location.href = "index.html";
+                return;
+            }
+
+            document.getElementById("keyText").textContent = sessionData.key;
+            document.getElementById("time").textContent = sessionData.generatedAt || "--";
+            document.getElementById("country").textContent = sessionData.country || "BR";
+            
+            if (sessionData.expireTime) {
+                document.getElementById("msg").textContent = "SESSÃO ATIVA";
+                startCountdown(sessionData.expireTime);
+            } else {
+                document.getElementById("msg").textContent = "AGUARDANDO CÓPIA";
+            }
+            return;
         }
 
-        document.getElementById("loading").style.display = "none";
-        return;
-    }
+        // Se não tem token e nem sessão, manda de volta pro início
+        alert("Acesso negado! Por favor, passe pelo encurtador primeiro.");
+        window.location.href = "index.html";
 
-    alert("Acesso negado! Por favor, passe pelo encurtador primeiro.");
-    window.location.href = "index.html";
+    } catch (e) {
+        console.error("Erro crítico:", e);
+        document.getElementById("keyText").textContent = "ERRO AO CARREGAR";
+    } finally {
+        // GARANTE QUE O LOADING SEMPRE VAI SUMIR (mesmo se der erro)
+        hideLoading();
+    }
 }
 
 function triggerSuccess() {
@@ -178,7 +189,7 @@ function triggerSuccess() {
 
 function copyKey(){
     const k = document.getElementById("keyText").textContent;
-    if(!k || k === "GERANDO...") return;
+    if(!k || k === "GERANDO..." || k === "ERRO AO CARREGAR") return;
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(k).then(() => {
