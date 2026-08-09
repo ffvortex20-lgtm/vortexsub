@@ -71,6 +71,7 @@ function startCountdown(expireTime) {
         if (distance < 0) {
             clearInterval(activeTimer);
             localStorage.removeItem("vtx_session");
+            localStorage.removeItem("vtx_authorized");
             alert("Sua Key expirou! Você precisa passar pelo encurtador novamente.");
             window.location.href = "index.html";
             return;
@@ -87,19 +88,31 @@ async function verifyAndLoadKey() {
     
     const urlParams = new URLSearchParams(window.location.search);
     const hasValidToken = urlParams.get('token') === SECRET_TOKEN;
+    const isAuthorized = localStorage.getItem('vtx_authorized') === 'true';
+    const savedIp = localStorage.getItem('vtx_client_ip');
+    
     const sessionData = JSON.parse(localStorage.getItem('vtx_session'));
     const now = new Date().getTime();
 
-    if (hasValidToken) {
+    const currentIpData = await fetch("https://ipapi.co/json/").then(r=>r.json()).catch(()=>null);
+    const currentIp = currentIpData?.ip || "unknown";
+    const country = currentIpData?.country_code || "N/D";
+
+    if (hasValidToken && isAuthorized) {
+        if (savedIp && savedIp !== "unknown" && currentIp !== "unknown" && savedIp !== currentIp) {
+            alert("Acesso negado: IP divergente do que iniciou a sessão!");
+            window.location.href = "index.html";
+            return;
+        }
+
         await new Promise(r=>setTimeout(r,850));
-        const g = await fetch("https://ipapi.co/json/").then(r=>r.json()).catch(()=>null);
         
         const newKey = randomKey();
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-        const country = g?.country_code || "N/D";
 
         const session = { key: newKey, generatedAt, country, expireTime: null };
         localStorage.setItem('vtx_session', JSON.stringify(session));
+        localStorage.removeItem('vtx_authorized');
 
         document.getElementById("keyText").textContent = newKey;
         document.getElementById("time").textContent = generatedAt;
