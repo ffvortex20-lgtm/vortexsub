@@ -3,365 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biopage</title>
-    <!-- Fonte e Ícones -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Vortex Hub - Início</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body {
-            background-color: #0b0f19;
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Efeito de Fundo Animado (Glow / Nebula) */
-        .background-glow {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        .glow-circle {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(110, 0, 255, 0.25) 0%, rgba(11, 15, 25, 0) 70%);
-            border-radius: 50%;
-            animation: moveGlow 10s infinite alternate ease-in-out;
-        }
-
-        .glow-circle:nth-child(2) {
-            background: radial-gradient(circle, rgba(0, 243, 255, 0.2) 0%, rgba(11, 15, 25, 0) 70%);
-            right: -100px;
-            bottom: -100px;
-            animation-duration: 14s;
-        }
-
-        @keyframes moveGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 80px) scale(1.2); }
-        }
-
-        /* Container Principal da Bio */
-        .container {
-            width: 100%;
-            max-width: 480px;
-            padding: 20px;
-            z-index: 1;
-            animation: fadeIn 1.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Perfil Header */
-        .profile-card {
-            background: rgba(18, 24, 38, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-        }
-
-        .avatar-container {
-            position: relative;
-            width: 110px;
-            height: 110px;
-            margin: 0 auto 15px;
-        }
-
-        .avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #6e00ff;
-            box-shadow: 0 0 20px rgba(110, 0, 255, 0.6);
-            animation: pulseBorder 3s infinite alternate;
-        }
-
-        @keyframes pulseBorder {
-            0% { box-shadow: 0 0 15px rgba(110, 0, 255, 0.4); }
-            100% { box-shadow: 0 0 30px rgba(0, 243, 255, 0.8); border-color: #00f3ff; }
-        }
-
-        .profile-name {
-            font-size: 1.6rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-            background: linear-gradient(90deg, #ffffff, #00f3ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .profile-bio {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            font-weight: 300;
-            margin-bottom: 15px;
-        }
-
-        .badges-wrapper {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .status-badge, .views-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 255, 128, 0.1);
-            border: 1px solid rgba(0, 255, 128, 0.3);
-            color: #00ff80;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .views-badge {
-            background: rgba(0, 243, 255, 0.1);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            color: #00f3ff;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00ff80;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff80;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        /* Links Estilizados */
-        .links-list {
+            background-color: #09090b;
+            color: #fff;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-
-        .link-btn {
-            display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            background: rgba(18, 24, 38, 0.6);
-            backdrop-filter: blur(10px);
+            height: 100vh;
+            background-image: radial-gradient(circle at 50% -20%, #1a1a2e, #09090b);
+        }
+        .hub-container {
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 14px 20px;
-            border-radius: 14px;
-            color: #ffffff;
+            padding: 50px 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        p { color: #a1a1aa; font-size: 14px; margin-bottom: 30px; }
+        .btn {
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            color: white;
             text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
         }
-
-        .link-btn i:first-child {
-            font-size: 1.2rem;
-            margin-right: 12px;
-            width: 24px;
-            text-align: center;
-        }
-
-        .link-content {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-
-        .link-btn:hover {
-            transform: translateY(-3px);
-            background: rgba(30, 41, 59, 0.8);
-            border-color: rgba(0, 243, 255, 0.4);
-            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.15);
-        }
-
-        .link-btn:hover .fa-chevron-right {
-            transform: translateX(4px);
-            color: #00f3ff;
-        }
-
-        .fa-chevron-right {
-            font-size: 0.8rem;
-            color: #64748b;
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        /* Cores específicas de ícones ao passar o mouse */
-        .link-btn.youtube:hover i:first-child { color: #FF0000; }
-        .link-btn.telegram:hover i:first-child { color: #229ED9; }
-        .link-btn.github:hover i:first-child { color: #ffffff; }
-        .link-btn.whatsapp:hover i:first-child { color: #25D366; }
-
-        /* Rodapé */
-        .footer {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 0.75rem;
-            color: #64748b;
-        }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
     </style>
 </head>
 <body>
-
-    <!-- Fundo Dinâmico -->
-    <div class="background-glow">
-        <div class="glow-circle" style="top: -100px; left: -100px;"></div>
-        <div class="glow-circle"></div>
+    <div class="hub-container">
+        <h1>VORTEX HUB</h1>
+        <p>Acesse o melhor painel com segurança premium.</p>
+        <!-- COLOQUE O LINK DO SEU ENCURTADOR ABAIXO -->
+        <button class="btn" onclick="window.location.href='https://link-do-seu-encurtador.com'">Pegar Key</button>
     </div>
-
-    <div class="container">
-        <!-- Card do Perfil -->
-        <div class="profile-card">
-            <div class="avatar-container">
-                <!-- Foto puxada diretamente do seu GitHub -->
-                <img src="https://github.com/ffvortex20-lgtm.png" alt="Avatar Gamer" class="avatar">
-            </div>
-            <h1 class="profile-name">Vortex</h1>
-            <p class="profile-bio">Redes sociais oficiais</p>
-            
-            <div class="badges-wrapper">
-                <div class="status-badge">
-                    <div class="status-dot"></div>
-                    Online
-                </div>
-                <div class="views-badge">
-                    <i class="fa-solid fa-eye"></i>
-                    <span id="view-count">Carregando...</span> views
-                </div>
-            </div>
-        </div>
-
-        <!-- Lista de Links -->
-        <div class="links-list">
-            <a href="https://www.youtube.com/@Vortex-Ofc1" target="_blank" class="link-btn youtube">
-                <div class="link-content">
-                    <i class="fa-brands fa-youtube"></i>
-                    <span>YouTube Channel</span>
-                </div>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-
-            <a href="https://t.me/vortexofc0" target="_blank" class="link-btn telegram">
-                <div class="link-content">
-                    <i class="fa-brands fa-telegram"></i>
-                    <span>Telegram</span>
-                </div>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-
-            <a href="https://github.com/ffvortex20-lgtm" target="_blank" class="link-btn github">
-                <div class="link-content">
-                    <i class="fa-brands fa-github"></i>
-                    <span>GitHub Profile</span>
-                </div>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-
-            <a href="https://whatsapp.com/channel/0029VbC7FWcJENxsIOsndS15" target="_blank" class="link-btn whatsapp">
-                <div class="link-content">
-                    <i class="fa-brands fa-whatsapp"></i>
-                    <span>WhatsApp Channel</span>
-                </div>
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-        </div>
-
-        <!-- Rodapé -->
-        <div class="footer">
-            <p>&copy; 2026 Vortex Dev. Todos os direitos reservados.</p>
-        </div>
-    </div>
-
-    <!-- Script de Integração com o Firebase Realtime Database (Anti-Flood por IP) -->
-    <script>
-        const databaseURL = "https://vortexdev2-default-rtdb.firebaseio.com";
-
-        async function handleUniqueVisitor() {
-            try {
-                // 1. Pega o IP real do usuário (funciona para PC e Celular)
-                const ipResponse = await fetch('https://api.ipify.org?format=json');
-                const ipData = await ipResponse.json();
-                
-                // Limpa o IP para virar uma chave válida no Firebase (substitui pontos por underlines)
-                const cleanIP = ipData.ip.replace(/\./g, '_');
-
-                // 2. Verifica se este IP já visitou checando no Firebase
-                const visitCheckRef = `${databaseURL}/visitas/ips/${cleanIP}.json`;
-                const checkRes = await fetch(visitCheckRef);
-                const hasVisited = await checkRes.json();
-
-                // 3. Se for a primeira vez que esse IP acessa, incrementa o contador global
-                if (!hasVisited) {
-                    // Marca o IP no Firebase para registrar que já contou
-                    await fetch(visitCheckRef, {
-                        method: 'PUT',
-                        body: JSON.stringify(true)
-                    });
-
-                    // Pega o total de views atual
-                    const totalRes = `${databaseURL}/visitas/total.json`;
-                    const currentRes = await fetch(totalRes);
-                    let totalViews = await currentRes.json();
-                    
-                    if (totalViews === null) totalViews = 0;
-                    totalViews += 1;
-
-                    // Salva o novo total
-                    await fetch(totalRes, {
-                        method: 'PUT',
-                        body: JSON.stringify(totalViews)
-                    });
-                }
-
-                // 4. Pega o total atualizado para exibir na tela
-                const totalRes = `${databaseURL}/visitas/total.json`;
-                const finalRes = await fetch(totalRes);
-                let finalViews = await finalRes.json();
-                
-                if (finalViews === null) finalViews = 0;
-                document.getElementById('view-count').innerText = finalViews.toLocaleString();
-
-            } catch (error) {
-                console.error("Erro ao processar visualização por IP:", error);
-                document.getElementById('view-count').innerText = "Indisponível";
-            }
-        }
-
-        // Executa a função ao carregar a página
-        handleUniqueVisitor();
-    </script>
 </body>
 </html>
