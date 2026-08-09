@@ -19,13 +19,15 @@ body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(r
 .avatar{width:82px;height:82px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));box-shadow:0 0 30px rgba(0,234,255,.2);position:relative}.avatar:before{content:"";position:absolute;inset:-7px;border:1px solid rgba(0,234,255,.3);border-radius:50%;animation:spin 7s linear infinite}.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
 h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shadow:0 0 20px rgba(0,234,255,.4)}h1 span{color:var(--c)}.sub{text-align:center;margin-top:6px;color:#63758e;font-size:7px;letter-spacing:1.8px}
 .status{width:max-content;margin:16px auto 13px;display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid rgba(0,255,145,.25);border-radius:99px;color:#4affa5;font-size:7px;letter-spacing:1px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:pulse 1.3s infinite}@keyframes pulse{50%{transform:scale(1.5);opacity:.5}}
-.keybox{padding:20px 13px;border:1px solid rgba(0,234,255,.35);border-radius:14px;background:linear-gradient(145deg,rgba(0,234,255,.055),rgba(134,60,255,.04));box-shadow:inset 0 0 25px rgba(0,234,255,.035),0 0 25px rgba(0,234,255,.05);text-align:center;position:relative;overflow:hidden}.keybox:before{content:"";position:absolute;top:0;left:-100%;width:70%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);animation:scan 3.5s infinite}@keyframes scan{0%,45%{left:-100%}70%,100%{left:140%}}.keylabel{position:relative;z-index:2;color:#52667f;font-size:6px;letter-spacing:1.5px;margin-bottom:8px}.key{position:relative;z-index:2;color:var(--c);font-size:18px;font-weight:900;letter-spacing:2px;word-break:break-all;text-shadow:0 0 15px rgba(0,234,255,.5)}
-.btn{position:relative;width:100%;height:51px;margin-top:10px;border-radius:10px;border:1px solid var(--c);background:rgba(0,234,255,.05);color:#fff;font:800 9px Orbitron;letter-spacing:1px;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(0,234,255,.18)}
+.keybox{padding:16px 13px;border:1px solid rgba(0,234,255,.35);border-radius:14px;background:linear-gradient(145deg,rgba(0,234,255,.055),rgba(134,60,255,.04));box-shadow:inset 0 0 25px rgba(0,234,255,.035),0 0 25px rgba(0,234,255,.05);text-align:center;position:relative;overflow:hidden;margin-bottom:8px}
+.keylabel{position:relative;z-index:2;color:#52667f;font-size:6px;letter-spacing:1.5px;margin-bottom:4px}
+.key{position:relative;z-index:2;color:var(--c);font-size:15px;font-weight:900;letter-spacing:2px;word-break:break-all;text-shadow:0 0 15px rgba(0,234,255,.5)}
+.btn{position:relative;width:100%;height:45px;margin-top:6px;border-radius:10px;border:1px solid var(--c);background:rgba(0,234,255,.05);color:#fff;font:800 9px Orbitron;letter-spacing:1px;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(0,234,255,.18)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.stat label{display:block;color:#50647d;font-size:6px;letter-spacing:1px}.stat b{display:block;margin-top:6px;color:var(--c);font-size:9px}.green b{color:var(--g)}.warn b{color:var(--warn)}
 .socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:44px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#9bacbf;font-size:7px;font-weight:800}.social:hover{color:#fff;border-color:rgba(0,234,255,.4)}
 .footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}.msg{text-align:center;min-height:16px;margin-top:9px;color:#4affa5;font-size:6.5px;letter-spacing:.6px}
 .loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.92);backdrop-filter:blur(8px);transition:opacity 0.3s ease}.loader{text-align:center;padding:20px}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
-@media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:15px}.grid,.socials{grid-template-columns:1fr}}
+@media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:13px}.grid,.socials{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -34,8 +36,14 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 <div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex"></div>
 <h1>VORTEX<span>HUB</span></h1><div class="sub">KEY GENERATION TERMINAL</div>
 <div class="status"><span class="dot"></span>KEY READY</div>
-<div class="keybox"><div class="keylabel">SUA VORTEX ACCESS KEY</div><div class="key" id="keyText">GERANDO...</div></div>
-<button class="btn" id="copyBtn" onclick="copyKey()">⧉ COPIAR KEY</button>
+
+<!-- Caixa do Usuário -->
+<div class="keybox"><div class="keylabel">SEU USUÁRIO (USER)</div><div class="key" id="userText">GERANDO...</div></div>
+
+<!-- Caixa da Senha -->
+<div class="keybox"><div class="keylabel">SUA SENHA (PASS)</div><div class="key" id="passText">GERANDO...</div></div>
+
+<button class="btn" id="copyBtn" onclick="copyKeys()">⧉ COPIAR DADOS DE LOGIN</button>
 <div class="msg" id="msg"></div>
 <div class="grid">
 <div class="stat green"><label>STATUS</label><b>ATIVA</b></div>
@@ -47,7 +55,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 <a class="social" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
 <a class="social" href="https://t.me/vtxmdz" target="_blank">✈ TELEGRAM</a>
 </div>
-<div class="footer"><span>VORTEX HUB • v4.0</span><span>KEY SYSTEM</span></div>
+<div class="footer"><span>VORTEX HUB • v4.1</span><span>KEY SYSTEM</span></div>
 </div>
 <div class="loading" id="loading">
     <div class="loader">
@@ -57,8 +65,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 </div>
 </div></main>
 <script>
-// 1 Dia exato em milissegundos (equivalente a: 1 * 24 * 60 * 60 * 1000)
-const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000;
+const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000; // 1 dia exato
 const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
 
 function setLoadMsg(msg) {
@@ -89,7 +96,7 @@ function startCountdown(expireTime) {
 
         if (distance < 0) {
             clearInterval(activeTimer);
-            localStorage.removeItem("vtx_session_v4");
+            localStorage.removeItem("vtx_session_v41");
             alert("Sua Key expirou!");
             window.location.reload();
             return;
@@ -114,18 +121,18 @@ function hideLoading() {
 async function verifyAndLoadKey() {
     try {
         const savedVersion = localStorage.getItem('vtx_version');
-        if (savedVersion !== "4.0") {
-            localStorage.removeItem("vtx_session_v4");
-            localStorage.setItem("vtx_version", "4.0");
+        if (savedVersion !== "4.1") {
+            localStorage.removeItem("vtx_session_v41");
+            localStorage.setItem("vtx_version", "4.1");
         }
 
         setLoadMsg("VERIFICANDO SESSÃO...");
-        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v4') || "null");
+        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v41') || "null");
         const now = new Date().getTime();
 
-        // Se já existe sessão salva e válida no navegador, reaproveita
-        if (sessionData && sessionData.key && sessionData.expireTime > now) {
-            document.getElementById("keyText").textContent = sessionData.key;
+        if (sessionData && sessionData.user && sessionData.pass && sessionData.expireTime > now) {
+            document.getElementById("userText").textContent = sessionData.user;
+            document.getElementById("passText").textContent = sessionData.pass;
             document.getElementById("time").textContent = sessionData.generatedAt || "--";
             document.getElementById("country").textContent = sessionData.country || "BR";
             
@@ -134,29 +141,31 @@ async function verifyAndLoadKey() {
             return;
         }
 
-        setLoadMsg("GERANDO NOVA KEY...");
-        const newKey = randomKey();
+        setLoadMsg("GERANDO CREDENCIAIS...");
+        const newUser = randomKey();
+        const newPass = randomKey(); // Gera uma senha distinta ou igual, dependendo da sua preferência (aqui gera duas separadas igual o admin)
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
         
-        // Exatamente igual ao painel do adm: Tempo atual do sistema + 1 dia em milissegundos
+        // Exatamente como o seu bloco: tempo atual do sistema + (1 * 24 * 60 * 60 * 1000)
         const expireTime = now + ONE_DAY_MS;
         const valTimestamp = String(expireTime);
         const savedCountry = localStorage.getItem('vtx_country') || "BR";
 
         setLoadMsg("SALVANDO NO FIREBASE...");
         
-        // Estrutura idêntica ao bloco map do adm (user, pass, val, status, login, etc.)
+        // Estrutura exata do Map do seu adm no Sketchware
         const postRes = await fetch(`${FIREBASE_URL}/Users.json`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                user: newKey,
-                pass: newKey,
-                val: valTimestamp,
-                status: "on",
-                disp: "",
+                user: newUser,
+                pass: newPass,
                 login: "1",
-                childkey: ""
+                status: "on",
+                val: valTimestamp,
+                disp: "",
+                childkey: "",
+                rev: "Dashboard"
             })
         });
         
@@ -169,13 +178,14 @@ async function verifyAndLoadKey() {
             });
         }
 
-        const session = { key: newKey, generatedAt, country: savedCountry, expireTime };
-        localStorage.setItem('vtx_session_v4', JSON.stringify(session));
+        const session = { user: newUser, pass: newPass, generatedAt, country: savedCountry, expireTime };
+        localStorage.setItem('vtx_session_v41', JSON.stringify(session));
 
-        document.getElementById("keyText").textContent = newKey;
+        document.getElementById("userText").textContent = newUser;
+        document.getElementById("passText").textContent = newPass;
         document.getElementById("time").textContent = generatedAt;
         document.getElementById("country").textContent = savedCountry;
-        document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO";
+        document.getElementById("msg").textContent = "DADOS GERADOS COM SUCESSO";
         
         startCountdown(expireTime);
         hideLoading();
@@ -188,21 +198,24 @@ async function verifyAndLoadKey() {
 }
 
 function triggerSuccess() {
-    document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
+    document.getElementById("msg").textContent = "DADOS COPIADOS COM SUCESSO";
 }
 
-function copyKey(){
-    const k = document.getElementById("keyText").textContent;
-    if(!k || k === "GERANDO..." || k === "ERRO AO CONECTAR") return;
+function copyKeys(){
+    const u = document.getElementById("userText").textContent;
+    const p = document.getElementById("passText").textContent;
+    if(!u || u === "GERANDO..." || u === "ERRO AO CONECTAR") return;
+
+    const fullText = `Usuário: ${u}\nSenha: ${p}`;
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(k).then(() => {
+        navigator.clipboard.writeText(fullText).then(() => {
             triggerSuccess();
         }).catch(() => {
-            fallbackCopy(k);
+            fallbackCopy(fullText);
         });
     } else {
-        fallbackCopy(k);
+        fallbackCopy(fullText);
     }
 }
 
