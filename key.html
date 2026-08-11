@@ -84,7 +84,6 @@ function startCountdown(expireTime) {
         if (distance < 0) {
             clearInterval(activeTimer);
             localStorage.removeItem("vtx_session_v58");
-            alert("Sua Key expirou!");
             window.location.reload();
             return;
         }
@@ -105,38 +104,37 @@ function hideLoading() {
     }
 }
 
-async function verifyAndLoadKey() {
+async function getIpAndValidate() {
     try {
-        const savedVersion = localStorage.getItem('vtx_version');
-        if (savedVersion !== "5.8") {
-            localStorage.removeItem("vtx_session_v58");
-            localStorage.setItem('vtx_version', "5.8");
-        }
-
-        setLoadMsg("VERIFICANDO SESSÃO...");
-        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v58') || "null");
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipRes.json();
+        const ip = ipData.ip.replace(/[.#$[\]]/g, "_");
+        
+        const lockRes = await fetch(`${FIREBASE_URL}/IpLocks/${ip}.json`);
+        const lockData = await lockRes.json();
         const now = new Date().getTime();
 
-        if (sessionData && sessionData.key && sessionData.expireTime > now) {
-            document.getElementById("keyText").textContent = sessionData.key;
-            document.getElementById("time").textContent = sessionData.generatedAt || "--";
-            document.getElementById("country").textContent = sessionData.country || "BR";
-            
-            startCountdown(sessionData.expireTime);
+        if (lockData && lockData.expireTime > now) {
+            document.getElementById("keyText").textContent = lockData.key;
+            document.getElementById("time").textContent = lockData.generatedAt;
+            startCountdown(lockData.expireTime);
             hideLoading();
-            return;
+            return null;
         }
+        return ip;
+    } catch(e) { return "BR"; }
+}
+
+async function verifyAndLoadKey() {
+    try {
+        const ip = await getIpAndValidate();
+        if (!ip) return;
 
         setLoadMsg("GERANDO NOVA KEY...");
         const newKey = generateKey();
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-        
-        const expireTime = now + ONE_DAY_MS;
-        const savedCountry = localStorage.getItem('vtx_country') || "BR";
+        const expireTime = new Date().getTime() + ONE_DAY_MS;
 
-        setLoadMsg("SALVANDO NO FIREBASE...");
-        
-        // Estrutura idêntica à Foto 2 (dias: "0", validade: "1", dispositivos: "1"):
         const postRes = await fetch(`${FIREBASE_URL}/KeysUsers.json`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -151,30 +149,27 @@ async function verifyAndLoadKey() {
             })
         });
         
-        if (!postRes.ok) throw new Error("Erro na requisição POST");
-
         const result = await postRes.json();
-        if (result && result.name) {
-            await fetch(`${FIREBASE_URL}/KeysUsers/${result.name}.json`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ uid: result.name })
-            });
-        }
+        await fetch(`${FIREBASE_URL}/KeysUsers/${result.name}.json`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ uid: result.name })
+        });
 
-        const session = { key: newKey, generatedAt, country: savedCountry, expireTime };
-        localStorage.setItem('vtx_session_v58', JSON.stringify(session));
+        await fetch(`${FIREBASE_URL}/IpLocks/${ip}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: newKey, expireTime, generatedAt })
+        });
 
         document.getElementById("keyText").textContent = newKey;
         document.getElementById("time").textContent = generatedAt;
-        document.getElementById("country").textContent = savedCountry;
         document.getElementById("msg").textContent = "KEY REGISTRADA COM SUCESSO";
         
         startCountdown(expireTime);
         hideLoading();
 
     } catch (e) {
-        console.error("Erro crítico:", e);
         setLoadMsg("ERRO AO CONECTAR");
         setTimeout(hideLoading, 1500);
     }
@@ -187,41 +182,7 @@ function triggerSuccess() {
 function copyKey(){
     const k = document.getElementById("keyText").textContent;
     if(!k || k === "GERANDO..." || k === "ERRO AO CONECTAR") return;
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(k).then(() => {
-            triggerSuccess();
-        }).catch(() => {
-            fallbackCopy(k);
-        });
-    } else {
-        fallbackCopy(k);
-    }
-}
-
-function fallbackCopy(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.opacity = "0";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-        if (successful) {
-            triggerSuccess();
-        } else {
-            document.getElementById("msg").textContent = "NÃO FOI POSSÍVEL COPIAR";
-        }
-    } catch (err) {
-        document.body.removeChild(textArea);
-        document.getElementById("msg").textContent = "NÃO FOI POSSÍVEL COPIAR";
-    }
+    navigator.clipboard.writeText(k).then(triggerSuccess);
 }
 
 verifyAndLoadKey();
