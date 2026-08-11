@@ -41,7 +41,7 @@ h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shad
 <div class="stat green"><label>STATUS</label><b>ativada</b></div>
 <div class="stat"><label>GERADA EM</label><b id="time">--</b></div>
 <div class="stat warn"><label>EXPIRA EM</label><b id="countdown">Calculando...</b></div>
-<div class="stat"><label>ORIGEM / IP</label><b id="country">BR</b></div>
+<div class="stat"><label>MEU IP</label><b id="userIp">Carregando...</b></div>
 </div>
 <div class="socials">
 <a class="social" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
@@ -68,6 +68,16 @@ function setLoadMsg(msg) {
 const particles=document.getElementById("particles");
 for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
 
+// Gera um UID no mesmo formato do bloco "push getKey" do Firebase
+function generateFirebaseUID() {
+    const chars = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+    let uid = '';
+    for (let i = 0; i < 20; i++) {
+        uid += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return uid;
+}
+
 function generateKey(){
     const digits = Math.floor(1000 + Math.random() * 9000); 
     return `VTX-VIP-${digits}`;
@@ -83,7 +93,6 @@ function startCountdown(expireTime) {
 
         if (distance < 0) {
             clearInterval(activeTimer);
-            localStorage.removeItem("vtx_session_v58");
             window.location.reload();
             return;
         }
@@ -109,6 +118,7 @@ async function getIpAndValidate() {
         const ipRes = await fetch("https://api.ipify.org?format=json");
         const ipData = await ipRes.json();
         const ip = ipData.ip.replace(/[.#$[\]]/g, "_");
+        document.getElementById("userIp").textContent = ipData.ip;
         
         const lockRes = await fetch(`${FIREBASE_URL}/IpLocks/${ip}.json`);
         const lockData = await lockRes.json();
@@ -119,43 +129,46 @@ async function getIpAndValidate() {
             document.getElementById("time").textContent = lockData.generatedAt;
             startCountdown(lockData.expireTime);
             hideLoading();
-            return null;
+            return null; // Bloqueia nova geração
         }
         return ip;
-    } catch(e) { return "BR"; }
+    } catch(e) { 
+        document.getElementById("userIp").textContent = "DESCONHECIDO";
+        return "IP_DESCONHECIDO_" + Math.floor(Math.random() * 1000); 
+    }
 }
 
 async function verifyAndLoadKey() {
     try {
+        setLoadMsg("OBTENDO SEU IP...");
         const ip = await getIpAndValidate();
-        if (!ip) return;
+        if (!ip) return; // Se retornou null, a chave antiga foi carregada. Para aqui.
 
         setLoadMsg("GERANDO NOVA KEY...");
         const newKey = generateKey();
+        const UID = generateFirebaseUID(); // Passo 1: push getKey
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
         const expireTime = new Date().getTime() + ONE_DAY_MS;
 
-        const postRes = await fetch(`${FIREBASE_URL}/KeysUsers.json`, {
-            method: "POST",
+        // Passo 2: Map: map create new map (organizando exatamente como na foto)
+        const payloadData = {
+            key: newKey,
+            validade: "1",
+            dispositivos: "1",
+            device: "",
+            status: "ativada",
+            dias: "0",
+            uid: UID
+        };
+
+        // Passo 3: Firebase DB add key UID value Map: map (Envio único e direto)
+        await fetch(`${FIREBASE_URL}/KeysUsers/${UID}.json`, {
+            method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                device: "",
-                dias: "0",
-                dispositivos: "1",
-                key: newKey,
-                status: "ativada",
-                uid: "",
-                validade: "1"
-            })
-        });
-        
-        const result = await postRes.json();
-        await fetch(`${FIREBASE_URL}/KeysUsers/${result.name}.json`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uid: result.name })
+            body: JSON.stringify(payloadData)
         });
 
+        // Salva o bloqueio de IP
         await fetch(`${FIREBASE_URL}/IpLocks/${ip}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -182,7 +195,26 @@ function triggerSuccess() {
 function copyKey(){
     const k = document.getElementById("keyText").textContent;
     if(!k || k === "GERANDO..." || k === "ERRO AO CONECTAR") return;
-    navigator.clipboard.writeText(k).then(triggerSuccess);
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(k).then(triggerSuccess).catch(() => fallbackCopy(k));
+    } else {
+        fallbackCopy(k);
+    }
+}
+
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        if (document.execCommand('copy')) triggerSuccess();
+    } catch (err) {}
+    document.body.removeChild(textArea);
 }
 
 verifyAndLoadKey();
