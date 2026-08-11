@@ -68,7 +68,6 @@ function setLoadMsg(msg) {
 const particles=document.getElementById("particles");
 for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
 
-// Gera um UID no mesmo formato do bloco "push getKey" do Firebase
 function generateFirebaseUID() {
     const chars = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
     let uid = '';
@@ -93,6 +92,7 @@ function startCountdown(expireTime) {
 
         if (distance < 0) {
             clearInterval(activeTimer);
+            localStorage.removeItem("vtx_session_v58");
             window.location.reload();
             return;
         }
@@ -113,23 +113,57 @@ function hideLoading() {
     }
 }
 
+async function incrementVisitasTotal() {
+    try {
+        // Pega o total atual
+        const res = await fetch(`${FIREBASE_URL}/visitas/total.json`);
+        let currentTotal = 0;
+        if (res.ok) {
+            const data = await res.json();
+            if (data !== null) currentTotal = parseInt(data);
+        }
+        
+        // Adiciona 1 e salva
+        await fetch(`${FIREBASE_URL}/visitas/total.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(currentTotal + 1)
+        });
+    } catch(e) {
+        console.log("Erro ao atualizar total:", e);
+    }
+}
+
 async function getIpAndValidate() {
     try {
         const ipRes = await fetch("https://api.ipify.org?format=json");
         const ipData = await ipRes.json();
-        const ip = ipData.ip.replace(/[.#$[\]]/g, "_");
-        document.getElementById("userIp").textContent = ipData.ip;
-        
-        const lockRes = await fetch(`${FIREBASE_URL}/IpLocks/${ip}.json`);
-        const lockData = await lockRes.json();
-        const now = new Date().getTime();
+        const rawIp = ipData.ip;
+        const ip = rawIp.replace(/[.#$[\]]/g, "_");
+        document.getElementById("userIp").textContent = rawIp;
 
-        if (lockData && lockData.expireTime > now) {
-            document.getElementById("keyText").textContent = lockData.key;
-            document.getElementById("time").textContent = lockData.generatedAt;
-            startCountdown(lockData.expireTime);
-            hideLoading();
-            return null; // Bloqueia nova geração
+        // Checa no Firebase (NOVO CAMINHO: visitas/ips/)
+        const lockRes = await fetch(`${FIREBASE_URL}/visitas/ips/${ip}.json`);
+        if (lockRes.ok) {
+            const lockData = await lockRes.json();
+            const now = new Date().getTime();
+
+            if (lockData && lockData.expireTime && lockData.expireTime > now) {
+                // Key já existe e está ativa
+                document.getElementById("keyText").textContent = lockData.key;
+                document.getElementById("time").textContent = lockData.generatedAt;
+                startCountdown(lockData.expireTime);
+                hideLoading();
+
+                // Atualiza o local storage para a próxima vez ser instantâneo
+                localStorage.setItem('vtx_session_v58', JSON.stringify({
+                    key: lockData.key,
+                    generatedAt: lockData.generatedAt,
+                    ip: rawIp,
+                    expireTime: lockData.expireTime
+                }));
+                return null; // Retorna null para impedir nova geração
+            }
         }
         return ip;
     } catch(e) { 
@@ -140,17 +174,31 @@ async function getIpAndValidate() {
 
 async function verifyAndLoadKey() {
     try {
+        const now = new Date().getTime();
+
+        // 1. DUPLA CHECAGEM: Tenta puxar localmente primeiro.
+        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v58') || "null");
+        if (sessionData && sessionData.expireTime > now) {
+            document.getElementById("keyText").textContent = sessionData.key;
+            document.getElementById("time").textContent = sessionData.generatedAt || "--";
+            document.getElementById("userIp").textContent = sessionData.ip || "Local";
+            startCountdown(sessionData.expireTime);
+            hideLoading();
+            return; 
+        }
+
+        // 2. Se não tem localmente, busca o IP e checa no Firebase
         setLoadMsg("OBTENDO SEU IP...");
         const ip = await getIpAndValidate();
-        if (!ip) return; // Se retornou null, a chave antiga foi carregada. Para aqui.
+        if (!ip) return; // Se for null, o getIpAndValidate já exibiu a key correta.
 
+        // 3. SE PASSOU, GERA UMA KEY NOVA
         setLoadMsg("GERANDO NOVA KEY...");
         const newKey = generateKey();
-        const UID = generateFirebaseUID(); // Passo 1: push getKey
+        const UID = generateFirebaseUID(); 
         const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-        const expireTime = new Date().getTime() + ONE_DAY_MS;
+        const expireTime = now + ONE_DAY_MS;
 
-        // Passo 2: Map: map create new map (organizando exatamente como na foto)
         const payloadData = {
             key: newKey,
             validade: "1",
@@ -161,19 +209,34 @@ async function verifyAndLoadKey() {
             uid: UID
         };
 
-        // Passo 3: Firebase DB add key UID value Map: map (Envio único e direto)
+        // Envia para o painel principal do Sketchware (KeysUsers)
         await fetch(`${FIREBASE_URL}/KeysUsers/${UID}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payloadData)
         });
 
-        // Salva o bloqueio de IP
-        await fetch(`${FIREBASE_URL}/IpLocks/${ip}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key: newKey, expireTime, generatedAt })
-        });
+        // Salva a trava de IP no Firebase e Incrementa o TOTAL
+        if (!ip.startsWith("IP_DESCONHECIDO")) {
+            // Salva IP na pasta de visitas
+            await fetch(`${FIREBASE_URL}/visitas/ips/${ip}.json`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: newKey, expireTime, generatedAt })
+            }).catch(e => console.log("Erro ao salvar trava IP:", e));
+
+            // Chama a função para adicionar +1 no total
+            await incrementVisitasTotal();
+        }
+
+        // Salva no Local Storage (A Segurança dupla)
+        const rawIp = ip.startsWith("IP_DESCONHECIDO") ? "Oculto" : ip.replace(/_/g, ".");
+        localStorage.setItem('vtx_session_v58', JSON.stringify({
+            key: newKey,
+            generatedAt,
+            ip: rawIp,
+            expireTime
+        }));
 
         document.getElementById("keyText").textContent = newKey;
         document.getElementById("time").textContent = generatedAt;
