@@ -1,103 +1,582 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vortex Hub - Key System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #0d0d0d;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: #1a1a1a;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-            text-align: center;
-            width: 350px;
-            border: 1px solid #333;
-        }
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #00ff88;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #333;
-            background: #0d0d0d;
-            color: #fff;
-            border-radius: 6px;
-            outline: none;
-            transition: 0.3s;
-        }
-        input:focus {
-            border-color: #00ff88;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #00ff88;
-            color: #000;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 10px;
-        }
-        button:hover {
-            background: #00cc6a;
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
-        }
-        .get-key-btn {
-            background: transparent;
-            color: #888;
-            border: 1px solid #333;
-        }
-        .get-key-btn:hover {
-            background: #222;
-            color: #fff;
-            box-shadow: none;
-        }
-    </style>
-</head>
-<body>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORTEX HUB • Sua Key</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #000000;
+        --text-main: #ffffff;
+        --text-sub: #888888;
+        --icon-bg: #1c1c1e;
+        --card-bg: #0c0c0e;
+        --border: #222222;
+        --btn-bg: #e5e5e5;
+        --btn-text: #000000;
+        --notice-bg: transparent;
+        --notice-border: transparent;
+        --notice-title: #d4a037;
+    }
 
-    <div class="container">
-        <h1>VORTEX HUB</h1>
-        
-        <!-- AQUI VAI ENTRAR O SEU SISTEMA ORIGINAL -->
-        <div id="seu-sistema-aqui">
-            <input type="text" id="keyInput" placeholder="Insira sua Key aqui...">
-            <button onclick="verificarKey()">Verificar Key</button>
-            <button class="get-key-btn" onclick="pegarKey()">Pegar Key</button>
+    [data-theme="light"] {
+        --bg: #f8f8f8;
+        --text-main: #000000;
+        --text-sub: #666666;
+        --icon-bg: #e5e5e5;
+        --card-bg: #ffffff;
+        --border: #e0e0e0;
+        --btn-bg: #222222;
+        --btn-text: #ffffff;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        padding: 40px 20px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        cursor: pointer;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-icon {
+        width: 64px;
+        height: 64px;
+        background-color: var(--icon-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .subtitle {
+        color: var(--text-sub);
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .steps {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .step-circle {
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: var(--text-sub);
+    }
+
+    .step-text {
+        font-size: 12px;
+        color: var(--text-sub);
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .step-line {
+        flex-grow: 1;
+        height: 1px;
+        background-color: var(--border);
+    }
+
+    .step-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--border);
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 24px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .card h2 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .card p {
+        color: var(--text-sub);
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .key-display {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-main);
+        text-align: center;
+        margin-bottom: 24px;
+        word-break: break-all;
+    }
+
+    .notice {
+        display: flex;
+        gap: 12px;
+        background-color: var(--notice-bg);
+        border-radius: 12px;
+        padding: 16px 0;
+        margin-bottom: 24px;
+    }
+
+    .notice-icon {
+        color: var(--notice-title);
+        flex-shrink: 0;
+    }
+
+    .notice-content strong {
+        color: var(--notice-title);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .notice-content div {
+        color: var(--text-sub);
+        font-size: 13px;
+        line-height: 1.5;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 4px;
+    }
+
+    .btn {
+        width: 100%;
+        background-color: var(--btn-bg);
+        color: var(--btn-text);
+        border: none;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
+    }
+
+    .msg {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-main);
+        margin-top: 16px;
+        min-height: 15px;
+    }
+
+    .footer {
+        margin-top: 40px;
+        color: var(--text-sub);
+        font-size: 10px;
+        letter-spacing: 2px;
+        font-weight: 600;
+    }
+
+    /* Ocultando a div de partículas para não quebrar o seu JS, mas sem exibir na tela */
+    #particles {
+        display: none;
+    }
+
+    /* Loading original do seu sistema adaptado ao visual limpo */
+    .loading {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        z-index: 99;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        transition: opacity 0.3s ease;
+    }
+    .loader {
+        text-align: center;
+    }
+    .ring {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 16px;
+        border: 3px solid var(--border);
+        border-top-color: var(--text-main);
+        border-radius: 50%;
+        animation: spin .7s linear infinite;
+    }
+    .loader p {
+        color: var(--text-sub);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="theme-toggle" onclick="toggleTheme()">
+    <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+</button>
+
+<!-- Required by your JS -->
+<div id="particles"></div>
+
+<div class="header-icon">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+    </svg>
+</div>
+
+<h1>Vortex Hub</h1>
+<div class="subtitle">O sistema gerou sua chave de acesso com sucesso</div>
+
+<div class="steps">
+    <div class="step-circle">1</div>
+    <div class="step-text">STEP 1 OF 1</div>
+    <div class="step-line"></div>
+    <div class="step-dot"></div>
+</div>
+
+<div class="card">
+    <h2>Sua Key</h2>
+    <p>Sua chave de acesso premium foi gerada. Copie a key abaixo para realizar o login no sistema.</p>
+    
+    <div class="key-display" id="keyText">GERANDO...</div>
+
+    <div class="notice">
+        <div class="notice-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <polyline points="9 12 11 14 15 10"></polyline>
+            </svg>
         </div>
-        
+        <div class="notice-content">
+            <strong>SYSTEM NOTICE</strong>
+            <div><span>Seu IP:</span> <span id="userIp">Carregando...</span></div>
+            <div><span>Gerada em:</span> <span id="time">--</span></div>
+            <div><span>Expira em:</span> <span id="countdown">Calculando...</span></div>
+        </div>
     </div>
 
-    <script>
-        // AGUARDANDO O SEU SCRIPT ORIGINAL PARA SUBSTITUIR ISSO AQUI
-        function verificarKey() {
-            console.log("Sistema original será inserido aqui.");
+    <button class="btn" id="copyBtn" onclick="copyKey()">
+        Copiar Key 
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+    </button>
+    <div class="msg" id="msg"></div>
+</div>
+
+<div class="footer">
+    DEVELOPED BY VORTEX HUB
+</div>
+
+<div class="loading" id="loading">
+    <div class="loader">
+        <div class="ring"></div>
+        <p id="loadingText">CONECTANDO AO FIREBASE...</p>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// TEMA CLARO E ESCURO (Adicionado para não interferir no seu Firebase)
+// ==========================================
+function toggleTheme() {
+    const body = document.body;
+    const isLight = body.getAttribute("data-theme") === "light";
+    const icon = document.getElementById("theme-icon");
+    
+    if (isLight) {
+        body.setAttribute("data-theme", "dark");
+        icon.innerHTML = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+    } else {
+        body.setAttribute("data-theme", "light");
+        icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+    }
+}
+
+// ==========================================
+// SEU SISTEMA ORIGINAL (INTACTO, SEM ALTERAÇÕES)
+// ==========================================
+const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000; 
+const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
+
+function setLoadMsg(msg) {
+    const el = document.getElementById("loadingText");
+    if(el) el.textContent = msg;
+}
+
+const particles=document.getElementById("particles");
+for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
+
+function generateFirebaseUID() {
+    const chars = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+    let uid = '';
+    for (let i = 0; i < 20; i++) {
+        uid += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return uid;
+}
+
+function generateKey(){
+    const digits = Math.floor(1000 + Math.random() * 9000); 
+    return `VTX-VIP-${digits}`;
+}
+
+let activeTimer = null;
+
+function startCountdown(expireTime) {
+    if (activeTimer) clearInterval(activeTimer);
+    activeTimer = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = expireTime - now;
+
+        if (distance < 0) {
+            clearInterval(activeTimer);
+            localStorage.removeItem("vtx_session_v58");
+            window.location.reload();
+            return;
         }
-        function pegarKey() {
-            console.log("Link de pegar key original será inserido aqui.");
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        document.getElementById("countdown").textContent = `${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+}
+
+function hideLoading() {
+    const loader = document.getElementById("loading");
+    if (loader) {
+        loader.style.opacity = "0";
+        setTimeout(() => loader.style.display = "none", 300);
+    }
+}
+
+async function incrementVisitasTotal() {
+    try {
+        const res = await fetch(`${FIREBASE_URL}/visitas/total.json`);
+        let currentTotal = 0;
+        if (res.ok) {
+            const data = await res.json();
+            if (data !== null) currentTotal = parseInt(data);
         }
-    </script>
+        
+        await fetch(`${FIREBASE_URL}/visitas/total.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(currentTotal + 1)
+        });
+    } catch(e) {
+        console.log("Erro ao atualizar total:", e);
+    }
+}
+
+async function getIpAndValidate() {
+    try {
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipRes.json();
+        const rawIp = ipData.ip;
+        const ip = rawIp.replace(/[.#$[\]]/g, "_");
+        document.getElementById("userIp").textContent = rawIp;
+
+        const lockRes = await fetch(`${FIREBASE_URL}/visitas/ips/${ip}.json`);
+        if (lockRes.ok) {
+            const lockData = await lockRes.json();
+            const now = new Date().getTime();
+
+            if (lockData && lockData.expireTime && lockData.expireTime > now) {
+                document.getElementById("keyText").textContent = lockData.key;
+                document.getElementById("time").textContent = lockData.generatedAt;
+                startCountdown(lockData.expireTime);
+                hideLoading();
+
+                localStorage.setItem('vtx_session_v58', JSON.stringify({
+                    key: lockData.key,
+                    generatedAt: lockData.generatedAt,
+                    ip: rawIp,
+                    expireTime: lockData.expireTime
+                }));
+                return null; 
+            }
+        }
+        return ip;
+    } catch(e) { 
+        document.getElementById("userIp").textContent = "DESCONHECIDO";
+        return "IP_DESCONHECIDO_" + Math.floor(Math.random() * 1000); 
+    }
+}
+
+async function verifyAndLoadKey() {
+    try {
+        const now = new Date().getTime();
+
+        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v58') || "null");
+        if (sessionData && sessionData.expireTime > now) {
+            document.getElementById("keyText").textContent = sessionData.key;
+            document.getElementById("time").textContent = sessionData.generatedAt || "--";
+            document.getElementById("userIp").textContent = sessionData.ip || "Local";
+            startCountdown(sessionData.expireTime);
+            hideLoading();
+            return; 
+        }
+
+        setLoadMsg("OBTENDO SEU IP...");
+        const ip = await getIpAndValidate();
+        if (!ip) return; 
+
+        setLoadMsg("GERANDO NOVA KEY...");
+        const newKey = generateKey();
+        const UID = generateFirebaseUID(); 
+        const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+        const expireTime = now + ONE_DAY_MS;
+
+        const payloadData = {
+            key: newKey,
+            validade: "1",
+            dispositivos: "1",
+            device: "",
+            status: "ativada",
+            dias: "0",
+            uid: UID
+        };
+
+        await fetch(`${FIREBASE_URL}/KeysUsers/${UID}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payloadData)
+        });
+
+        if (!ip.startsWith("IP_DESCONHECIDO")) {
+            await fetch(`${FIREBASE_URL}/visitas/ips/${ip}.json`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: newKey, expireTime, generatedAt })
+            }).catch(e => console.log("Erro ao salvar trava IP:", e));
+
+            await incrementVisitasTotal();
+        }
+
+        const rawIp = ip.startsWith("IP_DESCONHECIDO") ? "Oculto" : ip.replace(/_/g, ".");
+        localStorage.setItem('vtx_session_v58', JSON.stringify({
+            key: newKey,
+            generatedAt,
+            ip: rawIp,
+            expireTime
+        }));
+
+        document.getElementById("keyText").textContent = newKey;
+        document.getElementById("time").textContent = generatedAt;
+        document.getElementById("msg").textContent = "KEY REGISTRADA COM SUCESSO";
+        
+        startCountdown(expireTime);
+        hideLoading();
+
+    } catch (e) {
+        setLoadMsg("ERRO AO CONECTAR");
+        setTimeout(hideLoading, 1500);
+    }
+}
+
+function triggerSuccess() {
+    document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
+}
+
+function copyKey(){
+    const k = document.getElementById("keyText").textContent;
+    if(!k || k === "GERANDO..." || k === "ERRO AO CONECTAR") return;
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(k).then(triggerSuccess).catch(() => fallbackCopy(k));
+    } else {
+        fallbackCopy(k);
+    }
+}
+
+function fallbackCopy(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        if (document.execCommand('copy')) triggerSuccess();
+    } catch (err) {}
+    document.body.removeChild(textArea);
+}
+
+verifyAndLoadKey();
+</script>
 </body>
 </html>
