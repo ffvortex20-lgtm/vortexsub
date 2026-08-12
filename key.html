@@ -1,286 +1,151 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VORTEX HUB • Sua Key</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}:root{--c:#00eaff;--p:#863cff;--g:#00ff91;--warn:#ff3366}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden;background:radial-gradient(circle at 50% -15%,rgba(0,234,255,.18),transparent 35%),radial-gradient(circle at 100% 100%,rgba(134,60,255,.16),transparent 32%),#02050b;color:#fff;font-family:Orbitron,sans-serif}
-body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:40px 40px;animation:grid 10s linear infinite;pointer-events:none}@keyframes grid{to{background-position:0 40px,40px 0}}
-.bg{position:fixed;border-radius:50%;filter:blur(100px);opacity:.14;pointer-events:none}.b1{width:400px;height:400px;background:var(--c);top:-250px;left:-150px}.b2{width:380px;height:380px;background:var(--p);right:-160px;bottom:-230px}
-.particles{position:fixed;inset:0;pointer-events:none}.particle{position:absolute;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);animation:up linear infinite}@keyframes up{from{transform:translateY(110vh);opacity:0}15%{opacity:.8}85%{opacity:.8}to{transform:translateY(-10vh);opacity:0}}
-.card{position:relative;z-index:2;width:min(470px,100%);padding:1px;border-radius:27px;background:linear-gradient(135deg,rgba(0,234,255,.85),rgba(134,60,255,.7),transparent 70%);box-shadow:0 25px 90px #000,0 0 50px rgba(0,234,255,.08)}
-.inner{position:relative;overflow:hidden;border-radius:26px;padding:31px 25px 22px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99))}
-.inner:after{content:"";position:absolute;inset:-80%;background:conic-gradient(from 90deg,transparent 0 72%,rgba(0,234,255,.055),transparent 78%);animation:spin 12s linear infinite;pointer-events:none}@keyframes spin{to{transform:rotate(360deg)}}.content{position:relative;z-index:2}
-.line{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 16px var(--c)}
-.avatar{width:82px;height:82px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));box-shadow:0 0 30px rgba(0,234,255,.2);position:relative}.avatar:before{content:"";position:absolute;inset:-7px;border:1px solid rgba(0,234,255,.3);border-radius:50%;animation:spin 7s linear infinite}.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
-h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shadow:0 0 20px rgba(0,234,255,.4)}h1 span{color:var(--c)}.sub{text-align:center;margin-top:6px;color:#63758e;font-size:7px;letter-spacing:1.8px}
-.status{width:max-content;margin:16px auto 13px;display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid rgba(0,255,145,.25);border-radius:99px;color:#4affa5;font-size:7px;letter-spacing:1px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:pulse 1.3s infinite}@keyframes pulse{50%{transform:scale(1.5);opacity:.5}}
-.keybox{padding:20px 13px;border:1px solid rgba(0,234,255,.35);border-radius:14px;background:linear-gradient(145deg,rgba(0,234,255,.055),rgba(134,60,255,.04));box-shadow:inset 0 0 25px rgba(0,234,255,.035),0 0 25px rgba(0,234,255,.05);text-align:center;position:relative;overflow:hidden}.keybox:before{content:"";position:absolute;top:0;left:-100%;width:70%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);animation:scan 3.5s infinite}@keyframes scan{0%,45%{left:-100%}70%,100%{left:140%}}.keylabel{position:relative;z-index:2;color:#52667f;font-size:6px;letter-spacing:1.5px;margin-bottom:8px}.key{position:relative;z-index:2;color:var(--c);font-size:18px;font-weight:900;letter-spacing:2px;word-break:break-all;text-shadow:0 0 15px rgba(0,234,255,.5)}
-.btn{position:relative;width:100%;height:51px;margin-top:10px;border-radius:10px;border:1px solid var(--c);background:rgba(0,234,255,.05);color:#fff;font:800 9px Orbitron;letter-spacing:1px;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(0,234,255,.18)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.stat label{display:block;color:#50647d;font-size:6px;letter-spacing:1px}.stat b{display:block;margin-top:6px;color:var(--c);font-size:9px}.green b{color:var(--g)}.warn b{color:var(--warn)}
-.socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:44px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#9bacbf;font-size:7px;font-weight:800}.social:hover{color:#fff;border-color:rgba(0,234,255,.4)}
-.footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}.msg{text-align:center;min-height:16px;margin-top:9px;color:#4affa5;font-size:6.5px;letter-spacing:.6px}
-.loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.92);backdrop-filter:blur(8px);transition:opacity 0.3s ease}.loader{text-align:center;padding:20px}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
-@media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:15px}.grid,.socials{grid-template-columns:1fr}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex Hub - Sistema de Key</title>
+    <style>
+        /* Design Premium e Moderno */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f0f13;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .container {
+            background: #1a1a24;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid #2d2d3d;
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 26px;
+            color: #00d2ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        p {
+            color: #a0a0b0;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .key-box {
+            background: #0a0a0f;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333344;
+            margin-bottom: 25px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-whatsapp {
+            background: transparent;
+            border: 1px solid #25D366;
+            color: #25D366;
+            box-shadow: none;
+        }
+
+        .btn-whatsapp:hover {
+            background: rgba(37, 211, 102, 0.1);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+        }
+    </style>
 </head>
 <body>
-<div class="bg b1"></div><div class="bg b2"></div><div class="particles" id="particles"></div>
-<main class="card"><div class="inner"><div class="line"></div><div class="content">
-<div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex"></div>
-<h1>VORTEX<span>HUB</span></h1><div class="sub">KEY GENERATION TERMINAL</div>
-<div class="status"><span class="dot"></span>KEY READY</div>
-<div class="keybox"><div class="keylabel">SUA VORTEX ACCESS KEY</div><div class="key" id="keyText">GERANDO...</div></div>
-<button class="btn" id="copyBtn" onclick="copyKey()">⧉ COPIAR KEY</button>
-<div class="msg" id="msg"></div>
-<div class="grid">
-<div class="stat green"><label>STATUS</label><b>ativada</b></div>
-<div class="stat"><label>GERADA EM</label><b id="time">--</b></div>
-<div class="stat warn"><label>EXPIRA EM</label><b id="countdown">Calculando...</b></div>
-<div class="stat"><label>MEU IP</label><b id="userIp">Carregando...</b></div>
-</div>
-<div class="socials">
-<a class="social" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
-<a class="social" href="https://t.me/vtxmdz" target="_blank">✈ TELEGRAM</a>
-</div>
-<div class="footer"><span>VORTEX HUB • v5.8</span><span>KEY SYSTEM</span></div>
-</div>
-<div class="loading" id="loading">
-    <div class="loader">
-        <div class="ring"></div>
-        <p id="loadingText">CONECTANDO AO FIREBASE...</p>
-    </div>
-</div>
-</div></main>
-<script>
-const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000; 
-const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
 
-function setLoadMsg(msg) {
-    const el = document.getElementById("loadingText");
-    if(el) el.textContent = msg;
-}
-
-const particles=document.getElementById("particles");
-for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
-
-function generateFirebaseUID() {
-    const chars = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
-    let uid = '';
-    for (let i = 0; i < 20; i++) {
-        uid += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return uid;
-}
-
-function generateKey(){
-    const digits = Math.floor(1000 + Math.random() * 9000); 
-    return `VTX-VIP-${digits}`;
-}
-
-let activeTimer = null;
-
-function startCountdown(expireTime) {
-    if (activeTimer) clearInterval(activeTimer);
-    activeTimer = setInterval(() => {
-        const now = new Date().getTime();
-        const distance = expireTime - now;
-
-        if (distance < 0) {
-            clearInterval(activeTimer);
-            localStorage.removeItem("vtx_session_v58");
-            window.location.reload();
-            return;
-        }
-
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        document.getElementById("countdown").textContent = `${hours}h ${minutes}m ${seconds}s`;
-    }, 1000);
-}
-
-function hideLoading() {
-    const loader = document.getElementById("loading");
-    if (loader) {
-        loader.style.opacity = "0";
-        setTimeout(() => loader.style.display = "none", 300);
-    }
-}
-
-async function incrementVisitasTotal() {
-    try {
-        // Pega o total atual
-        const res = await fetch(`${FIREBASE_URL}/visitas/total.json`);
-        let currentTotal = 0;
-        if (res.ok) {
-            const data = await res.json();
-            if (data !== null) currentTotal = parseInt(data);
-        }
-        
-        // Adiciona 1 e salva
-        await fetch(`${FIREBASE_URL}/visitas/total.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(currentTotal + 1)
-        });
-    } catch(e) {
-        console.log("Erro ao atualizar total:", e);
-    }
-}
-
-async function getIpAndValidate() {
-    try {
-        const ipRes = await fetch("https://api.ipify.org?format=json");
-        const ipData = await ipRes.json();
-        const rawIp = ipData.ip;
-        const ip = rawIp.replace(/[.#$[\]]/g, "_");
-        document.getElementById("userIp").textContent = rawIp;
-
-        // Checa no Firebase (NOVO CAMINHO: visitas/ips/)
-        const lockRes = await fetch(`${FIREBASE_URL}/visitas/ips/${ip}.json`);
-        if (lockRes.ok) {
-            const lockData = await lockRes.json();
-            const now = new Date().getTime();
-
-            if (lockData && lockData.expireTime && lockData.expireTime > now) {
-                // Key já existe e está ativa
-                document.getElementById("keyText").textContent = lockData.key;
-                document.getElementById("time").textContent = lockData.generatedAt;
-                startCountdown(lockData.expireTime);
-                hideLoading();
-
-                // Atualiza o local storage para a próxima vez ser instantâneo
-                localStorage.setItem('vtx_session_v58', JSON.stringify({
-                    key: lockData.key,
-                    generatedAt: lockData.generatedAt,
-                    ip: rawIp,
-                    expireTime: lockData.expireTime
-                }));
-                return null; // Retorna null para impedir nova geração
-            }
-        }
-        return ip;
-    } catch(e) { 
-        document.getElementById("userIp").textContent = "DESCONHECIDO";
-        return "IP_DESCONHECIDO_" + Math.floor(Math.random() * 1000); 
-    }
-}
-
-async function verifyAndLoadKey() {
-    try {
-        const now = new Date().getTime();
-
-        // 1. DUPLA CHECAGEM: Tenta puxar localmente primeiro.
-        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v58') || "null");
-        if (sessionData && sessionData.expireTime > now) {
-            document.getElementById("keyText").textContent = sessionData.key;
-            document.getElementById("time").textContent = sessionData.generatedAt || "--";
-            document.getElementById("userIp").textContent = sessionData.ip || "Local";
-            startCountdown(sessionData.expireTime);
-            hideLoading();
-            return; 
-        }
-
-        // 2. Se não tem localmente, busca o IP e checa no Firebase
-        setLoadMsg("OBTENDO SEU IP...");
-        const ip = await getIpAndValidate();
-        if (!ip) return; // Se for null, o getIpAndValidate já exibiu a key correta.
-
-        // 3. SE PASSOU, GERA UMA KEY NOVA
-        setLoadMsg("GERANDO NOVA KEY...");
-        const newKey = generateKey();
-        const UID = generateFirebaseUID(); 
-        const generatedAt = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-        const expireTime = now + ONE_DAY_MS;
-
-        const payloadData = {
-            key: newKey,
-            validade: "1",
-            dispositivos: "1",
-            device: "",
-            status: "ativada",
-            dias: "0",
-            uid: UID
-        };
-
-        // Envia para o painel principal do Sketchware (KeysUsers)
-        await fetch(`${FIREBASE_URL}/KeysUsers/${UID}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payloadData)
-        });
-
-        // Salva a trava de IP no Firebase e Incrementa o TOTAL
-        if (!ip.startsWith("IP_DESCONHECIDO")) {
-            // Salva IP na pasta de visitas
-            await fetch(`${FIREBASE_URL}/visitas/ips/${ip}.json`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ key: newKey, expireTime, generatedAt })
-            }).catch(e => console.log("Erro ao salvar trava IP:", e));
-
-            // Chama a função para adicionar +1 no total
-            await incrementVisitasTotal();
-        }
-
-        // Salva no Local Storage (A Segurança dupla)
-        const rawIp = ip.startsWith("IP_DESCONHECIDO") ? "Oculto" : ip.replace(/_/g, ".");
-        localStorage.setItem('vtx_session_v58', JSON.stringify({
-            key: newKey,
-            generatedAt,
-            ip: rawIp,
-            expireTime
-        }));
-
-        document.getElementById("keyText").textContent = newKey;
-        document.getElementById("time").textContent = generatedAt;
-        document.getElementById("msg").textContent = "KEY REGISTRADA COM SUCESSO";
-        
-        startCountdown(expireTime);
-        hideLoading();
-
-    } catch (e) {
-        setLoadMsg("ERRO AO CONECTAR");
-        setTimeout(hideLoading, 1500);
-    }
-}
-
-function triggerSuccess() {
-    document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
-}
-
-function copyKey(){
-    const k = document.getElementById("keyText").textContent;
-    if(!k || k === "GERANDO..." || k === "ERRO AO CONECTAR") return;
+<div class="container">
+    <h1>Vortex Hub</h1>
+    <p>Complete as etapas para gerar sua Key de acesso premium.</p>
     
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(k).then(triggerSuccess).catch(() => fallbackCopy(k));
-    } else {
-        fallbackCopy(k);
+    <div class="key-box" id="keyDisplay">
+        VORTEX-XXXX-XXXX
+    </div>
+
+    <!-- Botão de Pegar/Copiar Key -->
+    <button class="btn" onclick="gerarECopiarKey()">Pegar Key</button>
+    
+    <!-- Link para o Canal do WhatsApp -->
+    <button class="btn btn-whatsapp" onclick="window.open('COLOQUE_SEU_LINK_AQUI', '_blank')">Canal do WhatsApp</button>
+</div>
+
+<script>
+    function gerarECopiarKey() {
+        // Função para gerar uma Key aleatória no formato VORTEX-XXXX-XXXX
+        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let parte1 = '';
+        let parte2 = '';
+        
+        for(let i = 0; i < 4; i++) {
+            parte1 += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            parte2 += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+        }
+        
+        const keyFinal = `VORTEX-${parte1}-${parte2}`;
+        const keyDisplay = document.getElementById('keyDisplay');
+        
+        // Atualiza o texto na tela com animação visual
+        keyDisplay.innerText = keyFinal;
+        keyDisplay.style.borderColor = "#00d2ff";
+        keyDisplay.style.boxShadow = "0 0 10px rgba(0, 210, 255, 0.3)";
+
+        // Copia automaticamente para a área de transferência
+        navigator.clipboard.writeText(keyFinal).then(() => {
+            alert('✅ Key copiada com sucesso!\nSua Key: ' + keyFinal);
+        }).catch(err => {
+            console.error('Erro ao copiar a key: ', err);
+            alert('Sua key foi gerada: ' + keyFinal + '\n(Copie manualmente se necessário)');
+        });
+
+        // Retorna a cor da borda ao normal após 1 segundo
+        setTimeout(() => {
+            keyDisplay.style.borderColor = "#333344";
+            keyDisplay.style.boxShadow = "none";
+        }, 1000);
     }
-}
-
-function fallbackCopy(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.opacity = "0";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-        if (document.execCommand('copy')) triggerSuccess();
-    } catch (err) {}
-    document.body.removeChild(textArea);
-}
-
-verifyAndLoadKey();
 </script>
+
 </body>
 </html>
