@@ -2,60 +2,441 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VORTEX HUB • Sua Key</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORTEX HUB • Key System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}:root{--c:#00eaff;--p:#863cff;--g:#00ff91;--warn:#ff3366}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;overflow:hidden;background:radial-gradient(circle at 50% -15%,rgba(0,234,255,.18),transparent 35%),radial-gradient(circle at 100% 100%,rgba(134,60,255,.16),transparent 32%),#02050b;color:#fff;font-family:Orbitron,sans-serif}
-body:before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(0,234,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(0,234,255,.045) 1px,transparent 1px);background-size:40px 40px;animation:grid 10s linear infinite;pointer-events:none}@keyframes grid{to{background-position:0 40px,40px 0}}
-.bg{position:fixed;border-radius:50%;filter:blur(100px);opacity:.14;pointer-events:none}.b1{width:400px;height:400px;background:var(--c);top:-250px;left:-150px}.b2{width:380px;height:380px;background:var(--p);right:-160px;bottom:-230px}
-.particles{position:fixed;inset:0;pointer-events:none}.particle{position:absolute;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c);animation:up linear infinite}@keyframes up{from{transform:translateY(110vh);opacity:0}15%{opacity:.8}85%{opacity:.8}to{transform:translateY(-10vh);opacity:0}}
-.card{position:relative;z-index:2;width:min(470px,100%);padding:1px;border-radius:27px;background:linear-gradient(135deg,rgba(0,234,255,.85),rgba(134,60,255,.7),transparent 70%);box-shadow:0 25px 90px #000,0 0 50px rgba(0,234,255,.08)}
-.inner{position:relative;overflow:hidden;border-radius:26px;padding:31px 25px 22px;background:linear-gradient(145deg,rgba(7,18,33,.98),rgba(2,6,13,.99))}
-.inner:after{content:"";position:absolute;inset:-80%;background:conic-gradient(from 90deg,transparent 0 72%,rgba(0,234,255,.055),transparent 78%);animation:spin 12s linear infinite;pointer-events:none}@keyframes spin{to{transform:rotate(360deg)}}.content{position:relative;z-index:2}
-.line{position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);box-shadow:0 0 16px var(--c)}
-.avatar{width:82px;height:82px;margin:auto;padding:3px;border-radius:50%;background:linear-gradient(135deg,var(--c),var(--p));box-shadow:0 0 30px rgba(0,234,255,.2);position:relative}.avatar:before{content:"";position:absolute;inset:-7px;border:1px solid rgba(0,234,255,.3);border-radius:50%;animation:spin 7s linear infinite}.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:3px solid #030912}
-h1{text-align:center;margin-top:14px;font-size:25px;letter-spacing:3px;text-shadow:0 0 20px rgba(0,234,255,.4)}h1 span{color:var(--c)}.sub{text-align:center;margin-top:6px;color:#63758e;font-size:7px;letter-spacing:1.8px}
-.status{width:max-content;margin:16px auto 13px;display:flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid rgba(0,255,145,.25);border-radius:99px;color:#4affa5;font-size:7px;letter-spacing:1px}.dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:pulse 1.3s infinite}@keyframes pulse{50%{transform:scale(1.5);opacity:.5}}
-.keybox{padding:20px 13px;border:1px solid rgba(0,234,255,.35);border-radius:14px;background:linear-gradient(145deg,rgba(0,234,255,.055),rgba(134,60,255,.04));box-shadow:inset 0 0 25px rgba(0,234,255,.035),0 0 25px rgba(0,234,255,.05);text-align:center;position:relative;overflow:hidden}.keybox:before{content:"";position:absolute;top:0;left:-100%;width:70%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);animation:scan 3.5s infinite}@keyframes scan{0%,45%{left:-100%}70%,100%{left:140%}}.keylabel{position:relative;z-index:2;color:#52667f;font-size:6px;letter-spacing:1.5px;margin-bottom:8px}.key{position:relative;z-index:2;color:var(--c);font-size:18px;font-weight:900;letter-spacing:2px;word-break:break-all;text-shadow:0 0 15px rgba(0,234,255,.5)}
-.btn{position:relative;width:100%;height:51px;margin-top:10px;border-radius:10px;border:1px solid var(--c);background:rgba(0,234,255,.05);color:#fff;font:800 9px Orbitron;letter-spacing:1px;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(0,234,255,.18)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.stat{padding:12px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025)}.stat label{display:block;color:#50647d;font-size:6px;letter-spacing:1px}.stat b{display:block;margin-top:6px;color:var(--c);font-size:9px}.green b{color:var(--g)}.warn b{color:var(--warn)}
-.socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}.social{height:44px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;text-decoration:none;color:#9bacbf;font-size:7px;font-weight:800}.social:hover{color:#fff;border-color:rgba(0,234,255,.4)}
-.footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);color:#405269;font-size:5.5px;letter-spacing:1px}.msg{text-align:center;min-height:16px;margin-top:9px;color:#4affa5;font-size:6.5px;letter-spacing:.6px}
-.loading{display:flex;position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;background:rgba(2,6,13,.92);backdrop-filter:blur(8px);transition:opacity 0.3s ease}.loader{text-align:center;padding:20px}.ring{width:48px;height:48px;margin:auto;border:2px solid rgba(0,234,255,.12);border-top-color:var(--c);border-right-color:var(--p);border-radius:50%;animation:spin .7s linear infinite}.loader p{margin-top:12px;color:#7890ab;font-size:7px;letter-spacing:1.3px}
-@media(max-width:450px){.inner{padding:27px 16px 20px}.key{font-size:15px}.grid,.socials{grid-template-columns:1fr}}
+    :root {
+        --bg-deep: #050508;
+        --surface: #0e0e14;
+        --surface-glass: rgba(14, 14, 20, 0.75);
+        --border: rgba(255, 255, 255, 0.08);
+        --border-glow: rgba(120, 80, 255, 0.3);
+        
+        --primary: #8a5cf5;
+        --primary-glow: rgba(138, 92, 245, 0.25);
+        --accent: #00f2fe;
+        
+        --text-main: #ffffff;
+        --text-sub: #94a3b8;
+        --text-dim: #64748b;
+        
+        --success: #10b981;
+        --warning: #f59e0b;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-deep);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Ambient background blur circles */
+    .ambient-glow {
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        filter: blur(100px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .glow-1 {
+        top: -100px;
+        left: -100px;
+        background: rgba(138, 92, 245, 0.15);
+    }
+    .glow-2 {
+        bottom: -100px;
+        right: -100px;
+        background: rgba(0, 242, 254, 0.1);
+    }
+
+    /* Particles container */
+    .particles {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+    .particle {
+        position: absolute;
+        background: var(--primary);
+        border-radius: 50%;
+        opacity: 0.3;
+        animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(105vh) scale(0); opacity: 0; }
+        50% { opacity: 0.5; }
+        100% { transform: translateY(-5vh) scale(1); opacity: 0; }
+    }
+
+    /* Main Container */
+    .container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .card {
+        background: var(--surface-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 32px 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(138, 92, 245, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    }
+
+    /* Header Profile / Logo */
+    .header-box {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .logo-img {
+        width: 68px;
+        height: 68px;
+        border-radius: 20px;
+        object-fit: cover;
+        border: 2px solid var(--border);
+        background: #15151c;
+        margin: 0 auto 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        padding: 2px;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: var(--text-main);
+        margin-bottom: 4px;
+    }
+
+    .title span {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+        font-size: 12px;
+        color: var(--text-dim);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    /* Status Pill */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--success);
+        margin-bottom: 20px;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        background-color: var(--success);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--success);
+        animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* Key Box Display */
+    .key-container {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        margin-bottom: 16px;
+        position: relative;
+    }
+
+    .key-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .key-value {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text-main);
+        letter-spacing: 1.5px;
+        word-break: break-all;
+    }
+
+    /* Action Button */
+    .btn-main {
+        width: 100%;
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-main:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+    }
+
+    .btn-main:active {
+        transform: translateY(0);
+    }
+
+    .msg {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--success);
+        min-height: 16px;
+        margin-top: 10px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .stat-card span {
+        display: block;
+        font-size: 10px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .stat-card strong {
+        font-size: 12px;
+        color: var(--text-sub);
+        font-weight: 700;
+    }
+
+    .stat-card.highlight strong {
+        color: var(--warning);
+    }
+
+    /* Social Links */
+    .social-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .social-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        color: var(--text-sub);
+        font-size: 11px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .social-btn:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-main);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 10px;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* Loading Overlay */
+    .loading {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-deep);
+        z-index: 99;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        transition: opacity 0.3s ease;
+    }
+
+    .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(255, 255, 255, 0.05);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin-bottom: 12px;
+    }
+
+    .loading p {
+        font-size: 11px;
+        color: var(--text-dim);
+        letter-spacing: 1.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    #particles-js { display: none; }
 </style>
 </head>
 <body>
-<div class="bg b1"></div><div class="bg b2"></div><div class="particles" id="particles"></div>
-<main class="card"><div class="inner"><div class="line"></div><div class="content">
-<div class="avatar"><img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex"></div>
-<h1>VORTEX<span>HUB</span></h1><div class="sub">KEY GENERATION TERMINAL</div>
-<div class="status"><span class="dot"></span>KEY READY</div>
-<div class="keybox"><div class="keylabel">SUA VORTEX ACCESS KEY</div><div class="key" id="keyText">GERANDO...</div></div>
-<button class="btn" id="copyBtn" onclick="copyKey()">⧉ COPIAR KEY</button>
-<div class="msg" id="msg"></div>
-<div class="grid">
-<div class="stat green"><label>STATUS</label><b>ativada</b></div>
-<div class="stat"><label>GERADA EM</label><b id="time">--</b></div>
-<div class="stat warn"><label>EXPIRA EM</label><b id="countdown">Calculando...</b></div>
-<div class="stat"><label>MEU IP</label><b id="userIp">Carregando...</b></div>
-</div>
-<div class="socials">
-<a class="social" href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank">💬 WHATSAPP</a>
-<a class="social" href="https://t.me/vtxmdz" target="_blank">✈ TELEGRAM</a>
-</div>
-<div class="footer"><span>VORTEX HUB • v5.8</span><span>KEY SYSTEM</span></div>
-</div>
-<div class="loading" id="loading">
-    <div class="loader">
-        <div class="ring"></div>
-        <p id="loadingText">CONECTANDO AO FIREBASE...</p>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+    <div class="card">
+        <div class="header-box">
+            <img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex" class="logo-img">
+            <h1 class="title">VORTEX <span>HUB</span></h1>
+            <div class="subtitle">Secure Key Terminal</div>
+        </div>
+
+        <div style="text-align: center;">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span>SISTEMA ATIVO</span>
+            </div>
+        </div>
+
+        <div class="key-container">
+            <div class="key-label">Sua Chave de Acesso</div>
+            <div class="key-value" id="keyText">GERANDO...</div>
+        </div>
+
+        <button class="btn-main" id="copyBtn" onclick="copyKey()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copiar Key
+        </button>
+        <div class="msg" id="msg"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>Gerada em</span>
+                <strong id="time">--:--</strong>
+            </div>
+            <div class="stat-card highlight">
+                <span>Expira em</span>
+                <strong id="countdown">Calculando...</strong>
+            </div>
+            <div class="stat-card">
+                <span>Seu IP</span>
+                <strong id="userIp">Carregando...</strong>
+            </div>
+            <div class="stat-card">
+                <span>Status ID</span>
+                <strong style="color: var(--success)">Ativada</strong>
+            </div>
+        </div>
+
+        <div class="social-links">
+            <a href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank" class="social-btn">
+                💬 WhatsApp
+            </a>
+            <a href="https://t.me/vtxmdz" target="_blank" class="social-btn">
+                ✈ Telegram
+            </a>
+        </div>
+
+        <div class="footer">
+            Vortex Development • v5.8
+        </div>
     </div>
 </div>
-</div></main>
+
+<div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p id="loadingText">CONECTANDO AO FIREBASE...</p>
+</div>
+
 <script>
 const ONE_DAY_MS = 1 * 24 * 60 * 60 * 1000; 
 const FIREBASE_URL = "https://vortexdev2-default-rtdb.firebaseio.com";
@@ -65,8 +446,19 @@ function setLoadMsg(msg) {
     if(el) el.textContent = msg;
 }
 
-const particles=document.getElementById("particles");
-for(let i=0;i<48;i++){const p=document.createElement("i");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDuration=5+Math.random()*10+"s";p.style.animationDelay=-Math.random()*10+"s";const s=1+Math.random()*2;p.style.width=s+"px";p.style.height=s+"px";particles.appendChild(p)}
+// Criar partículas suaves no fundo
+const particlesContainer = document.getElementById("particles");
+for(let i = 0; i < 20; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDuration = (6 + Math.random() * 8) + "s";
+    p.style.animationDelay = -(Math.random() * 10) + "s";
+    const size = (2 + Math.random() * 3) + "px";
+    p.style.width = size;
+    p.style.height = size;
+    particlesContainer.appendChild(p);
+}
 
 function generateFirebaseUID() {
     const chars = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
@@ -240,6 +632,9 @@ async function verifyAndLoadKey() {
 
 function triggerSuccess() {
     document.getElementById("msg").textContent = "KEY COPIADA COM SUCESSO";
+    setTimeout(() => {
+        document.getElementById("msg").textContent = "";
+    }, 3000);
 }
 
 function copyKey(){
