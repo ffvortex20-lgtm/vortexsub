@@ -3,149 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vortex Hub - Sistema de Key</title>
+    <title>Vortex Hub - Key System</title>
     <style>
-        /* Design Premium e Moderno */
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f0f13;
+        }
+        body {
+            background-color: #0d0d0d;
             color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
-        
         .container {
-            background: #1a1a24;
+            background: #1a1a1a;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
             text-align: center;
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid #2d2d3d;
+            width: 350px;
+            border: 1px solid #333;
         }
-
         h1 {
-            margin-top: 0;
-            font-size: 26px;
-            color: #00d2ff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
-
-        p {
-            color: #a0a0b0;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .key-box {
-            background: #0a0a0f;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #333344;
-            margin-bottom: 25px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 18px;
-            letter-spacing: 2px;
-            color: #fff;
-            transition: all 0.3s ease;
-        }
-
-        .btn {
-            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
+        input {
             width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            background: #0d0d0d;
+            color: #fff;
+            border-radius: 6px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #00ff88;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 6px;
             font-weight: bold;
-            text-transform: uppercase;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        button:hover {
+            background: #00cc6a;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
         }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-whatsapp {
+        .get-key-btn {
             background: transparent;
-            border: 1px solid #25D366;
-            color: #25D366;
-            box-shadow: none;
+            color: #888;
+            border: 1px solid #333;
         }
-
-        .btn-whatsapp:hover {
-            background: rgba(37, 211, 102, 0.1);
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+        .get-key-btn:hover {
+            background: #222;
+            color: #fff;
+            box-shadow: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Vortex Hub</h1>
-    <p>Complete as etapas para gerar sua Key de acesso premium.</p>
-    
-    <div class="key-box" id="keyDisplay">
-        VORTEX-XXXX-XXXX
+    <div class="container">
+        <h1>VORTEX HUB</h1>
+        
+        <!-- AQUI VAI ENTRAR O SEU SISTEMA ORIGINAL -->
+        <div id="seu-sistema-aqui">
+            <input type="text" id="keyInput" placeholder="Insira sua Key aqui...">
+            <button onclick="verificarKey()">Verificar Key</button>
+            <button class="get-key-btn" onclick="pegarKey()">Pegar Key</button>
+        </div>
+        
     </div>
 
-    <!-- Botão de Pegar/Copiar Key -->
-    <button class="btn" onclick="gerarECopiarKey()">Pegar Key</button>
-    
-    <!-- Link para o Canal do WhatsApp -->
-    <button class="btn btn-whatsapp" onclick="window.open('COLOQUE_SEU_LINK_AQUI', '_blank')">Canal do WhatsApp</button>
-</div>
-
-<script>
-    function gerarECopiarKey() {
-        // Função para gerar uma Key aleatória no formato VORTEX-XXXX-XXXX
-        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let parte1 = '';
-        let parte2 = '';
-        
-        for(let i = 0; i < 4; i++) {
-            parte1 += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-            parte2 += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+    <script>
+        // AGUARDANDO O SEU SCRIPT ORIGINAL PARA SUBSTITUIR ISSO AQUI
+        function verificarKey() {
+            console.log("Sistema original será inserido aqui.");
         }
-        
-        const keyFinal = `VORTEX-${parte1}-${parte2}`;
-        const keyDisplay = document.getElementById('keyDisplay');
-        
-        // Atualiza o texto na tela com animação visual
-        keyDisplay.innerText = keyFinal;
-        keyDisplay.style.borderColor = "#00d2ff";
-        keyDisplay.style.boxShadow = "0 0 10px rgba(0, 210, 255, 0.3)";
-
-        // Copia automaticamente para a área de transferência
-        navigator.clipboard.writeText(keyFinal).then(() => {
-            alert('✅ Key copiada com sucesso!\nSua Key: ' + keyFinal);
-        }).catch(err => {
-            console.error('Erro ao copiar a key: ', err);
-            alert('Sua key foi gerada: ' + keyFinal + '\n(Copie manualmente se necessário)');
-        });
-
-        // Retorna a cor da borda ao normal após 1 segundo
-        setTimeout(() => {
-            keyDisplay.style.borderColor = "#333344";
-            keyDisplay.style.boxShadow = "none";
-        }, 1000);
-    }
-</script>
-
+        function pegarKey() {
+            console.log("Link de pegar key original será inserido aqui.");
+        }
+    </script>
 </body>
 </html>
