@@ -9,10 +9,10 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
     }
     body {
-      background-color: #0d0d0d;
+      background-color: #0b0b0b;
       color: #ffffff;
       display: flex;
       justify-content: center;
@@ -21,60 +21,54 @@
       padding: 20px;
     }
     .card {
-      background-color: #161616;
-      border: 1px solid #282828;
+      background-color: #141414;
+      border: 1px solid #222222;
       border-radius: 16px;
-      padding: 28px;
+      padding: 24px;
       width: 100%;
-      max-width: 420px;
+      max-width: 380px;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
     .tag {
       color: #ff2a2a;
       font-size: 11px;
-      font-weight: 700;
+      font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       margin-bottom: 6px;
     }
     .title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 18px;
     }
     .key-box {
-      background-color: #080808;
+      background-color: #000000;
       border: 1px dashed #ff2a2a;
       border-radius: 10px;
-      padding: 16px;
+      padding: 14px;
       font-family: monospace;
-      font-size: 18px;
+      font-size: 16px;
       letter-spacing: 2px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       word-break: break-all;
-      color: #ffffff;
     }
     .btn-copy {
       background-color: #e60000;
       color: #ffffff;
       border: none;
-      padding: 14px 20px;
-      border-radius: 10px;
-      font-weight: 700;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
       width: 100%;
-      font-size: 15px;
-      transition: background-color 0.2s ease;
-    }
-    .btn-copy:active {
-      transform: scale(0.98);
+      font-size: 14px;
     }
     .info {
       color: #888888;
       font-size: 12px;
-      margin-top: 18px;
-      line-height: 1.5;
+      margin-top: 16px;
+      line-height: 1.6;
     }
     .hidden {
       display: none !important;
@@ -86,16 +80,12 @@
 </head>
 <body>
 
-  <!-- TELA DE MANUTENÇÃO -->
   <div id="maintenance-view" class="card hidden">
-    <div class="tag">SISTEMA INDISPONÍVEL</div>
+    <div class="tag">AVISO</div>
     <div class="title" style="color: #ff2a2a;">EM MANUTENÇÃO</div>
-    <p style="color: #aaaaaa; font-size: 14px; line-height: 1.5;">
-      Estamos realizando atualizações no sistema. Tente novamente mais tarde!
-    </p>
+    <p style="color: #aaaaaa; font-size: 14px;">O site está temporariamente indisponível.</p>
   </div>
 
-  <!-- TELA PRINCIPAL -->
   <div id="main-view" class="card">
     <div class="tag">KEY PÚBLICA</div>
     <div class="title">Use esta key no app</div>
@@ -113,12 +103,15 @@
     const database = firebase.database();
     const configRef = database.ref('config');
 
+    let rawDateStr = "";
+    let timerInterval = null;
+
     configRef.on('value', (snapshot) => {
       const data = snapshot.val();
+      if (!data) return;
+
       const mainView = document.getElementById('main-view');
       const maintenanceView = document.getElementById('maintenance-view');
-
-      if (!data) return;
 
       if (data.maintenance === true || data.maintenance === "true") {
         mainView.classList.add('hidden');
@@ -127,18 +120,61 @@
         maintenanceView.classList.add('hidden');
         mainView.classList.remove('hidden');
 
-        document.getElementById('key-display').innerText = data.current_key || 'SEM KEY DISPONÍVEL';
-        document.getElementById('validity-display').innerText = 'Válida até ' + (data.expiration_date || '--/--/----');
+        document.getElementById('key-display').innerText = data.current_key || 'SEM KEY';
+        rawDateStr = data.expiration_date || "";
+        
+        startCountdown();
       }
     });
 
+    function startCountdown() {
+      if (timerInterval) clearInterval(timerInterval);
+      
+      function updateTimer() {
+        const infoElem = document.getElementById('validity-display');
+        if (!rawDateStr) {
+          infoElem.innerText = "Sem data de validade definida.";
+          return;
+        }
+
+        // Extrai dia, mês, ano, hora, minuto
+        const numbers = rawDateStr.match(/\d+/g);
+        if (!numbers || numbers.length < 3) {
+          infoElem.innerText = "Válida até " + rawDateStr;
+          return;
+        }
+
+        const day = parseInt(numbers[0], 10);
+        const month = parseInt(numbers[1], 10) - 1;
+        const year = parseInt(numbers[2], 10);
+        const hour = numbers[3] ? parseInt(numbers[3], 10) : 23;
+        const min = numbers[4] ? parseInt(numbers[4], 10) : 59;
+
+        const targetDate = new Date(year, month, day, hour, min);
+        const now = new Date();
+        const diff = targetDate - now;
+
+        if (diff <= 0) {
+          infoElem.innerHTML = `Válida até ${rawDateStr}<br><span style="color:#ff2a2a; font-weight:bold;">KEY EXPIRADA</span>`;
+        } else {
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          infoElem.innerHTML = `Válida até ${rawDateStr}.<br>Restam <b>${days}</b> dia(s), <b>${hours}</b> hora(s) e <b>${mins}</b> min(s).`;
+        }
+      }
+
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 30000); // Atualiza a cada 30s
+    }
+
     function copyKey() {
       const keyText = document.getElementById('key-display').innerText;
-      if (keyText === 'Carregando...' || keyText === 'SEM KEY DISPONÍVEL') return;
+      if (keyText === 'Carregando...' || keyText === 'SEM KEY') return;
 
       navigator.clipboard.writeText(keyText).then(() => {
         const btn = document.getElementById('btn-copy');
-        btn.innerText = 'COPIADA!';
+        btn.innerText = 'COPIADA';
         btn.style.backgroundColor = '#00aa00';
         setTimeout(() => {
           btn.innerText = 'COPIAR KEY';
