@@ -1,139 +1,151 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vortex Hub - Login</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: #0b0f19;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .login-card {
-            background: rgba(17, 24, 39, 0.85);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 16px;
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.15);
-            backdrop-filter: blur(10px);
-            text-align: center;
-        }
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(45deg, #a78bfa, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-        .subtitle {
-            color: #9ca3af;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            color: #d1d5db;
-            margin-bottom: 6px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(31, 41, 55, 0.5);
-            border: 1px solid #374151;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .input-group input:focus {
-            border-color: #8b5cf6;
-            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
-        }
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 12px;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: white;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
-        }
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-        .btn-secondary {
-            background: rgba(31, 41, 55, 0.8);
-            border: 1px solid #4b5563;
-            color: #e5e7eb;
-        }
-        .btn-secondary:hover {
-            background: rgba(55, 65, 81, 1);
-        }
-        .footer-links {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-        .footer-links a {
-            color: #a78bfa;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .footer-links a:hover {
-            color: #c4b5fd;
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KM TEAM - Key</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      background-color: #161616;
+      border: 1px solid #282828;
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .tag {
+      color: #ff2a2a;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .key-box {
+      background-color: #080808;
+      border: 1px dashed #ff2a2a;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: monospace;
+      font-size: 18px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      word-break: break-all;
+      color: #ffffff;
+    }
+    .btn-copy {
+      background-color: #e60000;
+      color: #ffffff;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      font-size: 15px;
+      transition: background-color 0.2s ease;
+    }
+    .btn-copy:active {
+      transform: scale(0.98);
+    }
+    .info {
+      color: #888888;
+      font-size: 12px;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div class="login-card">
-        <div class="logo">VORTEX HUB</div>
-        <div class="subtitle">Autenticação Premium</div>
-        
-        <form onsubmit="event.preventDefault(); alert('Chave validada com sucesso!');">
-            <div class="input-group">
-                <label for="key">Insira sua Key de Acesso</label>
-                <input type="text" id="key" placeholder="vortex_xxxxxx" required>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Entrar no Hub</button>
-        </form>
 
-        <button class="btn btn-secondary" onclick="window.open('https://link-to-key-generator.com', '_blank')">Pegar Key (Get Key)</button>
-        
-        <div class="footer-links">
-            <a href="https://whatsapp.com" target="_blank">Canal WhatsApp</a>
-            <a href="#" onclick="alert('Suporte via WhatsApp')">Suporte</a>
-        </div>
-    </div>
+  <!-- TELA DE MANUTENÇÃO -->
+  <div id="maintenance-view" class="card hidden">
+    <div class="tag">SISTEMA INDISPONÍVEL</div>
+    <div class="title" style="color: #ff2a2a;">EM MANUTENÇÃO</div>
+    <p style="color: #aaaaaa; font-size: 14px; line-height: 1.5;">
+      Estamos realizando atualizações no sistema. Tente novamente mais tarde!
+    </p>
+  </div>
+
+  <!-- TELA PRINCIPAL -->
+  <div id="main-view" class="card">
+    <div class="tag">KEY PÚBLICA</div>
+    <div class="title">Use esta key no app</div>
+    <div class="key-box" id="key-display">Carregando...</div>
+    <button class="btn-copy" id="btn-copy" onclick="copyKey()">COPIAR KEY</button>
+    <div class="info" id="validity-display">Válida até --/--/----</div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://master12-13be0-default-rtdb.firebaseio.com"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const configRef = database.ref('config');
+
+    configRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      const mainView = document.getElementById('main-view');
+      const maintenanceView = document.getElementById('maintenance-view');
+
+      if (!data) return;
+
+      if (data.maintenance === true || data.maintenance === "true") {
+        mainView.classList.add('hidden');
+        maintenanceView.classList.remove('hidden');
+      } else {
+        maintenanceView.classList.add('hidden');
+        mainView.classList.remove('hidden');
+
+        document.getElementById('key-display').innerText = data.current_key || 'SEM KEY DISPONÍVEL';
+        document.getElementById('validity-display').innerText = 'Válida até ' + (data.expiration_date || '--/--/----');
+      }
+    });
+
+    function copyKey() {
+      const keyText = document.getElementById('key-display').innerText;
+      if (keyText === 'Carregando...' || keyText === 'SEM KEY DISPONÍVEL') return;
+
+      navigator.clipboard.writeText(keyText).then(() => {
+        const btn = document.getElementById('btn-copy');
+        btn.innerText = 'COPIADA!';
+        btn.style.backgroundColor = '#00aa00';
+        setTimeout(() => {
+          btn.innerText = 'COPIAR KEY';
+          btn.style.backgroundColor = '#e60000';
+        }, 2000);
+      });
+    }
+  </script>
 </body>
 </html>
