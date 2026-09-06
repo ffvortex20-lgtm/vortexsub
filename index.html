@@ -1,187 +1,804 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KM TEAM - Key</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-    body {
-      background-color: #0b0b0b;
-      color: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .card {
-      background-color: #141414;
-      border: 1px solid #222222;
-      border-radius: 16px;
-      padding: 24px;
-      width: 100%;
-      max-width: 380px;
-      text-align: center;
-    }
-    .tag {
-      color: #ff2a2a;
-      font-size: 11px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-    .title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 18px;
-    }
-    .key-box {
-      background-color: #000000;
-      border: 1px dashed #ff2a2a;
-      border-radius: 10px;
-      padding: 14px;
-      font-family: monospace;
-      font-size: 16px;
-      letter-spacing: 2px;
-      margin-bottom: 18px;
-      word-break: break-all;
-    }
-    .btn-copy {
-      background-color: #e60000;
-      color: #ffffff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-      font-size: 14px;
-    }
-    .info {
-      color: #888888;
-      font-size: 12px;
-      margin-top: 16px;
-      line-height: 1.6;
-    }
-    .hidden {
-      display: none !important;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<title>KM TEAM • Key System</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+:root{
+    --red:#ff1744;
+    --red2:#ff003c;
+    --dark:#070709;
+    --card:rgba(16,16,20,.78);
+    --border:rgba(255,23,68,.22);
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    color:white;
+    background:
+        radial-gradient(circle at 50% 0%,rgba(255,0,55,.16),transparent 35%),
+        radial-gradient(circle at 10% 90%,rgba(255,0,55,.08),transparent 30%),
+        #050507;
+    overflow:hidden;
+}
+
+/* FUNDO */
+
+.background{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.grid{
+    position:absolute;
+    inset:-100%;
+    background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:45px 45px;
+    transform:perspective(500px) rotateX(60deg);
+    animation:gridMove 15s linear infinite;
+}
+
+@keyframes gridMove{
+    from{transform:perspective(500px) rotateX(60deg) translateY(0)}
+    to{transform:perspective(500px) rotateX(60deg) translateY(45px)}
+}
+
+.glow{
+    position:absolute;
+    width:400px;
+    height:400px;
+    background:var(--red);
+    filter:blur(180px);
+    opacity:.12;
+    border-radius:50%;
+    animation:glowMove 7s ease-in-out infinite alternate;
+}
+
+@keyframes glowMove{
+    from{transform:translate(-120px,-100px)}
+    to{transform:translate(200px,150px)}
+}
+
+/* PARTICULAS */
+
+.particles{
+    position:absolute;
+    inset:0;
+}
+
+.particle{
+    position:absolute;
+    width:3px;
+    height:3px;
+    background:#ff1744;
+    border-radius:50%;
+    box-shadow:0 0 12px #ff1744;
+    opacity:.5;
+    animation:float linear infinite;
+}
+
+@keyframes float{
+    from{
+        transform:translateY(110vh);
+        opacity:0;
+    }
+    15%{opacity:.7}
+    85%{opacity:.7}
+    to{
+        transform:translateY(-10vh);
+        opacity:0;
+    }
+}
+
+/* CARD */
+
+.card{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    padding:32px;
+    border-radius:24px;
+    background:var(--card);
+    border:1px solid var(--border);
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.65),
+        0 0 60px rgba(255,0,55,.08);
+    text-align:center;
+    animation:cardIn .7s cubic-bezier(.2,.8,.2,1);
+    z-index:5;
+}
+
+@keyframes cardIn{
+    from{
+        opacity:0;
+        transform:translateY(25px) scale(.96);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+/* LOGO */
+
+.logo{
+    width:70px;
+    height:70px;
+    margin:0 auto 18px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    font-weight:800;
+    background:
+        linear-gradient(145deg,#ff1744,#800020);
+    box-shadow:
+        0 0 35px rgba(255,23,68,.35),
+        inset 0 1px rgba(255,255,255,.25);
+    animation:pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse{
+    0%,100%{box-shadow:0 0 25px rgba(255,23,68,.25)}
+    50%{box-shadow:0 0 45px rgba(255,23,68,.5)}
+}
+
+.tag{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 12px;
+    border-radius:50px;
+    background:rgba(255,23,68,.08);
+    border:1px solid rgba(255,23,68,.2);
+    color:#ff5270;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.6px;
+    margin-bottom:12px;
+}
+
+.tag::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#ff1744;
+    box-shadow:0 0 10px #ff1744;
+}
+
+.title{
+    font-size:24px;
+    font-weight:800;
+    margin-bottom:8px;
+    letter-spacing:-.7px;
+}
+
+.subtitle{
+    color:#85858d;
+    font-size:12px;
+    margin-bottom:25px;
+}
+
+/* KEY */
+
+.key-wrapper{
+    position:relative;
+    margin-bottom:15px;
+}
+
+.key-box{
+    position:relative;
+    padding:19px 15px;
+    border-radius:14px;
+    background:rgba(0,0,0,.6);
+    border:1px dashed rgba(255,23,68,.5);
+    color:#fff;
+    font-family:monospace;
+    font-size:15px;
+    letter-spacing:2px;
+    word-break:break-all;
+    box-shadow:
+        inset 0 0 25px rgba(255,0,55,.04),
+        0 0 20px rgba(255,0,55,.04);
+    transition:.25s;
+}
+
+.key-box:hover{
+    border-color:#ff1744;
+    box-shadow:
+        inset 0 0 30px rgba(255,0,55,.08),
+        0 0 25px rgba(255,0,55,.12);
+}
+
+/* STATUS */
+
+.status{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:7px;
+    color:#777780;
+    font-size:10px;
+    margin-bottom:18px;
+}
+
+.status-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#20e070;
+    box-shadow:0 0 10px #20e070;
+}
+
+/* BUTTON */
+
+.btn-copy{
+    position:relative;
+    overflow:hidden;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:13px;
+    cursor:pointer;
+    color:white;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.7px;
+    background:linear-gradient(135deg,#ff1744,#d50035);
+    box-shadow:
+        0 8px 25px rgba(255,0,55,.22);
+    transition:.2s;
+}
+
+.btn-copy::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:60%;
+    height:100%;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.25),
+        transparent
+    );
+    transform:skewX(-20deg);
+}
+
+.btn-copy:hover::before{
+    animation:shine .7s;
+}
+
+@keyframes shine{
+    to{left:140%}
+}
+
+.btn-copy:hover{
+    transform:translateY(-2px);
+    box-shadow:
+        0 12px 35px rgba(255,0,55,.35);
+}
+
+.btn-copy:active{
+    transform:scale(.97);
+}
+
+/* INFO */
+
+.info{
+    margin-top:19px;
+    padding-top:18px;
+    border-top:1px solid rgba(255,255,255,.06);
+    color:#777780;
+    font-size:11px;
+    line-height:1.8;
+}
+
+.info b{
+    color:#fff;
+}
+
+/* COPY SUCCESS */
+
+.success{
+    background:linear-gradient(135deg,#00c853,#00a844)!important;
+    box-shadow:0 8px 30px rgba(0,200,83,.25)!important;
+}
+
+/* MAINTENANCE */
+
+.maintenance-icon{
+    width:70px;
+    height:70px;
+    margin:0 auto 18px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    background:rgba(255,23,68,.08);
+    border:1px solid rgba(255,23,68,.25);
+    animation:shake 2s infinite;
+}
+
+@keyframes shake{
+    0%,90%,100%{transform:rotate(0)}
+    93%{transform:rotate(-5deg)}
+    96%{transform:rotate(5deg)}
+}
+
+/* HIDDEN */
+
+.hidden{
+    display:none!important;
+}
+
+/* MOBILE */
+
+@media(max-width:480px){
+    .card{
+        padding:26px 20px;
+        border-radius:21px;
+    }
+
+    .title{
+        font-size:21px;
+    }
+
+    .key-box{
+        font-size:13px;
+    }
+}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 </head>
+
 <body>
 
-  <div id="maintenance-view" class="card hidden">
-    <div class="tag">AVISO</div>
-    <div class="title" style="color: #ff2a2a;">EM MANUTENÇÃO</div>
-    <p style="color: #aaaaaa; font-size: 14px;">O site está temporariamente indisponível.</p>
-  </div>
+<div class="background">
+    <div class="grid"></div>
+    <div class="glow"></div>
+    <div class="particles" id="particles"></div>
+</div>
 
-  <div id="main-view" class="card">
-    <div class="tag">KEY PÚBLICA</div>
-    <div class="title">Use esta key no app</div>
-    <div class="key-box" id="key-display">Carregando...</div>
-    <button class="btn-copy" id="btn-copy" onclick="copyKey()">COPIAR KEY</button>
-    <div class="info" id="validity-display">Válida até --/--/----</div>
-  </div>
+<!-- PRINCIPAL -->
 
-  <script>
-    const firebaseConfig = {
-      databaseURL: "https://master12-13be0-default-rtdb.firebaseio.com"
-    };
+<div id="main-view" class="card">
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-    const configRef = database.ref('config');
+    <div class="logo">KM</div>
 
-    let rawDateStr = "";
-    let timerInterval = null;
+    <div class="tag">KEY SYSTEM ONLINE</div>
 
-    configRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (!data) return;
+    <div class="title">Sua Key está pronta</div>
 
-      const mainView = document.getElementById('main-view');
-      const maintenanceView = document.getElementById('maintenance-view');
+    <div class="subtitle">
+        Copie sua chave e utilize-a no aplicativo.
+    </div>
 
-      if (data.maintenance === true || data.maintenance === "true") {
-        mainView.classList.add('hidden');
-        maintenanceView.classList.remove('hidden');
-      } else {
-        maintenanceView.classList.add('hidden');
-        mainView.classList.remove('hidden');
+    <div class="key-wrapper">
+        <div class="key-box" id="key-display">
+            Carregando...
+        </div>
+    </div>
 
-        document.getElementById('key-display').innerText = data.current_key || 'SEM KEY';
-        rawDateStr = data.expiration_date || "";
-        
+    <div class="status">
+        <span class="status-dot"></span>
+        SISTEMA OPERACIONAL
+    </div>
+
+    <button class="btn-copy" id="btn-copy" onclick="copyKey()">
+        ⧉ &nbsp; COPIAR KEY
+    </button>
+
+    <div class="info" id="validity-display">
+        Verificando validade...
+    </div>
+
+</div>
+
+<!-- MANUTENÇÃO -->
+
+<div id="maintenance-view" class="card hidden">
+
+    <div class="maintenance-icon">⚙</div>
+
+    <div class="tag">SYSTEM OFFLINE</div>
+
+    <div class="title" style="color:#ff365d">
+        Em manutenção
+    </div>
+
+    <div class="subtitle" style="margin-bottom:0">
+        Nosso sistema está temporariamente indisponível.<br>
+        Tente novamente mais tarde.
+    </div>
+
+</div>
+
+<script>
+
+/* =========================
+   PARTICULAS
+========================= */
+
+const particles = document.getElementById("particles");
+
+for(let i=0;i<35;i++){
+
+    const p = document.createElement("div");
+
+    p.className = "particle";
+
+    p.style.left = Math.random()*100 + "%";
+    p.style.animationDuration = (5 + Math.random()*9) + "s";
+    p.style.animationDelay = (-Math.random()*10) + "s";
+    p.style.opacity = Math.random();
+
+    particles.appendChild(p);
+}
+
+
+/* =========================
+   SONS
+========================= */
+
+let audioCtx;
+
+function sound(type){
+
+    try{
+
+        if(!audioCtx){
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if(type === "click"){
+
+            osc.frequency.setValueAtTime(500,audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(
+                850,
+                audioCtx.currentTime+.08
+            );
+
+            gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(
+                .08,
+                audioCtx.currentTime+.01
+            );
+
+            gain.gain.exponentialRampToValueAtTime(
+                .0001,
+                audioCtx.currentTime+.12
+            );
+
+            osc.start();
+            osc.stop(audioCtx.currentTime+.12);
+
+        }
+
+        if(type === "success"){
+
+            osc.frequency.setValueAtTime(
+                500,
+                audioCtx.currentTime
+            );
+
+            osc.frequency.exponentialRampToValueAtTime(
+                1000,
+                audioCtx.currentTime+.15
+            );
+
+            gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+
+            gain.gain.exponentialRampToValueAtTime(
+                .12,
+                audioCtx.currentTime+.02
+            );
+
+            gain.gain.exponentialRampToValueAtTime(
+                .0001,
+                audioCtx.currentTime+.3
+            );
+
+            osc.start();
+            osc.stop(audioCtx.currentTime+.3);
+        }
+
+    }catch(e){}
+}
+
+
+/* =========================
+   FIREBASE
+========================= */
+
+const firebaseConfig = {
+
+    databaseURL:
+    "https://master12-13be0-default-rtdb.firebaseio.com"
+
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const database = firebase.database();
+
+const configRef = database.ref("config");
+
+let rawDateStr = "";
+let timerInterval = null;
+
+
+/* =========================
+   FIREBASE LISTENER
+========================= */
+
+configRef.on("value",(snapshot)=>{
+
+    const data = snapshot.val();
+
+    if(!data) return;
+
+    const mainView =
+        document.getElementById("main-view");
+
+    const maintenanceView =
+        document.getElementById("maintenance-view");
+
+    if(
+        data.maintenance === true ||
+        data.maintenance === "true"
+    ){
+
+        mainView.classList.add("hidden");
+
+        maintenanceView.classList.remove("hidden");
+
+    }else{
+
+        maintenanceView.classList.add("hidden");
+
+        mainView.classList.remove("hidden");
+
+        document.getElementById("key-display")
+            .innerText =
+            data.current_key || "SEM KEY";
+
+        rawDateStr =
+            data.expiration_date || "";
+
         startCountdown();
-      }
-    });
+    }
 
-    function startCountdown() {
-      if (timerInterval) clearInterval(timerInterval);
-      
-      function updateTimer() {
-        const infoElem = document.getElementById('validity-display');
-        if (!rawDateStr) {
-          infoElem.innerText = "Sem data de validade definida.";
-          return;
+});
+
+
+/* =========================
+   CONTADOR
+========================= */
+
+function startCountdown(){
+
+    if(timerInterval)
+        clearInterval(timerInterval);
+
+    function updateTimer(){
+
+        const info =
+            document.getElementById(
+                "validity-display"
+            );
+
+        if(!rawDateStr){
+
+            info.innerText =
+                "Sem data de validade definida.";
+
+            return;
         }
 
-        // Extrai dia, mês, ano, hora, minuto
-        const numbers = rawDateStr.match(/\d+/g);
-        if (!numbers || numbers.length < 3) {
-          infoElem.innerText = "Válida até " + rawDateStr;
-          return;
+        const numbers =
+            rawDateStr.match(/\d+/g);
+
+        if(!numbers || numbers.length < 3){
+
+            info.innerText =
+                "Válida até " + rawDateStr;
+
+            return;
         }
 
-        const day = parseInt(numbers[0], 10);
-        const month = parseInt(numbers[1], 10) - 1;
-        const year = parseInt(numbers[2], 10);
-        const hour = numbers[3] ? parseInt(numbers[3], 10) : 23;
-        const min = numbers[4] ? parseInt(numbers[4], 10) : 59;
+        const day =
+            parseInt(numbers[0],10);
 
-        const targetDate = new Date(year, month, day, hour, min);
+        const month =
+            parseInt(numbers[1],10)-1;
+
+        const year =
+            parseInt(numbers[2],10);
+
+        const hour =
+            numbers[3]
+            ? parseInt(numbers[3],10)
+            : 23;
+
+        const min =
+            numbers[4]
+            ? parseInt(numbers[4],10)
+            : 59;
+
+        const targetDate =
+            new Date(
+                year,
+                month,
+                day,
+                hour,
+                min
+            );
+
         const now = new Date();
-        const diff = targetDate - now;
 
-        if (diff <= 0) {
-          infoElem.innerHTML = `Válida até ${rawDateStr}<br><span style="color:#ff2a2a; font-weight:bold;">KEY EXPIRADA</span>`;
-        } else {
-          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          infoElem.innerHTML = `Válida até ${rawDateStr}.<br>Restam <b>${days}</b> dia(s), <b>${hours}</b> hora(s) e <b>${mins}</b> min(s).`;
+        const diff =
+            targetDate-now;
+
+        if(diff <= 0){
+
+            info.innerHTML =
+            `Válida até ${rawDateStr}<br>
+            <span style="
+            color:#ff1744;
+            font-weight:800;">
+            ⚠ KEY EXPIRADA
+            </span>`;
+
+        }else{
+
+            const days =
+                Math.floor(
+                    diff/(1000*60*60*24)
+                );
+
+            const hours =
+                Math.floor(
+                    (diff%(1000*60*60*24))/
+                    (1000*60*60)
+                );
+
+            const mins =
+                Math.floor(
+                    (diff%(1000*60*60))/
+                    (1000*60)
+                );
+
+            info.innerHTML =
+            `Válida até <b>${rawDateStr}</b><br>
+            Restam <b>${days}</b> dia(s),
+            <b>${hours}</b> hora(s) e
+            <b>${mins}</b> min(s).`;
         }
-      }
-
-      updateTimer();
-      timerInterval = setInterval(updateTimer, 30000); // Atualiza a cada 30s
     }
 
-    function copyKey() {
-      const keyText = document.getElementById('key-display').innerText;
-      if (keyText === 'Carregando...' || keyText === 'SEM KEY') return;
+    updateTimer();
 
-      navigator.clipboard.writeText(keyText).then(() => {
-        const btn = document.getElementById('btn-copy');
-        btn.innerText = 'COPIADA';
-        btn.style.backgroundColor = '#00aa00';
-        setTimeout(() => {
-          btn.innerText = 'COPIAR KEY';
-          btn.style.backgroundColor = '#e60000';
-        }, 2000);
-      });
+    timerInterval =
+        setInterval(updateTimer,30000);
+}
+
+
+/* =========================
+   COPIAR KEY
+========================= */
+
+async function copyKey(){
+
+    const key =
+        document
+        .getElementById("key-display")
+        .innerText;
+
+    if(
+        key === "Carregando..." ||
+        key === "SEM KEY"
+    ) return;
+
+    sound("click");
+
+    try{
+
+        await navigator.clipboard.writeText(key);
+
+        const button =
+            document.getElementById("btn-copy");
+
+        button.classList.add("success");
+
+        button.innerHTML =
+            "✓ &nbsp; KEY COPIADA!";
+
+        sound("success");
+
+        setTimeout(()=>{
+
+            button.classList.remove("success");
+
+            button.innerHTML =
+                "⧉ &nbsp; COPIAR KEY";
+
+        },2200);
+
+    }catch(error){
+
+        const area =
+            document.createElement("textarea");
+
+        area.value = key;
+
+        document.body.appendChild(area);
+
+        area.select();
+
+        document.execCommand("copy");
+
+        area.remove();
+
+        const button =
+            document.getElementById("btn-copy");
+
+        button.classList.add("success");
+
+        button.innerHTML =
+            "✓ &nbsp; KEY COPIADA!";
+
+        sound("success");
+
+        setTimeout(()=>{
+
+            button.classList.remove("success");
+
+            button.innerHTML =
+                "⧉ &nbsp; COPIAR KEY";
+
+        },2200);
     }
-  </script>
+}
+
+</script>
+
 </body>
 </html>
+```
