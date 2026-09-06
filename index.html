@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -14,15 +13,13 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Inter',sans-serif;
+    font-family:'Inter',Arial,sans-serif;
 }
 
 :root{
     --red:#ff1744;
-    --red2:#ff003c;
-    --dark:#070709;
-    --card:rgba(16,16,20,.78);
-    --border:rgba(255,23,68,.22);
+    --red-dark:#d50036;
+    --black:#050507;
 }
 
 body{
@@ -31,56 +28,106 @@ body{
     align-items:center;
     justify-content:center;
     padding:20px;
-    color:white;
-    background:
-        radial-gradient(circle at 50% 0%,rgba(255,0,55,.16),transparent 35%),
-        radial-gradient(circle at 10% 90%,rgba(255,0,55,.08),transparent 30%),
-        #050507;
+    color:#fff;
     overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255,0,55,.18),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(255,0,55,.10),
+            transparent 30%
+        ),
+        #050507;
 }
 
-/* FUNDO */
+/* =========================
+   FUNDO
+========================= */
 
 .background{
     position:fixed;
     inset:0;
-    pointer-events:none;
     overflow:hidden;
+    pointer-events:none;
 }
 
 .grid{
     position:absolute;
-    inset:-100%;
+    width:200%;
+    height:100%;
+    left:-50%;
+    bottom:-35%;
+
     background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+        linear-gradient(
+            rgba(255,23,68,.08) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,23,68,.08) 1px,
+            transparent 1px
+        );
+
     background-size:45px 45px;
-    transform:perspective(500px) rotateX(60deg);
-    animation:gridMove 15s linear infinite;
+
+    transform:
+        perspective(500px)
+        rotateX(60deg);
+
+    animation:gridMove 12s linear infinite;
 }
 
 @keyframes gridMove{
-    from{transform:perspective(500px) rotateX(60deg) translateY(0)}
-    to{transform:perspective(500px) rotateX(60deg) translateY(45px)}
+    from{
+        transform:
+            perspective(500px)
+            rotateX(60deg)
+            translateY(0);
+    }
+
+    to{
+        transform:
+            perspective(500px)
+            rotateX(60deg)
+            translateY(45px);
+    }
 }
 
 .glow{
     position:absolute;
-    width:400px;
-    height:400px;
-    background:var(--red);
-    filter:blur(180px);
-    opacity:.12;
+    width:420px;
+    height:420px;
+
+    background:#ff003c;
+
     border-radius:50%;
-    animation:glowMove 7s ease-in-out infinite alternate;
+
+    filter:blur(170px);
+
+    opacity:.12;
+
+    animation:glowMove 8s ease-in-out infinite alternate;
 }
 
 @keyframes glowMove{
-    from{transform:translate(-120px,-100px)}
-    to{transform:translate(200px,150px)}
+    from{
+        transform:translate(-100px,-100px);
+    }
+
+    to{
+        transform:translate(300px,200px);
+    }
 }
 
-/* PARTICULAS */
+/* =========================
+   PARTICULAS
+========================= */
 
 .particles{
     position:absolute;
@@ -89,234 +136,481 @@ body{
 
 .particle{
     position:absolute;
+
     width:3px;
     height:3px;
-    background:#ff1744;
+
     border-radius:50%;
-    box-shadow:0 0 12px #ff1744;
-    opacity:.5;
-    animation:float linear infinite;
+
+    background:#ff1744;
+
+    box-shadow:
+        0 0 10px #ff1744;
+
+    animation:particleMove linear infinite;
 }
 
-@keyframes float{
+@keyframes particleMove{
+
     from{
         transform:translateY(110vh);
         opacity:0;
     }
-    15%{opacity:.7}
-    85%{opacity:.7}
+
+    15%{
+        opacity:.8;
+    }
+
+    85%{
+        opacity:.8;
+    }
+
     to{
         transform:translateY(-10vh);
         opacity:0;
     }
 }
 
-/* CARD */
+/* =========================
+   CARD
+========================= */
 
 .card{
     position:relative;
+
     width:100%;
     max-width:420px;
+
     padding:32px;
+
     border-radius:24px;
-    background:var(--card);
-    border:1px solid var(--border);
-    backdrop-filter:blur(22px);
-    -webkit-backdrop-filter:blur(22px);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20,20,25,.88),
+            rgba(8,8,11,.88)
+        );
+
+    border:1px solid rgba(255,23,68,.35);
+
+    backdrop-filter:blur(25px);
+    -webkit-backdrop-filter:blur(25px);
+
     box-shadow:
-        0 25px 80px rgba(0,0,0,.65),
+        0 30px 90px rgba(0,0,0,.7),
         0 0 60px rgba(255,0,55,.08);
+
     text-align:center;
-    animation:cardIn .7s cubic-bezier(.2,.8,.2,1);
+
+    animation:cardEnter .7s cubic-bezier(.2,.8,.2,1);
+
     z-index:5;
 }
 
-@keyframes cardIn{
+@keyframes cardEnter{
+
     from{
         opacity:0;
-        transform:translateY(25px) scale(.96);
+        transform:
+            translateY(30px)
+            scale(.94);
     }
+
     to{
         opacity:1;
-        transform:none;
+        transform:
+            translateY(0)
+            scale(1);
     }
 }
 
-/* LOGO */
+/* =========================
+   LOGO
+========================= */
 
 .logo{
     width:70px;
     height:70px;
+
     margin:0 auto 18px;
-    border-radius:20px;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
+    border-radius:20px;
+
     font-size:25px;
     font-weight:800;
+
     background:
-        linear-gradient(145deg,#ff1744,#800020);
+        linear-gradient(
+            145deg,
+            #ff1744,
+            #a9002d
+        );
+
     box-shadow:
-        0 0 35px rgba(255,23,68,.35),
-        inset 0 1px rgba(255,255,255,.25);
-    animation:pulse 3s ease-in-out infinite;
+        0 0 35px rgba(255,23,68,.4),
+        inset 0 1px rgba(255,255,255,.3);
+
+    animation:logoPulse 3s ease-in-out infinite;
 }
 
-@keyframes pulse{
-    0%,100%{box-shadow:0 0 25px rgba(255,23,68,.25)}
-    50%{box-shadow:0 0 45px rgba(255,23,68,.5)}
+@keyframes logoPulse{
+
+    0%,100%{
+        box-shadow:
+            0 0 25px rgba(255,23,68,.25);
+    }
+
+    50%{
+        box-shadow:
+            0 0 50px rgba(255,23,68,.55);
+    }
 }
+
+/* =========================
+   TAG
+========================= */
 
 .tag{
     display:inline-flex;
+
     align-items:center;
     gap:7px;
-    padding:7px 12px;
+
+    padding:7px 13px;
+
     border-radius:50px;
-    background:rgba(255,23,68,.08);
-    border:1px solid rgba(255,23,68,.2);
-    color:#ff5270;
+
+    background:
+        rgba(255,23,68,.08);
+
+    border:
+        1px solid rgba(255,23,68,.25);
+
+    color:#ff5473;
+
     font-size:10px;
+
     font-weight:800;
-    letter-spacing:1.6px;
+
+    letter-spacing:1.5px;
+
     margin-bottom:12px;
 }
 
 .tag::before{
     content:"";
+
     width:6px;
     height:6px;
+
     border-radius:50%;
+
     background:#ff1744;
-    box-shadow:0 0 10px #ff1744;
+
+    box-shadow:
+        0 0 10px #ff1744;
 }
+
+/* =========================
+   TITULO
+========================= */
 
 .title{
     font-size:24px;
+
     font-weight:800;
-    margin-bottom:8px;
+
     letter-spacing:-.7px;
+
+    margin-bottom:8px;
 }
 
 .subtitle{
     color:#85858d;
+
     font-size:12px;
-    margin-bottom:25px;
+
+    line-height:1.6;
+
+    margin-bottom:24px;
 }
 
-/* KEY */
-
-.key-wrapper{
-    position:relative;
-    margin-bottom:15px;
-}
+/* =========================
+   KEY
+========================= */
 
 .key-box{
-    position:relative;
     padding:19px 15px;
+
     border-radius:14px;
-    background:rgba(0,0,0,.6);
-    border:1px dashed rgba(255,23,68,.5);
+
+    background:
+        rgba(0,0,0,.65);
+
+    border:
+        1px dashed rgba(255,23,68,.55);
+
     color:#fff;
+
     font-family:monospace;
+
     font-size:15px;
+
     letter-spacing:2px;
+
     word-break:break-all;
-    box-shadow:
-        inset 0 0 25px rgba(255,0,55,.04),
-        0 0 20px rgba(255,0,55,.04);
+
+    margin-bottom:13px;
+
     transition:.25s;
 }
 
 .key-box:hover{
+
     border-color:#ff1744;
+
     box-shadow:
-        inset 0 0 30px rgba(255,0,55,.08),
-        0 0 25px rgba(255,0,55,.12);
+        0 0 25px rgba(255,23,68,.12),
+        inset 0 0 25px rgba(255,23,68,.05);
 }
 
-/* STATUS */
+/* =========================
+   STATUS
+========================= */
 
 .status{
     display:flex;
-    justify-content:center;
+
     align-items:center;
+    justify-content:center;
+
     gap:7px;
+
     color:#777780;
+
     font-size:10px;
+
     margin-bottom:18px;
 }
 
 .status-dot{
     width:6px;
     height:6px;
+
     border-radius:50%;
+
     background:#20e070;
-    box-shadow:0 0 10px #20e070;
+
+    box-shadow:
+        0 0 10px #20e070;
+
+    animation:statusPulse 1.5s infinite;
 }
 
-/* BUTTON */
+@keyframes statusPulse{
 
-.btn-copy{
+    50%{
+        opacity:.35;
+        transform:scale(.7);
+    }
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.btn{
     position:relative;
+
     overflow:hidden;
+
     width:100%;
+
     padding:15px;
+
     border:none;
+
     border-radius:13px;
+
     cursor:pointer;
-    color:white;
+
+    color:#fff;
+
     font-size:13px;
+
     font-weight:800;
-    letter-spacing:.7px;
-    background:linear-gradient(135deg,#ff1744,#d50035);
-    box-shadow:
-        0 8px 25px rgba(255,0,55,.22);
+
+    letter-spacing:.6px;
+
     transition:.2s;
 }
 
-.btn-copy::before{
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn:active{
+    transform:scale(.97);
+}
+
+/* copiar */
+
+.btn-copy{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff1744,
+            #d50036
+        );
+
+    box-shadow:
+        0 8px 28px rgba(255,0,55,.25);
+
+    margin-bottom:12px;
+}
+
+.btn-copy:hover{
+
+    box-shadow:
+        0 12px 40px rgba(255,0,55,.4);
+}
+
+/* brilho */
+
+.btn::before{
+
     content:"";
+
     position:absolute;
+
     top:0;
-    left:-100%;
+    left:-120%;
+
     width:60%;
     height:100%;
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.25),
-        transparent
-    );
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.25),
+            transparent
+        );
+
     transform:skewX(-20deg);
 }
 
-.btn-copy:hover::before{
+.btn:hover::before{
     animation:shine .7s;
 }
 
 @keyframes shine{
-    to{left:140%}
+    to{
+        left:140%;
+    }
 }
 
-.btn-copy:hover{
-    transform:translateY(-2px);
+/* =========================
+   CANAL WHATSAPP
+========================= */
+
+.channel-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    text-decoration:none;
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px solid rgba(255,23,68,.35);
+
+    color:#fff;
+
     box-shadow:
-        0 12px 35px rgba(255,0,55,.35);
+        0 0 20px rgba(255,23,68,.05);
 }
 
-.btn-copy:active{
-    transform:scale(.97);
+.channel-btn:hover{
+
+    border-color:#ff1744;
+
+    background:
+        rgba(255,23,68,.08);
+
+    box-shadow:
+        0 0 30px rgba(255,23,68,.16);
 }
 
-/* INFO */
+.whatsapp-icon{
+
+    width:27px;
+    height:27px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:#25D366;
+
+    color:white;
+
+    font-size:15px;
+
+    box-shadow:
+        0 0 15px rgba(37,211,102,.25);
+}
+
+.channel-text{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+.channel-title{
+    font-size:11px;
+    font-weight:800;
+}
+
+.channel-subtitle{
+    margin-top:2px;
+    color:#777780;
+    font-size:9px;
+}
+
+/* =========================
+   INFO
+========================= */
 
 .info{
-    margin-top:19px;
+
+    margin-top:20px;
+
     padding-top:18px;
-    border-top:1px solid rgba(255,255,255,.06);
+
+    border-top:
+        1px solid rgba(255,255,255,.06);
+
     color:#777780;
+
     font-size:11px;
+
     line-height:1.8;
 }
 
@@ -324,47 +618,82 @@ body{
     color:#fff;
 }
 
-/* COPY SUCCESS */
+/* =========================
+   SUCESSO
+========================= */
 
 .success{
-    background:linear-gradient(135deg,#00c853,#00a844)!important;
-    box-shadow:0 8px 30px rgba(0,200,83,.25)!important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00c853,
+            #00a844
+        ) !important;
+
+    box-shadow:
+        0 8px 30px rgba(0,200,83,.3) !important;
 }
 
-/* MAINTENANCE */
+/* =========================
+   MANUTENÇÃO
+========================= */
 
 .maintenance-icon{
+
     width:70px;
     height:70px;
+
     margin:0 auto 18px;
+
     border-radius:20px;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     font-size:28px;
-    background:rgba(255,23,68,.08);
-    border:1px solid rgba(255,23,68,.25);
-    animation:shake 2s infinite;
+
+    background:
+        rgba(255,23,68,.08);
+
+    border:
+        1px solid rgba(255,23,68,.25);
+
+    animation:maintenance 2s infinite;
 }
 
-@keyframes shake{
-    0%,90%,100%{transform:rotate(0)}
-    93%{transform:rotate(-5deg)}
-    96%{transform:rotate(5deg)}
+@keyframes maintenance{
+
+    0%,90%,100%{
+        transform:rotate(0);
+    }
+
+    93%{
+        transform:rotate(-5deg);
+    }
+
+    96%{
+        transform:rotate(5deg);
+    }
 }
 
-/* HIDDEN */
+/* =========================
+   HIDDEN
+========================= */
 
 .hidden{
-    display:none!important;
+    display:none !important;
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:480px){
+
     .card{
         padding:26px 20px;
-        border-radius:21px;
     }
 
     .title{
@@ -385,64 +714,150 @@ body{
 <body>
 
 <div class="background">
+
     <div class="grid"></div>
+
     <div class="glow"></div>
-    <div class="particles" id="particles"></div>
+
+    <div
+        class="particles"
+        id="particles">
+    </div>
+
 </div>
 
-<!-- PRINCIPAL -->
 
-<div id="main-view" class="card">
+<!-- =========================
+     TELA PRINCIPAL
+========================= -->
 
-    <div class="logo">KM</div>
+<div
+    id="main-view"
+    class="card">
 
-    <div class="tag">KEY SYSTEM ONLINE</div>
+    <div class="logo">
+        KM
+    </div>
 
-    <div class="title">Sua Key está pronta</div>
+    <div class="tag">
+        KEY SYSTEM ONLINE
+    </div>
+
+    <div class="title">
+        Sua Key está pronta
+    </div>
 
     <div class="subtitle">
         Copie sua chave e utilize-a no aplicativo.
     </div>
 
-    <div class="key-wrapper">
-        <div class="key-box" id="key-display">
-            Carregando...
-        </div>
+    <div
+        class="key-box"
+        id="key-display">
+
+        Carregando...
+
     </div>
 
     <div class="status">
+
         <span class="status-dot"></span>
+
         SISTEMA OPERACIONAL
+
     </div>
 
-    <button class="btn-copy" id="btn-copy" onclick="copyKey()">
+
+    <!-- COPIAR -->
+
+    <button
+        class="btn btn-copy"
+        id="btn-copy"
+        onclick="copyKey()">
+
         ⧉ &nbsp; COPIAR KEY
+
     </button>
 
-    <div class="info" id="validity-display">
+
+    <!-- CANAL -->
+
+    <a
+        class="btn channel-btn"
+        href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N"
+        target="_blank"
+        rel="noopener noreferrer">
+
+        <span class="whatsapp-icon">
+            ☎
+        </span>
+
+        <span class="channel-text">
+
+            <span class="channel-title">
+                CANAL DE ATUALIZAÇÕES
+            </span>
+
+            <span class="channel-subtitle">
+                Receba novidades e atualizações
+            </span>
+
+        </span>
+
+        <span style="margin-left:auto;font-size:18px;">
+            ›
+        </span>
+
+    </a>
+
+
+    <div
+        class="info"
+        id="validity-display">
+
         Verificando validade...
+
     </div>
 
 </div>
 
-<!-- MANUTENÇÃO -->
 
-<div id="maintenance-view" class="card hidden">
+<!-- =========================
+     MANUTENÇÃO
+========================= -->
 
-    <div class="maintenance-icon">⚙</div>
+<div
+    id="maintenance-view"
+    class="card hidden">
 
-    <div class="tag">SYSTEM OFFLINE</div>
+    <div class="maintenance-icon">
+        ⚙
+    </div>
 
-    <div class="title" style="color:#ff365d">
+    <div class="tag">
+        SYSTEM OFFLINE
+    </div>
+
+    <div
+        class="title"
+        style="color:#ff365d">
+
         Em manutenção
+
     </div>
 
-    <div class="subtitle" style="margin-bottom:0">
-        Nosso sistema está temporariamente indisponível.<br>
+    <div
+        class="subtitle"
+        style="margin-bottom:0">
+
+        Nosso sistema está temporariamente indisponível.
+        <br><br>
         Tente novamente mais tarde.
+
     </div>
 
 </div>
+
 
 <script>
 
@@ -450,18 +865,27 @@ body{
    PARTICULAS
 ========================= */
 
-const particles = document.getElementById("particles");
+const particles =
+    document.getElementById("particles");
 
-for(let i=0;i<35;i++){
+for(let i = 0; i < 40; i++){
 
-    const p = document.createElement("div");
+    const p =
+        document.createElement("div");
 
     p.className = "particle";
 
-    p.style.left = Math.random()*100 + "%";
-    p.style.animationDuration = (5 + Math.random()*9) + "s";
-    p.style.animationDelay = (-Math.random()*10) + "s";
-    p.style.opacity = Math.random();
+    p.style.left =
+        Math.random() * 100 + "%";
+
+    p.style.animationDuration =
+        (5 + Math.random() * 10) + "s";
+
+    p.style.animationDelay =
+        (-Math.random() * 10) + "s";
+
+    p.style.opacity =
+        Math.random();
 
     particles.appendChild(p);
 }
@@ -471,45 +895,69 @@ for(let i=0;i<35;i++){
    SONS
 ========================= */
 
-let audioCtx;
+let audioCtx = null;
 
 function sound(type){
 
     try{
 
         if(!audioCtx){
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            audioCtx =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
         }
 
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const osc =
+            audioCtx.createOscillator();
+
+        const gain =
+            audioCtx.createGain();
 
         osc.connect(gain);
-        gain.connect(audioCtx.destination);
+
+        gain.connect(
+            audioCtx.destination
+        );
+
 
         if(type === "click"){
 
-            osc.frequency.setValueAtTime(500,audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(
-                850,
-                audioCtx.currentTime+.08
+            osc.frequency.setValueAtTime(
+                500,
+                audioCtx.currentTime
             );
 
-            gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(
+                850,
+                audioCtx.currentTime + .08
+            );
+
+            gain.gain.setValueAtTime(
+                .0001,
+                audioCtx.currentTime
+            );
+
             gain.gain.exponentialRampToValueAtTime(
                 .08,
-                audioCtx.currentTime+.01
+                audioCtx.currentTime + .01
             );
 
             gain.gain.exponentialRampToValueAtTime(
                 .0001,
-                audioCtx.currentTime+.12
+                audioCtx.currentTime + .12
             );
 
             osc.start();
-            osc.stop(audioCtx.currentTime+.12);
 
+            osc.stop(
+                audioCtx.currentTime + .12
+            );
         }
+
 
         if(type === "success"){
 
@@ -520,26 +968,33 @@ function sound(type){
 
             osc.frequency.exponentialRampToValueAtTime(
                 1000,
-                audioCtx.currentTime+.15
+                audioCtx.currentTime + .15
             );
 
-            gain.gain.setValueAtTime(.0001,audioCtx.currentTime);
+            gain.gain.setValueAtTime(
+                .0001,
+                audioCtx.currentTime
+            );
 
             gain.gain.exponentialRampToValueAtTime(
                 .12,
-                audioCtx.currentTime+.02
+                audioCtx.currentTime + .02
             );
 
             gain.gain.exponentialRampToValueAtTime(
                 .0001,
-                audioCtx.currentTime+.3
+                audioCtx.currentTime + .3
             );
 
             osc.start();
-            osc.stop(audioCtx.currentTime+.3);
+
+            osc.stop(
+                audioCtx.currentTime + .3
+            );
         }
 
     }catch(e){}
+
 }
 
 
@@ -550,62 +1005,93 @@ function sound(type){
 const firebaseConfig = {
 
     databaseURL:
-    "https://master12-13be0-default-rtdb.firebaseio.com"
+        "https://master12-13be0-default-rtdb.firebaseio.com"
 
 };
 
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(
+    firebaseConfig
+);
 
-const database = firebase.database();
+const database =
+    firebase.database();
 
-const configRef = database.ref("config");
+const configRef =
+    database.ref("config");
 
 let rawDateStr = "";
+
 let timerInterval = null;
 
 
 /* =========================
-   FIREBASE LISTENER
+   FIREBASE
 ========================= */
 
-configRef.on("value",(snapshot)=>{
+configRef.on(
+    "value",
+    (snapshot) => {
 
-    const data = snapshot.val();
+        const data =
+            snapshot.val();
 
-    if(!data) return;
+        if(!data)
+            return;
 
-    const mainView =
-        document.getElementById("main-view");
 
-    const maintenanceView =
-        document.getElementById("maintenance-view");
+        const mainView =
+            document.getElementById(
+                "main-view"
+            );
 
-    if(
-        data.maintenance === true ||
-        data.maintenance === "true"
-    ){
+        const maintenanceView =
+            document.getElementById(
+                "maintenance-view"
+            );
 
-        mainView.classList.add("hidden");
 
-        maintenanceView.classList.remove("hidden");
+        if(
+            data.maintenance === true ||
+            data.maintenance === "true"
+        ){
 
-    }else{
+            mainView.classList.add(
+                "hidden"
+            );
 
-        maintenanceView.classList.add("hidden");
+            maintenanceView.classList.remove(
+                "hidden"
+            );
 
-        mainView.classList.remove("hidden");
+        }else{
 
-        document.getElementById("key-display")
-            .innerText =
-            data.current_key || "SEM KEY";
+            maintenanceView.classList.add(
+                "hidden"
+            );
 
-        rawDateStr =
-            data.expiration_date || "";
+            mainView.classList.remove(
+                "hidden"
+            );
 
-        startCountdown();
+
+            document.getElementById(
+                "key-display"
+            ).innerText =
+                data.current_key ||
+                "SEM KEY";
+
+
+            rawDateStr =
+                data.expiration_date ||
+                "";
+
+
+            startCountdown();
+
+        }
+
     }
-
-});
+);
 
 
 /* =========================
@@ -615,7 +1101,10 @@ configRef.on("value",(snapshot)=>{
 function startCountdown(){
 
     if(timerInterval)
-        clearInterval(timerInterval);
+        clearInterval(
+            timerInterval
+        );
+
 
     function updateTimer(){
 
@@ -623,6 +1112,7 @@ function startCountdown(){
             document.getElementById(
                 "validity-display"
             );
+
 
         if(!rawDateStr){
 
@@ -632,35 +1122,58 @@ function startCountdown(){
             return;
         }
 
-        const numbers =
-            rawDateStr.match(/\d+/g);
 
-        if(!numbers || numbers.length < 3){
+        const numbers =
+            rawDateStr.match(
+                /\d+/g
+            );
+
+
+        if(
+            !numbers ||
+            numbers.length < 3
+        ){
 
             info.innerText =
-                "Válida até " + rawDateStr;
+                "Válida até " +
+                rawDateStr;
 
             return;
         }
 
+
         const day =
-            parseInt(numbers[0],10);
+            parseInt(
+                numbers[0],
+                10
+            );
+
 
         const month =
-            parseInt(numbers[1],10)-1;
+            parseInt(
+                numbers[1],
+                10
+            ) - 1;
+
 
         const year =
-            parseInt(numbers[2],10);
+            parseInt(
+                numbers[2],
+                10
+            );
+
 
         const hour =
             numbers[3]
             ? parseInt(numbers[3],10)
             : 23;
 
+
         const min =
             numbers[4]
             ? parseInt(numbers[4],10)
             : 59;
+
 
         const targetDate =
             new Date(
@@ -671,134 +1184,183 @@ function startCountdown(){
                 min
             );
 
-        const now = new Date();
+
+        const now =
+            new Date();
+
 
         const diff =
-            targetDate-now;
+            targetDate - now;
+
 
         if(diff <= 0){
 
             info.innerHTML =
-            `Válida até ${rawDateStr}<br>
-            <span style="
-            color:#ff1744;
-            font-weight:800;">
-            ⚠ KEY EXPIRADA
-            </span>`;
+
+                `Válida até ${rawDateStr}
+                <br>
+                <span style="
+                    color:#ff1744;
+                    font-weight:800;
+                ">
+                    ⚠ KEY EXPIRADA
+                </span>`;
 
         }else{
 
             const days =
                 Math.floor(
-                    diff/(1000*60*60*24)
+                    diff /
+                    (1000 * 60 * 60 * 24)
                 );
+
 
             const hours =
                 Math.floor(
-                    (diff%(1000*60*60*24))/
-                    (1000*60*60)
+                    (
+                        diff %
+                        (1000 * 60 * 60 * 24)
+                    ) /
+                    (1000 * 60 * 60)
                 );
+
 
             const mins =
                 Math.floor(
-                    (diff%(1000*60*60))/
-                    (1000*60)
+                    (
+                        diff %
+                        (1000 * 60 * 60)
+                    ) /
+                    (1000 * 60)
                 );
 
+
             info.innerHTML =
-            `Válida até <b>${rawDateStr}</b><br>
-            Restam <b>${days}</b> dia(s),
-            <b>${hours}</b> hora(s) e
-            <b>${mins}</b> min(s).`;
+
+                `Válida até
+                <b>${rawDateStr}</b>
+                <br>
+                Restam
+                <b>${days}</b> dia(s),
+                <b>${hours}</b> hora(s) e
+                <b>${mins}</b> min(s).`;
         }
+
     }
+
 
     updateTimer();
 
     timerInterval =
-        setInterval(updateTimer,30000);
+        setInterval(
+            updateTimer,
+            30000
+        );
 }
 
 
 /* =========================
-   COPIAR KEY
+   COPIAR
 ========================= */
 
 async function copyKey(){
 
     const key =
         document
-        .getElementById("key-display")
+        .getElementById(
+            "key-display"
+        )
         .innerText;
+
 
     if(
         key === "Carregando..." ||
         key === "SEM KEY"
-    ) return;
+    )
+        return;
+
 
     sound("click");
 
+
     try{
 
-        await navigator.clipboard.writeText(key);
+        await navigator
+            .clipboard
+            .writeText(key);
 
-        const button =
-            document.getElementById("btn-copy");
 
-        button.classList.add("success");
-
-        button.innerHTML =
-            "✓ &nbsp; KEY COPIADA!";
-
-        sound("success");
-
-        setTimeout(()=>{
-
-            button.classList.remove("success");
-
-            button.innerHTML =
-                "⧉ &nbsp; COPIAR KEY";
-
-        },2200);
+        showSuccess();
 
     }catch(error){
 
         const area =
-            document.createElement("textarea");
+            document.createElement(
+                "textarea"
+            );
 
         area.value = key;
 
-        document.body.appendChild(area);
+        document.body.appendChild(
+            area
+        );
 
         area.select();
 
-        document.execCommand("copy");
+        document.execCommand(
+            "copy"
+        );
 
         area.remove();
 
-        const button =
-            document.getElementById("btn-copy");
+        showSuccess();
 
-        button.classList.add("success");
+    }
 
-        button.innerHTML =
-            "✓ &nbsp; KEY COPIADA!";
+}
 
-        sound("success");
 
-        setTimeout(()=>{
+/* =========================
+   SUCESSO
+========================= */
 
-            button.classList.remove("success");
+function showSuccess(){
+
+    const button =
+        document.getElementById(
+            "btn-copy"
+        );
+
+
+    button.classList.add(
+        "success"
+    );
+
+
+    button.innerHTML =
+        "✓ &nbsp; KEY COPIADA!";
+
+
+    sound("success");
+
+
+    setTimeout(
+        () => {
+
+            button.classList.remove(
+                "success"
+            );
 
             button.innerHTML =
                 "⧉ &nbsp; COPIAR KEY";
 
-        },2200);
-    }
+        },
+        2200
+    );
+
 }
 
 </script>
 
 </body>
 </html>
-```
