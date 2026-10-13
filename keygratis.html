@@ -645,29 +645,43 @@ const configRef = database.ref("config");
 
 let rawDateStr = "";
 let timerInterval = null;
-let dbDataLoaded = false;
 let currentDbData = null;
+let isVerified = false; // Controla se o usuário já passou pelo gateway
 
 configRef.on("value", (snapshot) => {
     currentDbData = snapshot.val();
-    dbDataLoaded = true;
     if(currentDbData) {
-        updateViewWithData(currentDbData);
+        updateViewStates();
     }
 });
 
-function updateViewWithData(data) {
+function updateViewStates() {
+    const gatewayView = document.getElementById("gateway-view");
     const mainView = document.getElementById("main-view");
     const maintenanceView = document.getElementById("maintenance-view");
 
-    if(data.maintenance === true || data.maintenance === "true"){
+    if(!currentDbData) return;
+
+    // Se estiver em manutenção, oculta tudo e mostra apenas a manutenção
+    if(currentDbData.maintenance === true || currentDbData.maintenance === "true"){
+        gatewayView.classList.add("hidden");
         mainView.classList.add("hidden");
         maintenanceView.classList.remove("hidden");
     } else {
+        // Se não estiver em manutenção, esconde a tela de manutenção
         maintenanceView.classList.add("hidden");
-        document.getElementById("key-display").innerText = data.current_key || "SEM KEY";
-        rawDateStr = data.expiration_date || "";
-        startCountdown();
+
+        // Se já passou pelos 20 segundos e verificou, mostra a Key. Senão, mostra o Gateway.
+        if (isVerified) {
+            gatewayView.classList.add("hidden");
+            mainView.classList.remove("hidden");
+            document.getElementById("key-display").innerText = currentDbData.current_key || "SEM KEY";
+            rawDateStr = currentDbData.expiration_date || "";
+            startCountdown();
+        } else {
+            mainView.classList.add("hidden");
+            gatewayView.classList.remove("hidden");
+        }
     }
 }
 
@@ -704,26 +718,10 @@ function checkVerification() {
         return;
     }
 
-    // Sucesso na verificação: oculta o gateway e mostra o card principal
+    // Sucesso na verificação
     alertBox.classList.add("hidden");
-    document.getElementById("gateway-view").classList.add("hidden");
-    
-    const mainView = document.getElementById("main-view");
-    const maintenanceView = document.getElementById("maintenance-view");
-
-    if (currentDbData) {
-        if (currentDbData.maintenance === true || currentDbData.maintenance === "true") {
-            maintenanceView.classList.remove("hidden");
-        } else {
-            mainView.classList.remove("hidden");
-            document.getElementById("key-display").innerText = currentDbData.current_key || "SEM KEY";
-            rawDateStr = currentDbData.expiration_date || "";
-            startCountdown();
-        }
-    } else {
-        document.getElementById("key-display").innerText = "Carregando...";
-        mainView.classList.remove("hidden");
-    }
+    isVerified = true;
+    updateViewStates();
 }
 
 /* =========================
