@@ -274,6 +274,11 @@ body {
     font-weight: 800;
     letter-spacing: 0.8px;
     transition: all 0.25s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .btn:hover {
@@ -315,57 +320,82 @@ body {
 }
 
 /* =========================
-   BOTÃO DE CANAL
+   BOTÕES DE TAREFAS / CANAIS
 ========================= */
 
-.channel-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(139, 92, 246, 0.25);
+.task-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(139, 92, 246, 0.3);
     color: #fff;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    margin-bottom: 12px;
+    justify-content: space-between;
 }
 
-.channel-btn:hover {
+.task-btn:hover {
     border-color: #06b6d4;
     background: rgba(6, 182, 212, 0.06);
-    box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
 }
 
-.whatsapp-icon {
-    width: 32px;
-    height: 32px;
+.task-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.social-icon {
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #25D366;
     color: white;
-    font-size: 16px;
-    box-shadow: 0 0 15px rgba(37, 211, 102, 0.3);
+    font-size: 14px;
     flex-shrink: 0;
 }
 
-.channel-text {
+.wa-bg { background: #25D366; box-shadow: 0 0 10px rgba(37, 211, 102, 0.3); }
+.tg-bg { background: #0088cc; box-shadow: 0 0 10px rgba(0, 136, 204, 0.3); }
+
+.task-text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
 }
 
-.channel-title {
-    font-size: 12px;
+.task-title {
+    font-size: 11px;
     font-weight: 800;
 }
 
-.channel-subtitle {
-    margin-top: 2px;
+.task-sub {
+    font-size: 9px;
     color: #94a3b8;
-    font-size: 10px;
+    margin-top: 1px;
+}
+
+.verify-btn {
+    background: linear-gradient(135deg, #06b6d4, #0284c7);
+    box-shadow: 0 10px 30px rgba(6, 182, 212, 0.35);
+    margin-top: 6px;
+    margin-bottom: 12px;
+}
+
+.verify-btn:hover {
+    box-shadow: 0 15px 40px rgba(6, 182, 212, 0.55);
+}
+
+.alert-box {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    font-size: 11px;
+    line-height: 1.4;
 }
 
 /* =========================
@@ -453,9 +483,52 @@ body {
 </div>
 
 <!-- =========================
-    TELA PRINCIPAL
+    TELA DE GATEWAY (VERIFICAÇÃO)
 ========================= -->
-<div id="main-view" class="card">
+<div id="gateway-view" class="card">
+    <div class="logo">VM</div>
+    <div class="tag">VERIFICAÇÃO OBRIGATÓRIA</div>
+    <div class="title">Liberar sua Key</div>
+    <div class="subtitle">Complete as etapas abaixo para desbloquear o acesso à sua chave.</div>
+
+    <!-- Botão WhatsApp -->
+    <a class="btn task-btn" href="https://whatsapp.com/channel/0029VbC7FWcJENxsIOsndS15" target="_blank" rel="noopener noreferrer" onclick="startTaskTimer()">
+        <div class="task-left">
+            <span class="social-icon wa-bg">💬</span>
+            <div class="task-text">
+                <span class="task-title">Canal do WhatsApp</span>
+                <span class="task-sub">Inscreva-se no canal oficial</span>
+            </div>
+        </div>
+        <span style="font-size:16px; color:#94a3b8;">›</span>
+    </a>
+
+    <!-- Botão Telegram -->
+    <a class="btn task-btn" href="https://t.me/seu_grupo_aqui" target="_blank" rel="noopener noreferrer" onclick="startTaskTimer()">
+        <div class="task-left">
+            <span class="social-icon tg-bg">✈</span>
+            <div class="task-text">
+                <span class="task-title">Grupo do Telegram</span>
+                <span class="task-sub">Entre no grupo da comunidade</span>
+            </div>
+        </div>
+        <span style="font-size:16px; color:#94a3b8;">›</span>
+    </a>
+
+    <!-- Botão Verificar -->
+    <button class="btn verify-btn" onclick="checkVerification()">
+        ✓ &nbsp; VERIFICAR CONCLUSÃO
+    </button>
+
+    <div id="gateway-alert" class="alert-box hidden">
+        ⚠ Você retornou muito rápido! Fique pelo menos 20 segundos nas redes antes de verificar.
+    </div>
+</div>
+
+<!-- =========================
+    TELA PRINCIPAL (KEY)
+========================= -->
+<div id="main-view" class="card hidden">
     <div class="logo">VM</div>
     <div class="tag">KEY SYSTEM ONLINE</div>
     <div class="title">Sua Key está pronta</div>
@@ -475,14 +548,14 @@ body {
         ⧉ &nbsp; COPIAR KEY
     </button>
 
-    <!-- CANAL -->
-    <a class="btn channel-btn" href="https://discord.gg/dY6fPTFZa" target="_blank" rel="noopener noreferrer">
-        <span class="whatsapp-icon">☎</span>
-        <span class="channel-text">
-            <span class="channel-title">CANAL DE ATUALIZAÇÕES</span>
-            <span class="channel-subtitle">Receba novidades e avisos em tempo real</span>
-        </span>
-        <span style="margin-left:auto; font-size:18px; color:#94a3b8;">›</span>
+    <!-- CANAL DE ATUALIZAÇÕES -->
+    <a class="btn task-btn" href="https://whatsapp.com/channel/0029VbC7FWcJENxsIOsndS15" target="_blank" rel="noopener noreferrer" style="justify-content: flex-start; gap:12px;">
+        <span class="social-icon wa-bg">💬</span>
+        <div class="task-text">
+            <span class="task-title">CANAL DE ATUALIZAÇÕES</span>
+            <span class="task-sub">Receba novidades e avisos</span>
+        </div>
+        <span style="margin-left:auto; font-size:16px; color:#94a3b8;">›</span>
     </a>
 
     <div class="info" id="validity-display">
@@ -557,84 +630,132 @@ function sound(type){
 }
 
 /* =========================
-   FIREBASE CONFIGURAÇÃO (vmteam-fcb3e)
+   LÓGICA DE VERIFICAÇÃO (20 SEGUNDOS)
 ========================= */
-const firebaseConfig = {
-    databaseURL: "https://vmteam-fcb3e-default-rtdb.firebaseio.com"
-};
+let clickTimestamp = 0;
+let taskStarted = false;
 
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-const configRef = database.ref("config");
-
-let rawDateStr = "";
-let timerInterval = null;
-
-configRef.on("value", (snapshot) => {
-    const data = snapshot.val();
-    if(!data) return;
-
-    const mainView = document.getElementById("main-view");
-    const maintenanceView = document.getElementById("maintenance-view");
-
-    if(data.maintenance === true || data.maintenance === "true"){
-        mainView.classList.add("hidden");
-        maintenanceView.classList.remove("hidden");
-    } else {
-        maintenanceView.classList.add("hidden");
-        mainView.classList.remove("hidden");
-
-        document.getElementById("key-display").innerText = data.current_key || "SEM KEY";
-        rawDateStr = data.expiration_date || "";
-
-        startCountdown();
+function startTaskTimer() {
+    if (!taskStarted) {
+        clickTimestamp = Date.now();
+        taskStarted = true;
     }
-});
+    sound("click");
+}
+
+function checkVerification() {
+    sound("click");
+    const alertBox = document.getElementById("gateway-alert");
+
+    if (!taskStarted) {
+        alertBox.innerText = "⚠ Clique nos links do WhatsApp e Telegram primeiro!";
+        alertBox.classList.remove("hidden");
+        return;
+    }
+
+    const elapsed = (Date.now() - clickTimestamp) / 1000;
+
+    if (elapsed < 20) {
+        alertBox.innerText = "⚠ Você retornou muito rápido! Aguarde pelo menos 20 segundos nas redes antes de verificar.";
+        alertBox.classList.remove("hidden");
+        taskStarted = false; // Reseta para obrigar a clicar novamente se tentou burlar
+        return;
+    }
+
+    // Sucesso na verificação
+    alertBox.classList.add("hidden");
+    document.getElementById("gateway-view").classList.add("hidden");
+    
+    // Mostra o card principal e ativa o banco de dados
+    initFirebase();
+}
 
 /* =========================
-   CONTADOR REGRESSIVO
+   FIREBASE CONFIGURAÇÃO
 ========================= */
-function startCountdown(){
-    if(timerInterval) clearInterval(timerInterval);
+let firebaseInitialized = false;
 
-    function updateTimer(){
-        const info = document.getElementById("validity-display");
+function initFirebase() {
+    if (firebaseInitialized) return;
+    firebaseInitialized = true;
 
-        if(!rawDateStr){
-            info.innerText = "Sem data de validade definida.";
-            return;
-        }
+    const firebaseConfig = {
+        databaseURL: "https://vmteam-fcb3e-default-rtdb.firebaseio.com"
+    };
 
-        const numbers = rawDateStr.match(/\d+/g);
+    try {
+        firebase.initializeApp(firebaseConfig);
+    } catch(e) {}
 
-        if(!numbers || numbers.length < 3){
-            info.innerText = "Válida até " + rawDateStr;
-            return;
-        }
+    const database = firebase.database();
+    const configRef = database.ref("config");
 
-        const day = parseInt(numbers[0], 10);
-        const month = parseInt(numbers[1], 10) - 1;
-        const year = parseInt(numbers[2], 10);
-        const hour = numbers[3] ? parseInt(numbers[3], 10) : 23;
-        const min = numbers[4] ? parseInt(numbers[4], 10) : 59;
+    let rawDateStr = "";
+    let timerInterval = null;
 
-        const targetDate = new Date(year, month, day, hour, min);
-        const now = new Date();
-        const diff = targetDate - now;
+    configRef.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if(!data) return;
 
-        if(diff <= 0){
-            info.innerHTML = `${rawDateStr} restantes<br><span style="color:#ef4444; font-weight:800;">⚠ KEY EXPIRADA</span>`;
+        const mainView = document.getElementById("main-view");
+        const maintenanceView = document.getElementById("maintenance-view");
+
+        if(data.maintenance === true || data.maintenance === "true"){
+            mainView.classList.add("hidden");
+            maintenanceView.classList.remove("hidden");
         } else {
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            maintenanceView.classList.add("hidden");
+            mainView.classList.remove("hidden");
 
-            info.innerHTML = `Válida até <b>${rawDateStr}</b><br>Restam <b>${days}</b> dia(s), <b>${hours}</b> hora(s) e <b>${mins}</b> min(s).`;
+            document.getElementById("key-display").innerText = data.current_key || "SEM KEY";
+            rawDateStr = data.expiration_date || "";
+
+            startCountdown();
         }
-    }
+    });
 
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 30000);
+    function startCountdown(){
+        if(timerInterval) clearInterval(timerInterval);
+
+        function updateTimer(){
+            const info = document.getElementById("validity-display");
+
+            if(!rawDateStr){
+                info.innerText = "Sem data de validade definida.";
+                return;
+            }
+
+            const numbers = rawDateStr.match(/\d+/g);
+
+            if(!numbers || numbers.length < 3){
+                info.innerText = "Válida até " + rawDateStr;
+                return;
+            }
+
+            const day = parseInt(numbers[0], 10);
+            const month = parseInt(numbers[1], 10) - 1;
+            const year = parseInt(numbers[2], 10);
+            const hour = numbers[3] ? parseInt(numbers[3], 10) : 23;
+            const min = numbers[4] ? parseInt(numbers[4], 10) : 59;
+
+            const targetDate = new Date(year, month, day, hour, min);
+            const now = new Date();
+            const diff = targetDate - now;
+
+            if(diff <= 0){
+                info.innerHTML = `${rawDateStr} restantes<br><span style="color:#ef4444; font-weight:800;">⚠ KEY EXPIRADA</span>`;
+            } else {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+                info.innerHTML = `Válida até <b>${rawDateStr}</b><br>Restam <b>${days}</b> dia(s), <b>${hours}</b> hora(s) e <b>${mins}</b> min(s).`;
+            }
+        }
+
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 30000);
+    }
 }
 
 /* =========================
