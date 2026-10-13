@@ -356,7 +356,7 @@ body {
 }
 
 .wa-bg { background: #25D366; box-shadow: 0 0 10px rgba(37, 211, 102, 0.3); }
-.tg-bg { background: #0088cc; box-shadow: 0 0 10px rgba(0, 136, 204, 0.3); }
+.dc-bg { background: #5865F2; box-shadow: 0 0 10px rgba(88, 101, 242, 0.3); }
 
 .task-text {
     display: flex;
@@ -503,13 +503,13 @@ body {
         <span style="font-size:16px; color:#94a3b8;">›</span>
     </a>
 
-    <!-- Botão Telegram -->
-    <a class="btn task-btn" href="https://t.me/seu_grupo_aqui" target="_blank" rel="noopener noreferrer" onclick="startTaskTimer()">
+    <!-- Botão Discord -->
+    <a class="btn task-btn" href="https://discord.gg/PmQv5hR84" target="_blank" rel="noopener noreferrer" onclick="startTaskTimer()">
         <div class="task-left">
-            <span class="social-icon tg-bg">✈</span>
+            <span class="social-icon dc-bg">🎮</span>
             <div class="task-text">
-                <span class="task-title">Grupo do Telegram</span>
-                <span class="task-sub">Entre no grupo da comunidade</span>
+                <span class="task-title">Servidor do Discord</span>
+                <span class="task-sub">Entre no servidor da comunidade</span>
             </div>
         </div>
         <span style="font-size:16px; color:#94a3b8;">›</span>
@@ -548,12 +548,12 @@ body {
         ⧉ &nbsp; COPIAR KEY
     </button>
 
-    <!-- CANAL DE ATUALIZAÇÕES -->
-    <a class="btn task-btn" href="https://whatsapp.com/channel/0029VbC7FWcJENxsIOsndS15" target="_blank" rel="noopener noreferrer" style="justify-content: flex-start; gap:12px;">
-        <span class="social-icon wa-bg">💬</span>
+    <!-- DISCORD DE ATUALIZAÇÕES -->
+    <a class="btn task-btn" href="https://discord.gg/PmQv5hR84" target="_blank" rel="noopener noreferrer" style="justify-content: flex-start; gap:12px;">
+        <span class="social-icon dc-bg">🎮</span>
         <div class="task-text">
-            <span class="task-title">CANAL DE ATUALIZAÇÕES</span>
-            <span class="task-sub">Receba novidades e avisos</span>
+            <span class="task-title">SERVIDOR DO DISCORD</span>
+            <span class="task-sub">Entre para ver novidades e avisos</span>
         </div>
         <span style="margin-left:auto; font-size:16px; color:#94a3b8;">›</span>
     </a>
@@ -630,6 +630,48 @@ function sound(type){
 }
 
 /* =========================
+   FIREBASE (CARREGA EM SEGUNDO PLANO)
+========================= */
+const firebaseConfig = {
+    databaseURL: "https://vmteam-fcb3e-default-rtdb.firebaseio.com"
+};
+
+try {
+    firebase.initializeApp(firebaseConfig);
+} catch(e) {}
+
+const database = firebase.database();
+const configRef = database.ref("config");
+
+let rawDateStr = "";
+let timerInterval = null;
+let dbDataLoaded = false;
+let currentDbData = null;
+
+configRef.on("value", (snapshot) => {
+    currentDbData = snapshot.val();
+    dbDataLoaded = true;
+    if(currentDbData) {
+        updateViewWithData(currentDbData);
+    }
+});
+
+function updateViewWithData(data) {
+    const mainView = document.getElementById("main-view");
+    const maintenanceView = document.getElementById("maintenance-view");
+
+    if(data.maintenance === true || data.maintenance === "true"){
+        mainView.classList.add("hidden");
+        maintenanceView.classList.remove("hidden");
+    } else {
+        maintenanceView.classList.add("hidden");
+        document.getElementById("key-display").innerText = data.current_key || "SEM KEY";
+        rawDateStr = data.expiration_date || "";
+        startCountdown();
+    }
+}
+
+/* =========================
    LÓGICA DE VERIFICAÇÃO (20 SEGUNDOS)
 ========================= */
 let clickTimestamp = 0;
@@ -648,7 +690,7 @@ function checkVerification() {
     const alertBox = document.getElementById("gateway-alert");
 
     if (!taskStarted) {
-        alertBox.innerText = "⚠ Clique nos links do WhatsApp e Telegram primeiro!";
+        alertBox.innerText = "⚠ Clique nos links do WhatsApp e Discord primeiro!";
         alertBox.classList.remove("hidden");
         return;
     }
@@ -658,104 +700,74 @@ function checkVerification() {
     if (elapsed < 20) {
         alertBox.innerText = "⚠ Você retornou muito rápido! Aguarde pelo menos 20 segundos nas redes antes de verificar.";
         alertBox.classList.remove("hidden");
-        taskStarted = false; // Reseta para obrigar a clicar novamente se tentou burlar
+        taskStarted = false; 
         return;
     }
 
-    // Sucesso na verificação
+    // Sucesso na verificação: oculta o gateway e mostra o card principal
     alertBox.classList.add("hidden");
     document.getElementById("gateway-view").classList.add("hidden");
     
-    // Mostra o card principal e ativa o banco de dados
-    initFirebase();
+    const mainView = document.getElementById("main-view");
+    const maintenanceView = document.getElementById("maintenance-view");
+
+    if (currentDbData) {
+        if (currentDbData.maintenance === true || currentDbData.maintenance === "true") {
+            maintenanceView.classList.remove("hidden");
+        } else {
+            mainView.classList.remove("hidden");
+            document.getElementById("key-display").innerText = currentDbData.current_key || "SEM KEY";
+            rawDateStr = currentDbData.expiration_date || "";
+            startCountdown();
+        }
+    } else {
+        document.getElementById("key-display").innerText = "Carregando...";
+        mainView.classList.remove("hidden");
+    }
 }
 
 /* =========================
-   FIREBASE CONFIGURAÇÃO
+   CONTADOR REGRESSIVO
 ========================= */
-let firebaseInitialized = false;
+function startCountdown(){
+    if(timerInterval) clearInterval(timerInterval);
 
-function initFirebase() {
-    if (firebaseInitialized) return;
-    firebaseInitialized = true;
+    function updateTimer(){
+        const info = document.getElementById("validity-display");
+        if(!rawDateStr){
+            info.innerText = "Sem data de validade definida.";
+            return;
+        }
 
-    const firebaseConfig = {
-        databaseURL: "https://vmteam-fcb3e-default-rtdb.firebaseio.com"
-    };
+        const numbers = rawDateStr.match(/\d+/g);
+        if(!numbers || numbers.length < 3){
+            info.innerText = "Válida até " + rawDateStr;
+            return;
+        }
 
-    try {
-        firebase.initializeApp(firebaseConfig);
-    } catch(e) {}
+        const day = parseInt(numbers[0], 10);
+        const month = parseInt(numbers[1], 10) - 1;
+        const year = parseInt(numbers[2], 10);
+        const hour = numbers[3] ? parseInt(numbers[3], 10) : 23;
+        const min = numbers[4] ? parseInt(numbers[4], 10) : 59;
 
-    const database = firebase.database();
-    const configRef = database.ref("config");
+        const targetDate = new Date(year, month, day, hour, min);
+        const now = new Date();
+        const diff = targetDate - now;
 
-    let rawDateStr = "";
-    let timerInterval = null;
-
-    configRef.on("value", (snapshot) => {
-        const data = snapshot.val();
-        if(!data) return;
-
-        const mainView = document.getElementById("main-view");
-        const maintenanceView = document.getElementById("maintenance-view");
-
-        if(data.maintenance === true || data.maintenance === "true"){
-            mainView.classList.add("hidden");
-            maintenanceView.classList.remove("hidden");
+        if(diff <= 0){
+            info.innerHTML = `${rawDateStr} restantes<br><span style="color:#ef4444; font-weight:800;">⚠ KEY EXPIRADA</span>`;
         } else {
-            maintenanceView.classList.add("hidden");
-            mainView.classList.remove("hidden");
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-            document.getElementById("key-display").innerText = data.current_key || "SEM KEY";
-            rawDateStr = data.expiration_date || "";
-
-            startCountdown();
+            info.innerHTML = `Válida até <b>${rawDateStr}</b><br>Restam <b>${days}</b> dia(s), <b>${hours}</b> hora(s) e <b>${mins}</b> min(s).`;
         }
-    });
-
-    function startCountdown(){
-        if(timerInterval) clearInterval(timerInterval);
-
-        function updateTimer(){
-            const info = document.getElementById("validity-display");
-
-            if(!rawDateStr){
-                info.innerText = "Sem data de validade definida.";
-                return;
-            }
-
-            const numbers = rawDateStr.match(/\d+/g);
-
-            if(!numbers || numbers.length < 3){
-                info.innerText = "Válida até " + rawDateStr;
-                return;
-            }
-
-            const day = parseInt(numbers[0], 10);
-            const month = parseInt(numbers[1], 10) - 1;
-            const year = parseInt(numbers[2], 10);
-            const hour = numbers[3] ? parseInt(numbers[3], 10) : 23;
-            const min = numbers[4] ? parseInt(numbers[4], 10) : 59;
-
-            const targetDate = new Date(year, month, day, hour, min);
-            const now = new Date();
-            const diff = targetDate - now;
-
-            if(diff <= 0){
-                info.innerHTML = `${rawDateStr} restantes<br><span style="color:#ef4444; font-weight:800;">⚠ KEY EXPIRADA</span>`;
-            } else {
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-                info.innerHTML = `Válida até <b>${rawDateStr}</b><br>Restam <b>${days}</b> dia(s), <b>${hours}</b> hora(s) e <b>${mins}</b> min(s).`;
-            }
-        }
-
-        updateTimer();
-        timerInterval = setInterval(updateTimer, 30000);
     }
+
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 30000);
 }
 
 /* =========================
