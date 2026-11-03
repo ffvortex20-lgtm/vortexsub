@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vortex Key Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-deep: #050508;
+        --surface: #0e0e14;
+        --surface-glass: rgba(14, 14, 20, 0.85);
+        --border: rgba(255, 255, 255, 0.08);
+        --primary: #8a5cf5;
+        --text-main: #ffffff;
+        --text-sub: #94a3b8;
+        --text-dim: #64748b;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+        background-color: var(--bg-deep);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    .ambient-glow {
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        filter: blur(100px);
+        z-index: 0;
+        pointer-events: none;
+    }
+    .glow-1 { top: -100px; left: -100px; background: rgba(138, 92, 245, 0.15); }
+    .glow-2 { bottom: -100px; right: -100px; background: rgba(0, 242, 254, 0.1); }
+
+    .container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .card {
+        background: var(--surface-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 32px 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .header-box {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .logo-img {
+        width: 68px;
+        height: 68px;
+        border-radius: 20px;
+        object-fit: cover;
+        border: 2px solid var(--border);
+        background: #15151c;
+        margin: 0 auto 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        padding: 2px;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: var(--text-main);
+        margin-bottom: 4px;
+    }
+
+    .title span {
+        background: linear-gradient(135deg, var(--primary), #00f2fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+        font-size: 12px;
+        color: var(--text-dim);
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--success);
+        margin-bottom: 20px;
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        background-color: var(--success);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--success);
+    }
+
+    .key-container {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+
+    .key-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .key-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-main);
+        letter-spacing: 1.5px;
+        word-break: break-all;
+    }
+
+    .btn-main {
+        width: 100%;
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-main:hover {
+        transform: translateY(-2px);
+    }
+
+    .msg {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--success);
+        min-height: 16px;
+        margin-top: 10px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        text-align: left;
+    }
+
+    .stat-card span {
+        display: block;
+        font-size: 10px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .stat-card strong {
+        font-size: 12px;
+        color: var(--text-sub);
+        font-weight: 700;
+    }
+
+    .stat-card.highlight strong { color: var(--warning); }
+
+    .social-links {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .social-btn {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        color: var(--text-sub);
+        font-size: 11px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .social-btn:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text-main);
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 10px;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .loading {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-deep);
+        z-index: 99;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        transition: opacity 0.3s ease;
+    }
+
+    .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(255, 255, 255, 0.05);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        margin-bottom: 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
+
+<div class="container">
+    <div class="card">
+        <div class="header-box">
+            <img src="https://github.com/ffvortex20-lgtm.png?size=256" alt="Vortex" class="logo-img">
+            <h1 class="title">VORTEX <span>KEY</span></h1>
+            <div class="subtitle">Secure Key Terminal</div>
+        </div>
+
+        <div style="text-align: center;">
+            <div class="status-badge" id="statusBadge">
+                <div class="status-dot"></div>
+                <span id="statusText">SISTEMA ATIVO</span>
+            </div>
+        </div>
+
+        <div class="key-container">
+            <div class="key-label">Sua Chave de Acesso</div>
+            <div class="key-value" id="keyText">VERIFICANDO...</div>
+        </div>
+
+        <button class="btn-main" id="copyBtn" onclick="copyKey()" style="display:none;">
+            📋 Copiar Key
+        </button>
+        <div class="msg" id="msg"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>Gerada em</span>
+                <strong id="time">--:--</strong>
+            </div>
+            <div class="stat-card highlight">
+                <span>Expira em</span>
+                <strong id="countdown">--</strong>
+            </div>
+            <div class="stat-card">
+                <span>Seu IP</span>
+                <strong id="userIp">Carregando...</strong>
+            </div>
+            <div class="stat-card">
+                <span>Status ID</span>
+                <strong id="statusId" style="color: var(--success)">Ativada</strong>
+            </div>
+        </div>
+
+        <div class="social-links">
+            <a href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N" target="_blank" class="social-btn">💬 WhatsApp</a>
+            <a href="https://t.me/vtxmdz" target="_blank" class="social-btn">✈ Telegram</a>
+        </div>
+
+        <div class="footer">Developed by Vortex</div>
+    </div>
+</div>
+
+<div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p id="loadingText" style="font-size:11px; color:var(--text-dim); letter-spacing:1px; font-weight:700;">VALIDANDO ACESSO...</p>
+</div>
+
+<script>
+const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
+const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 horas de validade da Key
+
+function setLoadMsg(txt) {
+    document.getElementById("loadingText").textContent = txt;
+}
+
+function hideLoading() {
+    const loader = document.getElementById("loading");
+    if (loader) {
+        loader.style.opacity = "0";
+        setTimeout(() => loader.style.display = "none", 300);
+    }
+}
+
+function generateFirebaseUID() {
+    const chars = '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+    let uid = '';
+    for (let i = 0; i < 20; i++) {
+        uid += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return uid;
+}
+
+function generateKey() {
+    const digits = Math.floor(1000 + Math.random() * 9000);
+    return `VORTEX-${digits}`;
+}
+
+let activeTimer = null;
+function startCountdown(expireTime) {
+    if (activeTimer) clearInterval(activeTimer);
+    activeTimer = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = expireTime - now;
+
+        if (distance < 0) {
+            clearInterval(activeTimer);
+            localStorage.removeItem("vtx_session_v2");
+            window.location.reload();
+            return;
+        }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        document.getElementById("countdown").textContent = `${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+}
+
+async function initKeySystem() {
+    try {
+        setLoadMsg("OBTENDO SEU IP...");
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipRes.json();
+        const rawIp = ipData.ip;
+        const safeIp = rawIp.replace(/[.#$[\]]/g, "_");
+        document.getElementById("userIp").textContent = rawIp;
+
+        // 1. Verifica se passou pelo index.html (evita burlaçoes acessando direto o key.html)
+        const checkIpRes = await fetch(`${FIREBASE_URL}/usuariosT/ips_validos/${safeIp}.json`);
+        const ipValidation = await checkIpRes.json();
+
+        const now = new Date().getTime();
+
+        // Se o IP não gerou no index ou expirou a sessão do link de redirecionamento (> 2 dias / burlação)
+        if (!ipValidation || (ipValidation.expireTime && ipValidation.expireTime < now)) {
+            setLoadMsg("ACESSO NEGADO: COMPLETE AS ETAPAS!");
+            document.getElementById("keyText").textContent = "BLOQUEADO";
+            document.getElementById("statusText").textContent = "ACESSO DIRETO";
+            document.getElementById("statusBadge").style.background = "rgba(239, 68, 68, 0.1)";
+            document.getElementById("statusBadge").style.borderColor = "rgba(239, 68, 68, 0.2)";
+            document.getElementById("statusBadge").style.color = "var(--danger)";
+            setTimeout(() => {
+                window.location.href = "index.html"; // Manda de volta para o index
+            }, 2000);
+            return;
+        }
+
+        // 2. Verifica se já existe uma key ativa salva no navegador para este IP
+        const session = JSON.parse(localStorage.getItem("vtx_session_v2") || "null");
+        if (session && session.expireTime > now) {
+            document.getElementById("keyText").textContent = session.key;
+            document.getElementById("time").textContent = session.generatedAt;
+            startCountdown(session.expireTime);
+            document.getElementById("copyBtn").style.display = "flex";
+            hideLoading();
+            return;
+        }
+
+        // 3. Gera nova Key e salva no formato exato da sua foto na pasta `usuariosT`
+        setLoadMsg("GERANDO SUA KEY...");
+        const newKey = generateKey();
+        const UID = generateFirebaseUID();
+        const generatedAtTime = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+        const expireTime = now + ONE_DAY_MS; // 24 horas
+
+        const payload = {
+            device: "",
+            dias: "0",
+            dispositivos: "1",
+            key: newKey,
+            status: "ativada",
+            uid: UID,
+            validade: "1"
+        };
+
+        // Salva na raiz usuariosT/UID conforme solicitado e mostrado na imagem
+        await fetch(`${FIREBASE_URL}/usuariosT/${UID}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        // Vincula a key ao IP gerador para controle de sessão
+        await fetch(`${FIREBASE_URL}/usuariosT/ips_validos/${safeIp}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ip: rawIp,
+                key: newKey,
+                expireTime: expireTime + (48 * 60 * 60 * 1000), // Limpeza automática do IP em 2 dias (evita lotação)
+                generatedAt: generatedAtTime
+            })
+        });
+
+        // Salva localmente
+        localStorage.setItem("vtx_session_v2", JSON.stringify({
+            key: newKey,
+            generatedAt: generatedAtTime,
+            expireTime: expireTime
+        }));
+
+        document.getElementById("keyText").textContent = newKey;
+        document.getElementById("time").textContent = generatedAtTime;
+        document.getElementById("msg").textContent = "KEY GERADA COM SUCESSO!";
+        document.getElementById("copyBtn").style.display = "flex";
+        
+        startCountdown(expireTime);
+        hideLoading();
+
+    } catch (e) {
+        setLoadMsg("ERRO DE CONEXÃO COM O SERVIDOR");
+        setTimeout(hideLoading, 2000);
+    }
+}
+
+function copyKey() {
+    const keyVal = document.getElementById("keyText").textContent;
+    navigator.clipboard.writeText(keyVal);
+    document.getElementById("msg").textContent = "KEY COPIADA PARA A ÁREA DE TRANSFERÊNCIA!";
+    setTimeout(() => {
+        document.getElementById("msg").textContent = "";
+    }, 3000);
+}
+
+window.onload = initKeySystem;
+</script>
+</body>
+</html>
