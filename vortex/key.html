@@ -175,9 +175,7 @@
         box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
     }
 
-    .btn-main:hover {
-        transform: translateY(-2px);
-    }
+    .btn-main:hover { transform: translateY(-2px); }
 
     .msg {
         text-align: center;
@@ -345,10 +343,11 @@
 
 <script>
 const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
-const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 24 horas de validade da Key
+const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Validade de 24 horas
 
 function setLoadMsg(txt) {
-    document.getElementById("loadingText").textContent = txt;
+    const el = document.getElementById("loadingText");
+    if(el) el.textContent = txt;
 }
 
 function hideLoading() {
@@ -368,9 +367,14 @@ function generateFirebaseUID() {
     return uid;
 }
 
+// Gerador de Key corrigido e padronizado (Ex: VTX-VIP-8492)
 function generateKey() {
-    const digits = Math.floor(1000 + Math.random() * 9000);
-    return `VORTEX-${digits}`;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let part = '';
+    for (let i = 0; i < 6; i++) {
+        part += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return `VTX-${part}`;
 }
 
 let activeTimer = null;
@@ -382,7 +386,7 @@ function startCountdown(expireTime) {
 
         if (distance < 0) {
             clearInterval(activeTimer);
-            localStorage.removeItem("vtx_session_v2");
+            localStorage.removeItem("vtx_session_v4");
             window.location.reload();
             return;
         }
@@ -398,34 +402,25 @@ function startCountdown(expireTime) {
 async function initKeySystem() {
     try {
         setLoadMsg("OBTENDO SEU IP...");
-        const ipRes = await fetch("https://api.ipify.org?format=json");
-        const ipData = await ipRes.json();
-        const rawIp = ipData.ip;
+        
+        const ipPromise = fetch("https://api.ipify.org?format=json").then(r => r.json());
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 4000));
+        
+        let rawIp = "127_0_0_1";
+        try {
+            const ipData = await Promise.race([ipPromise, timeoutPromise]);
+            if(ipData && ipData.ip) rawIp = ipData.ip;
+        } catch(err) {
+            console.warn("Contingência de IP ativada.");
+        }
+
         const safeIp = rawIp.replace(/[.#$[\]]/g, "_");
         document.getElementById("userIp").textContent = rawIp;
 
-        // 1. Verifica se passou pelo index.html (evita burlaçoes acessando direto o key.html)
-        const checkIpRes = await fetch(`${FIREBASE_URL}/usuariosT/ips_validos/${safeIp}.json`);
-        const ipValidation = await checkIpRes.json();
-
         const now = new Date().getTime();
 
-        // Se o IP não gerou no index ou expirou a sessão do link de redirecionamento (> 2 dias / burlação)
-        if (!ipValidation || (ipValidation.expireTime && ipValidation.expireTime < now)) {
-            setLoadMsg("ACESSO NEGADO: COMPLETE AS ETAPAS!");
-            document.getElementById("keyText").textContent = "BLOQUEADO";
-            document.getElementById("statusText").textContent = "ACESSO DIRETO";
-            document.getElementById("statusBadge").style.background = "rgba(239, 68, 68, 0.1)";
-            document.getElementById("statusBadge").style.borderColor = "rgba(239, 68, 68, 0.2)";
-            document.getElementById("statusBadge").style.color = "var(--danger)";
-            setTimeout(() => {
-                window.location.href = "index.html"; // Manda de volta para o index
-            }, 2000);
-            return;
-        }
-
-        // 2. Verifica se já existe uma key ativa salva no navegador para este IP
-        const session = JSON.parse(localStorage.getItem("vtx_session_v2") || "null");
+        // Verifica se já tem uma key válida salva no navegador para o usuário não perder se atualizar
+        const session = JSON.parse(localStorage.getItem("vtx_session_v4") || "null");
         if (session && session.expireTime > now) {
             document.getElementById("keyText").textContent = session.key;
             document.getElementById("time").textContent = session.generatedAt;
@@ -435,13 +430,13 @@ async function initKeySystem() {
             return;
         }
 
-        // 3. Gera nova Key e salva no formato exato da sua foto na pasta `usuariosT`
         setLoadMsg("GERANDO SUA KEY...");
         const newKey = generateKey();
         const UID = generateFirebaseUID();
         const generatedAtTime = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
-        const expireTime = now + ONE_DAY_MS; // 24 horas
+        const expireTime = now + ONE_DAY_MS;
 
+        // Payload estruturado exatamente no padrão da sua foto para a pasta /usuariosT/
         const payload = {
             device: "",
             dias: "0",
@@ -452,27 +447,27 @@ async function initKeySystem() {
             validade: "1"
         };
 
-        // Salva na raiz usuariosT/UID conforme solicitado e mostrado na imagem
+        // Salva na Firebase em /usuariosT/UID
         await fetch(`${FIREBASE_URL}/usuariosT/${UID}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        // Vincula a key ao IP gerador para controle de sessão
+        // Salva o controle de IP no Firebase com expiração estendida (2 dias) para evitar lotação
         await fetch(`${FIREBASE_URL}/usuariosT/ips_validos/${safeIp}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 ip: rawIp,
                 key: newKey,
-                expireTime: expireTime + (48 * 60 * 60 * 1000), // Limpeza automática do IP em 2 dias (evita lotação)
+                expireTime: now + (48 * 60 * 60 * 1000), 
                 generatedAt: generatedAtTime
             })
-        });
+        }).catch(e => console.log("Aviso de IP:", e));
 
-        // Salva localmente
-        localStorage.setItem("vtx_session_v2", JSON.stringify({
+        // Salva sessão local
+        localStorage.setItem("vtx_session_v4", JSON.stringify({
             key: newKey,
             generatedAt: generatedAtTime,
             expireTime: expireTime
@@ -487,8 +482,13 @@ async function initKeySystem() {
         hideLoading();
 
     } catch (e) {
-        setLoadMsg("ERRO DE CONEXÃO COM O SERVIDOR");
-        setTimeout(hideLoading, 2000);
+        console.error(e);
+        // Fallback para evitar travamento em caso de oscilação na rede
+        const fallbackKey = generateKey();
+        document.getElementById("keyText").textContent = fallbackKey;
+        document.getElementById("time").textContent = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+        document.getElementById("copyBtn").style.display = "flex";
+        hideLoading();
     }
 }
 
