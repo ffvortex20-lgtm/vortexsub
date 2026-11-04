@@ -1,70 +1,194 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vortex • Painel Desenvolvedor</title>
+<title>Vortex • Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --bg-deep: #050508;
-        --surface: #0e0e14;
-        --surface-glass: rgba(14, 14, 20, 0.85);
-        --border: rgba(255, 255, 255, 0.08);
-        --primary: #8a5cf5;
+        --bg-deep: #090508;
+        --surface: #140b12;
+        --surface-glass: rgba(20, 11, 18, 0.85);
+        --border: rgba(255, 105, 180, 0.15);
+        --primary: #ff1493;
+        --primary-glow: rgba(255, 20, 147, 0.3);
         --text-main: #ffffff;
-        --text-sub: #94a3b8;
-        --text-dim: #64748b;
+        --text-sub: #cbd5e1;
+        --text-dim: #94a3b8;
         --success: #10b981;
-        --warning: #f59e0b;
         --danger: #ef4444;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg-deep); color: var(--text-main); min-height: 100vh; padding: 20px; }
-    .container { max-width: 1100px; margin: 0 auto; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--surface-glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); }
-    h1 { font-size: 20px; font-weight: 800; color: #fff; }
-    h1 span { background: linear-gradient(135deg, var(--primary), #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
-    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 24px; }
-    .stat-card { background: var(--surface-glass); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; }
-    .stat-card span { font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; }
-    .stat-card h3 { font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 5px; }
 
-    .card { background: var(--surface-glass); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 24px; }
+    [data-theme="light"] {
+        --bg-deep: #fff1f8;
+        --surface: #ffffff;
+        --surface-glass: rgba(255, 255, 255, 0.9);
+        --border: rgba(255, 105, 180, 0.3);
+        --primary: #ff1493;
+        --primary-glow: rgba(255, 20, 147, 0.15);
+        --text-main: #1e1b4b;
+        --text-sub: #475569;
+        --text-dim: #64748b;
+        --success: #059669;
+        --danger: #dc2626;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s; }
+    
+    body {
+        background-color: var(--bg-deep);
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Efeito de fundo glow rosa */
+    .ambient-glow {
+        position: fixed;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        filter: blur(120px);
+        z-index: 0;
+        pointer-events: none;
+        background: rgba(255, 20, 147, 0.12);
+        top: -100px;
+        right: -100px;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        background: var(--surface-glass);
+        backdrop-filter: blur(16px);
+        padding: 20px 24px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 30px var(--primary-glow);
+        animation: fadeIn 0.6s ease;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .logo-img { width: 50px; height: 50px; border-radius: 14px; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 15px var(--primary); }
+    
+    h1 { font-size: 20px; font-weight: 800; }
+    h1 span { background: linear-gradient(135deg, var(--primary), #ff69b4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    
+    .theme-toggle {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 24px; }
+    .stat-card {
+        background: var(--surface-glass);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        animation: slideUp 0.5s ease;
+    }
+    .stat-card span { font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; letter-spacing: 0.5px; }
+    .stat-card h3 { font-size: 26px; font-weight: 800; margin-top: 6px; color: var(--text-main); }
+
+    .card {
+        background: var(--surface-glass);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        animation: fadeIn 0.7s ease;
+    }
     .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
     
-    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
-    input, select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: #fff; font-size: 13px; outline: none; }
-    input:focus { border-color: var(--primary); }
-    
-    .btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-    .btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    .btn-danger { background: var(--danger); }
-    .btn-success { background: var(--success); }
+    input, select {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: var(--text-main);
+        font-size: 13px;
+        outline: none;
+    }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+
+    .btn {
+        background: linear-gradient(135deg, #ff1493, #c71585);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-shadow: 0 4px 15px var(--primary-glow);
+    }
+    .btn:hover { transform: translateY(-2px); opacity: 0.95; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+    .btn-success { background: linear-gradient(135deg, #10b981, #047857); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
 
     table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; text-align: left; }
-    th, td { padding: 12px; border-bottom: 1px solid var(--border); }
-    th { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--text-sub); }
+    th { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
     
-    .badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .badge.ativa { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
-    .badge.desativada { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .badge.ativa { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge.desativada { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
     .actions-group { display: flex; gap: 6px; }
-    .action-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 10px; border-radius: 8px; color: #fff; cursor: pointer; font-size: 11px; font-weight: 600; }
-    .action-btn:hover { background: rgba(255,255,255,0.1); }
+    .action-btn { background: var(--surface); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; color: var(--text-sub); cursor: pointer; font-size: 11px; font-weight: 600; }
+    .action-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
+<div class="ambient-glow"></div>
+
 <div class="container">
     <header>
-        <h1>VORTEX <span>ADMIN DASHBOARD</span></h1>
-        <button class="btn btn-danger" onclick="logout()">Sair</button>
+        <div class="header-left">
+            <img src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg" alt="Logo" class="logo-img">
+            <h1>VORTEX <span>ADMIN PANEL</span></h1>
+        </div>
+        <div class="top-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeIcon">☀️</button>
+            <button class="btn btn-danger" onclick="playClick(); logout()">Sair</button>
+        </div>
     </header>
 
-    <!-- Estatísticas -->
     <div class="grid-stats">
         <div class="stat-card"><span>Total Registradas</span><h3 id="stTotal">0</h3></div>
         <div class="stat-card"><span>Ativadas</span><h3 id="stAtivadas" style="color:var(--success)">0</h3></div>
@@ -72,48 +196,50 @@
         <div class="stat-card"><span>Revendedores</span><h3 id="stRev">0</h3></div>
     </div>
 
-    <!-- Controle de Manutenção -->
     <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h2>⚙️ Status do Servidor / Manutenção</h2>
-            <p style="font-size: 12px; color: var(--text-dim);">Ative para bloquear o gerador de keys para todos os usuários.</p>
+            <p style="font-size: 12px; color: var(--text-dim);">Bloqueia o gerador globalmente quando ativo.</p>
         </div>
-        <button id="btnManutencao" class="btn" onclick="toggleManutencao()">Carregando...</button>
+        <button id="btnManutencao" class="btn" onclick="playClick(); toggleManutencao()">Carregando...</button>
     </div>
 
-    <!-- Gerador de Keys / Massa -->
     <div class="card">
         <h2>🔑 Gerador de Chaves (Admin)</h2>
         <div class="form-row">
-            <input type="text" id="customKey" placeholder="Deixe em branco para gerar aleatória">
-            <input type="number" id="qtdMassa" placeholder="Quantidade em Massa (Ex: 5)" min="1" value="1">
-            <button class="btn" onclick="gerarKeysAdmin()">Gerar Keys</button>
+            <input type="text" id="customKey" placeholder="Key personalizada (Opcional)">
+            <input type="number" id="diasAdmin" placeholder="Dias de Validade (Ex: 30)" value="30">
+            <select id="dispAdmin">
+                <option value="1">1 Dispositivo</option>
+                <option value="2">2 Dispositivos</option>
+                <option value="5">5 Dispositivos</option>
+                <option value="Livre">Dispositivos Livres (Ilimitado)</option>
+            </select>
+            <input type="number" id="qtdMassa" placeholder="Qtd em Massa" min="1" value="1">
+            <button class="btn" onclick="playClick(); gerarKeysAdmin()">Gerar Keys</button>
         </div>
     </div>
 
-    <!-- Distribuir Dias em Massa -->
     <div class="card">
         <h2>⏳ Distribuir Dias para Keys Ativas</h2>
         <div class="form-row">
-            <input type="number" id="diasDistribuir" placeholder="Dias a adicionar (Ex: 1 ou 2)" value="1">
-            <button class="btn btn-success" onclick="distribuirDias()">Adicionar Dias em Todas Ativas</button>
+            <input type="number" id="diasDistribuir" placeholder="Dias a adicionar" value="5">
+            <button class="btn btn-success" onclick="playClick(); distribuirDias()">Adicionar Dias em Massa</button>
         </div>
     </div>
 
-    <!-- Criar Revendedor -->
     <div class="card">
         <h2>👤 Criar Novo Revendedor</h2>
         <div class="form-row">
             <input type="text" id="revUser" placeholder="Nome de Usuário">
             <input type="password" id="revPass" placeholder="Senha">
             <input type="text" id="revCredito" placeholder="Créditos em $ (Ex: 10.0)" value="10.0">
-            <button class="btn" onclick="criarRevendedor()">Criar Revendedor</button>
+            <button class="btn" onclick="playClick(); criarRevendedor()">Criar Revendedor</button>
         </div>
     </div>
 
-    <!-- Lista de Keys -->
     <div class="card">
-        <h2>📋 Gerenciamento Geral de Keys</h2>
+        <h2>📋 Gerenciamento de Keys</h2>
         <div style="overflow-x: auto;">
             <table>
                 <thead>
@@ -121,29 +247,51 @@
                         <th>Key</th>
                         <th>Criador</th>
                         <th>Status</th>
-                        <th>IP / Validade</th>
+                        <th>Dias / Disp.</th>
+                        <th>IP / HWID</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaKeys">
-                    <tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Carregando dados...</td></tr>
+                    <tr><td colspan="6" style="text-align:center; color:var(--text-dim);">Carregando dados...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
+<!-- Som de clique suave -->
+<audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
 <script>
 const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
 
+function playClick() {
+    const sound = document.getElementById("clickSound");
+    if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
+}
+
+function toggleTheme() {
+    playClick();
+    const html = document.documentElement;
+    const current = html.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("vtx_theme", next);
+    document.getElementById("themeIcon").textContent = next === "dark" ? "☀️" : "🌙";
+}
+
+if(localStorage.getItem("vtx_theme") === "light") {
+    document.documentElement.setAttribute("data-theme", "light");
+    document.getElementById("themeIcon").textContent = "🌙";
+}
+
 async function carregarPainelAdmin() {
     try {
-        // Carrega Manutenção (Formato exato: manutencaom/0/status)[cite: 3]
         const mRes = await fetch(`${FIREBASE_URL}/manutencaom/0/status.json`);
         const statusManut = await mRes.json();
         atualizarBotaoManutencao(statusManut === "true" || statusManut === true);
 
-        // Carrega Keys
         const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
         const data = await kRes.json();
         
@@ -151,7 +299,6 @@ async function carregarPainelAdmin() {
         let tbody = "";
         let revsCount = 0;
 
-        // Carrega Revendedores
         const rRes = await fetch(`${FIREBASE_URL}/revendedores.json`);
         const revs = await rRes.json();
         if(revs) revsCount = Object.keys(revs).length;
@@ -159,11 +306,8 @@ async function carregarPainelAdmin() {
 
         if (data) {
             for (let uid in data) {
-                // Pula o no de ips_validos se houver
                 if (uid === "ips_validos") continue;
-                
                 let k = data[uid];
-                // Verifica se é uma chave válida
                 if (!k.key) continue;
 
                 total++;
@@ -175,12 +319,13 @@ async function carregarPainelAdmin() {
                         <td><strong>${k.key}</strong></td>
                         <td>${k.criador || 'Admin'}</td>
                         <td><span class="badge ${k.status === 'ativada' ? 'ativa' : 'desativada'}">${k.status}</span></td>
+                        <td>${k.validade || k.dias || '1'} dias (${k.dispositivos || '1'})</td>
                         <td>${k.ip || 'Não usada'}</td>
                         <td>
                             <div class="actions-group">
-                                <button class="action-btn" onclick="mudarStatus('${uid}', '${k.status === 'ativada' ? 'desativada' : 'ativada'}')">${k.status === 'ativada' ? 'Desativar' : 'Ativar'}</button>
-                                <button class="action-btn" onclick="resetarKey('${uid}')">Resetar</button>
-                                <button class="action-btn" style="color:var(--danger)" onclick="deletarKey('${uid}')">Excluir</button>
+                                <button class="action-btn" onclick="playClick(); mudarStatus('${uid}', '${k.status === 'ativada' ? 'desativada' : 'ativada'}')">${k.status === 'ativada' ? 'Desativar' : 'Ativar'}</button>
+                                <button class="action-btn" onclick="playClick(); resetarKey('${uid}')">Resetar</button>
+                                <button class="action-btn" style="color:var(--danger)" onclick="playClick(); deletarKey('${uid}')">Excluir</button>
                             </div>
                         </td>
                     </tr>
@@ -191,11 +336,9 @@ async function carregarPainelAdmin() {
         document.getElementById("stTotal").textContent = total;
         document.getElementById("stAtivadas").textContent = ativas;
         document.getElementById("stDesativadas").textContent = desativadas;
-        document.getElementById("tabelaKeys").innerHTML = tbody || `<tr><td colspan="5" style="text-align:center;">Nenhuma key encontrada.</td></tr>`;
+        document.getElementById("tabelaKeys").innerHTML = tbody || `<tr><td colspan="6" style="text-align:center;">Nenhuma key encontrada.</td></tr>`;
 
-    } catch(e) {
-        console.error(e);
-    }
+    } catch(e) { console.error(e); }
 }
 
 function atualizarBotaoManutencao(isAtiva) {
@@ -224,6 +367,8 @@ async function toggleManutencao() {
 
 async function gerarKeysAdmin() {
     const custom = document.getElementById("customKey").value.trim();
+    const dias = document.getElementById("diasAdmin").value || "30";
+    const disp = document.getElementById("dispAdmin").value;
     const qtd = parseInt(document.getElementById("qtdMassa").value) || 1;
 
     for(let i=0; i<qtd; i++) {
@@ -238,12 +383,12 @@ async function gerarKeysAdmin() {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 device: "",
-                dias: "0",
-                dispositivos: "1",
+                dias: String(dias),
+                validade: String(dias),
+                dispositivos: String(disp),
                 key: keyGen,
                 status: "ativada",
                 uid: uid,
-                validade: "1",
                 criador: "Admin"
             })
         });
@@ -267,7 +412,7 @@ async function resetarKey(uid) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify("")
     });
-    alert("Key resetada (hardware liberado)!");
+    alert("Key resetada com sucesso!");
     carregarPainelAdmin();
 }
 
@@ -288,15 +433,15 @@ async function distribuirDias() {
         for(let uid in data) {
             let k = data[uid];
             if(k.key && k.status === "ativada") {
-                let diasAtuais = parseInt(k.dias) || 0;
-                await fetch(`${FIREBASE_URL}/usuariosT/${uid}/dias.json`, {
+                let diasAtuais = parseInt(k.validade || k.dias) || 30;
+                await fetch(`${FIREBASE_URL}/usuariosT/${uid}/validade.json`, {
                     method: "PUT",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(String(diasAtuais + diasAdd))
                 });
             }
         }
-        alert("Dias distribuídos com sucesso para todas as keys ativas!");
+        alert("Dias adicionados com sucesso!");
         carregarPainelAdmin();
     }
 }
@@ -318,11 +463,7 @@ async function criarRevendedor() {
     carregarPainelAdmin();
 }
 
-function logout() {
-    localStorage.removeItem("vtx_admin");
-    window.location.href = "admin.html";
-}
-
+function logout() { localStorage.removeItem("vtx_admin"); location.reload(); }
 window.onload = carregarPainelAdmin;
 </script>
 </body>
