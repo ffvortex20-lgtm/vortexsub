@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vortex • Painel Desenvolvedor</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-deep: #050508;
+        --surface: #0e0e14;
+        --surface-glass: rgba(14, 14, 20, 0.85);
+        --border: rgba(255, 255, 255, 0.08);
+        --primary: #8a5cf5;
+        --text-main: #ffffff;
+        --text-sub: #94a3b8;
+        --text-dim: #64748b;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-deep); color: var(--text-main); min-height: 100vh; padding: 20px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--surface-glass); padding: 20px; border-radius: 20px; border: 1px solid var(--border); }
+    h1 { font-size: 20px; font-weight: 800; color: #fff; }
+    h1 span { background: linear-gradient(135deg, var(--primary), #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface-glass); border: 1px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; }
+    .stat-card span { font-size: 11px; text-transform: uppercase; color: var(--text-dim); font-weight: 700; }
+    .stat-card h3 { font-size: 24px; font-weight: 800; color: var(--text-main); margin-top: 5px; }
+
+    .card { background: var(--surface-glass); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 24px; }
+    .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+    
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
+    input, select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: #fff; font-size: 13px; outline: none; }
+    input:focus { border-color: var(--primary); }
+    
+    .btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    .btn-danger { background: var(--danger); }
+    .btn-success { background: var(--success); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; text-align: left; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+    
+    .badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .badge.ativa { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge.desativada { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+    .actions-group { display: flex; gap: 6px; }
+    .action-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 6px 10px; border-radius: 8px; color: #fff; cursor: pointer; font-size: 11px; font-weight: 600; }
+    .action-btn:hover { background: rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>VORTEX <span>ADMIN DASHBOARD</span></h1>
+        <button class="btn btn-danger" onclick="logout()">Sair</button>
+    </header>
+
+    <!-- Estatísticas -->
+    <div class="grid-stats">
+        <div class="stat-card"><span>Total Registradas</span><h3 id="stTotal">0</h3></div>
+        <div class="stat-card"><span>Ativadas</span><h3 id="stAtivadas" style="color:var(--success)">0</h3></div>
+        <div class="stat-card"><span>Desativadas</span><h3 id="stDesativadas" style="color:var(--danger)">0</h3></div>
+        <div class="stat-card"><span>Revendedores</span><h3 id="stRev">0</h3></div>
+    </div>
+
+    <!-- Controle de Manutenção -->
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2>⚙️ Status do Servidor / Manutenção</h2>
+            <p style="font-size: 12px; color: var(--text-dim);">Ative para bloquear o gerador de keys para todos os usuários.</p>
+        </div>
+        <button id="btnManutencao" class="btn" onclick="toggleManutencao()">Carregando...</button>
+    </div>
+
+    <!-- Gerador de Keys / Massa -->
+    <div class="card">
+        <h2>🔑 Gerador de Chaves (Admin)</h2>
+        <div class="form-row">
+            <input type="text" id="customKey" placeholder="Deixe em branco para gerar aleatória">
+            <input type="number" id="qtdMassa" placeholder="Quantidade em Massa (Ex: 5)" min="1" value="1">
+            <button class="btn" onclick="gerarKeysAdmin()">Gerar Keys</button>
+        </div>
+    </div>
+
+    <!-- Distribuir Dias em Massa -->
+    <div class="card">
+        <h2>⏳ Distribuir Dias para Keys Ativas</h2>
+        <div class="form-row">
+            <input type="number" id="diasDistribuir" placeholder="Dias a adicionar (Ex: 1 ou 2)" value="1">
+            <button class="btn btn-success" onclick="distribuirDias()">Adicionar Dias em Todas Ativas</button>
+        </div>
+    </div>
+
+    <!-- Criar Revendedor -->
+    <div class="card">
+        <h2>👤 Criar Novo Revendedor</h2>
+        <div class="form-row">
+            <input type="text" id="revUser" placeholder="Nome de Usuário">
+            <input type="password" id="revPass" placeholder="Senha">
+            <input type="text" id="revCredito" placeholder="Créditos em $ (Ex: 10.0)" value="10.0">
+            <button class="btn" onclick="criarRevendedor()">Criar Revendedor</button>
+        </div>
+    </div>
+
+    <!-- Lista de Keys -->
+    <div class="card">
+        <h2>📋 Gerenciamento Geral de Keys</h2>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Criador</th>
+                        <th>Status</th>
+                        <th>IP / Validade</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaKeys">
+                    <tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Carregando dados...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
+
+async function carregarPainelAdmin() {
+    try {
+        // Carrega Manutenção (Formato exato: manutencaom/0/status)[cite: 3]
+        const mRes = await fetch(`${FIREBASE_URL}/manutencaom/0/status.json`);
+        const statusManut = await mRes.json();
+        atualizarBotaoManutencao(statusManut === "true" || statusManut === true);
+
+        // Carrega Keys
+        const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
+        const data = await kRes.json();
+        
+        let total = 0, ativas = 0, desativadas = 0;
+        let tbody = "";
+        let revsCount = 0;
+
+        // Carrega Revendedores
+        const rRes = await fetch(`${FIREBASE_URL}/revendedores.json`);
+        const revs = await rRes.json();
+        if(revs) revsCount = Object.keys(revs).length;
+        document.getElementById("stRev").textContent = revsCount;
+
+        if (data) {
+            for (let uid in data) {
+                // Pula o no de ips_validos se houver
+                if (uid === "ips_validos") continue;
+                
+                let k = data[uid];
+                // Verifica se é uma chave válida
+                if (!k.key) continue;
+
+                total++;
+                if (k.status === "ativada") ativas++;
+                else desativadas++;
+
+                tbody += `
+                    <tr>
+                        <td><strong>${k.key}</strong></td>
+                        <td>${k.criador || 'Admin'}</td>
+                        <td><span class="badge ${k.status === 'ativada' ? 'ativa' : 'desativada'}">${k.status}</span></td>
+                        <td>${k.ip || 'Não usada'}</td>
+                        <td>
+                            <div class="actions-group">
+                                <button class="action-btn" onclick="mudarStatus('${uid}', '${k.status === 'ativada' ? 'desativada' : 'ativada'}')">${k.status === 'ativada' ? 'Desativar' : 'Ativar'}</button>
+                                <button class="action-btn" onclick="resetarKey('${uid}')">Resetar</button>
+                                <button class="action-btn" style="color:var(--danger)" onclick="deletarKey('${uid}')">Excluir</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        document.getElementById("stTotal").textContent = total;
+        document.getElementById("stAtivadas").textContent = ativas;
+        document.getElementById("stDesativadas").textContent = desativadas;
+        document.getElementById("tabelaKeys").innerHTML = tbody || `<tr><td colspan="5" style="text-align:center;">Nenhuma key encontrada.</td></tr>`;
+
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+function atualizarBotaoManutencao(isAtiva) {
+    const btn = document.getElementById("btnManutencao");
+    if(isAtiva) {
+        btn.textContent = "MANUTENÇÃO ATIVA (Desligar)";
+        btn.className = "btn btn-danger";
+    } else {
+        btn.textContent = "SISTEMA NORMAL (Ligar Manutenção)";
+        btn.className = "btn btn-success";
+    }
+}
+
+async function toggleManutencao() {
+    const mRes = await fetch(`${FIREBASE_URL}/manutencaom/0/status.json`);
+    const statusAtual = await mRes.json();
+    const novoStatus = (statusAtual === "true" || statusAtual === true) ? "false" : "true";
+
+    await fetch(`${FIREBASE_URL}/manutencaom/0/status.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(novoStatus)
+    });
+    carregarPainelAdmin();
+}
+
+async function gerarKeysAdmin() {
+    const custom = document.getElementById("customKey").value.trim();
+    const qtd = parseInt(document.getElementById("qtdMassa").value) || 1;
+
+    for(let i=0; i<qtd; i++) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let part = '';
+        for (let j = 0; j < 6; j++) part += chars.charAt(Math.floor(Math.random() * chars.length));
+        const keyGen = custom && qtd === 1 ? custom : `VTX-${part}`;
+        const uid = 'UID_' + Math.random().toString(36).substr(2, 9);
+
+        await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                device: "",
+                dias: "0",
+                dispositivos: "1",
+                key: keyGen,
+                status: "ativada",
+                uid: uid,
+                validade: "1",
+                criador: "Admin"
+            })
+        });
+    }
+    alert("Key(s) gerada(s) com sucesso!");
+    carregarPainelAdmin();
+}
+
+async function mudarStatus(uid, novoStatus) {
+    await fetch(`${FIREBASE_URL}/usuariosT/${uid}/status.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(novoStatus)
+    });
+    carregarPainelAdmin();
+}
+
+async function resetarKey(uid) {
+    await fetch(`${FIREBASE_URL}/usuariosT/${uid}/device.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify("")
+    });
+    alert("Key resetada (hardware liberado)!");
+    carregarPainelAdmin();
+}
+
+async function deletarKey(uid) {
+    if(confirm("Tem certeza que deseja excluir esta key?")) {
+        await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, { method: "DELETE" });
+        carregarPainelAdmin();
+    }
+}
+
+async function distribuirDias() {
+    const diasAdd = parseInt(document.getElementById("diasDistribuir").value) || 0;
+    if(diasAdd <= 0) return alert("Digite um valor válido de dias.");
+
+    const res = await fetch(`${FIREBASE_URL}/usuariosT.json`);
+    const data = await res.json();
+    if(data) {
+        for(let uid in data) {
+            let k = data[uid];
+            if(k.key && k.status === "ativada") {
+                let diasAtuais = parseInt(k.dias) || 0;
+                await fetch(`${FIREBASE_URL}/usuariosT/${uid}/dias.json`, {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(String(diasAtuais + diasAdd))
+                });
+            }
+        }
+        alert("Dias distribuídos com sucesso para todas as keys ativas!");
+        carregarPainelAdmin();
+    }
+}
+
+async function criarRevendedor() {
+    const user = document.getElementById("revUser").value.trim();
+    const pass = document.getElementById("revPass").value.trim();
+    const credito = document.getElementById("revCredito").value.trim();
+
+    if(!user || !pass) return alert("Preencha usuário e senha!");
+
+    const revId = 'rev_' + Math.random().toString(36).substr(2, 9);
+    await fetch(`${FIREBASE_URL}/revendedores/${revId}.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ usuario: user, senha: pass, creditos: credito })
+    });
+    alert("Revendedor criado com sucesso!");
+    carregarPainelAdmin();
+}
+
+function logout() {
+    localStorage.removeItem("vtx_admin");
+    window.location.href = "admin.html";
+}
+
+window.onload = carregarPainelAdmin;
+</script>
+</body>
+</html>
