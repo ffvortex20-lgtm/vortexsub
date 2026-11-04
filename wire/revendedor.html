@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,67 +7,182 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     :root {
-        --bg-deep: #050508;
-        --surface: #0e0e14;
-        --surface-glass: rgba(14, 14, 20, 0.85);
-        --border: rgba(255, 255, 255, 0.08);
-        --primary: #8a5cf5;
+        --bg-deep: #090508;
+        --surface: #140b12;
+        --surface-glass: rgba(20, 11, 18, 0.85);
+        --border: rgba(255, 105, 180, 0.15);
+        --primary: #ff1493;
+        --primary-glow: rgba(255, 20, 147, 0.3);
         --text-main: #ffffff;
-        --text-sub: #94a3b8;
-        --text-dim: #64748b;
+        --text-sub: #cbd5e1;
+        --text-dim: #94a3b8;
         --success: #10b981;
         --danger: #ef4444;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: var(--bg-deep); color: var(--text-main); min-height: 100vh; padding: 20px; display: flex; align-items: center; justify-content: center; }
-    .container { width: 100%; max-width: 900px; }
-    .card { background: var(--surface-glass); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-    h1 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 20px; }
-    h1 span { background: linear-gradient(135deg, var(--primary), #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    [data-theme="light"] {
+        --bg-deep: #fff1f8;
+        --surface: #ffffff;
+        --surface-glass: rgba(255, 255, 255, 0.9);
+        --border: rgba(255, 105, 180, 0.3);
+        --primary: #ff1493;
+        --primary-glow: rgba(255, 20, 147, 0.15);
+        --text-main: #1e1b4b;
+        --text-sub: #475569;
+        --text-dim: #64748b;
+        --success: #059669;
+        --danger: #dc2626;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: background 0.3s, color 0.3s; }
     
-    input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: #fff; font-size: 13px; outline: none; margin-bottom: 12px; }
-    input:focus { border-color: var(--primary); }
+    body {
+        background-color: var(--bg-deep);
+        color: var(--text-main);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .ambient-glow {
+        position: fixed;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        filter: blur(120px);
+        z-index: 0;
+        pointer-events: none;
+        background: rgba(255, 20, 147, 0.12);
+        top: -100px;
+        left: -100px;
+    }
+
+    .container { width: 100%; max-width: 900px; position: relative; z-index: 1; }
     
-    .btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; }
-    .btn:hover { opacity: 0.9; }
+    .card {
+        background: var(--surface-glass);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        animation: fadeIn 0.5s ease;
+    }
+
+    .header-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .logo-img { width: 45px; height: 45px; border-radius: 12px; object-fit: cover; border: 2px solid var(--primary); box-shadow: 0 0 12px var(--primary); }
+
+    h1 { font-size: 18px; font-weight: 800; }
+    h1 span { background: linear-gradient(135deg, var(--primary), #ff69b4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    input, select {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: var(--text-main);
+        font-size: 13px;
+        outline: none;
+        margin-bottom: 12px;
+    }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+
+    .btn {
+        background: linear-gradient(135deg, #ff1493, #c71585);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        width: 100%;
+        box-shadow: 0 4px 15px var(--primary-glow);
+    }
+    .btn:hover { opacity: 0.95; transform: translateY(-1px); }
 
     table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; text-align: left; }
-    th, td { padding: 12px; border-bottom: 1px solid var(--border); }
+    th, td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--text-sub); }
     th { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
-    .badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
-    .badge.ativa { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-    .badge.desativada { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
-    .action-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 5px 10px; border-radius: 6px; color: #fff; cursor: pointer; font-size: 11px; }
+    
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+    .badge.ativa { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge.desativada { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    
+    .action-btn { background: var(--surface); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; color: var(--text-sub); cursor: pointer; font-size: 11px; font-weight: 600; }
+    .action-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .theme-toggle {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
+<div class="ambient-glow"></div>
+
 <div class="container" id="loginBox">
     <div class="card" style="max-width: 400px; margin: 0 auto; text-align: center;">
-        <h1>LOGIN <span>REVENDEDOR</span></h1>
+        <div style="display:flex; justify-content:flex-end; margin-bottom: 10px;">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeIconLogin">☀️</button>
+        </div>
+        <img src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg" alt="Logo" style="width:60px; height:60px; border-radius:16px; margin:0 auto 15px; border:2px solid var(--primary);">
+        <h1 style="margin-bottom: 20px;">LOGIN <span>REVENDEDOR</span></h1>
         <input type="text" id="loginUser" placeholder="Usuário">
         <input type="password" id="loginPass" placeholder="Senha">
-        <button class="btn" onclick="fazerLogin()">Entrar no Painel</button>
+        <button class="btn" onclick="playClick(); fazerLogin()">Entrar no Painel</button>
     </div>
 </div>
 
 <div class="container" id="painelBox" style="display: none;">
-    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <h1>PAINEL <span>REVENDEDOR</span></h1>
-            <p style="font-size: 12px; color: var(--text-dim);">Logado como: <strong id="lblUser" style="color:#fff;"></strong></p>
+    <div class="card header-card">
+        <div class="header-left">
+            <img src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg" alt="Logo" class="logo-img">
+            <div>
+                <h1>PAINEL <span>REVENDEDOR</span></h1>
+                <p style="font-size: 12px; color: var(--text-dim);">Conta: <strong id="lblUser" style="color:var(--text-main);"></strong></p>
+            </div>
         </div>
-        <div style="text-align: right;">
-            <span style="font-size: 11px; color: var(--text-dim); display: block;">CRÉDITOS DISPONÍVEIS</span>
-            <h2 id="lblCreditos" style="color: var(--success); font-size: 20px;">$0.0</h2>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="text-align: right;">
+                <span style="font-size: 10px; color: var(--text-dim); display: block; font-weight: 700;">SALDO</span>
+                <h2 id="lblCreditos" style="color: var(--primary); font-size: 18px;">$0.0</h2>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeIconPainel">☀️</button>
+            <button class="btn" style="width: auto; background: var(--danger); padding: 8px 14px;" onclick="playClick(); logout()">Sair</button>
         </div>
-        <button class="btn" style="width: auto; background: var(--danger);" onclick="logout()">Sair</button>
     </div>
 
     <div class="card">
-        <h2>🔑 Gerar Chave (Custo: $1.0 por key)</h2>
+        <h2>🔑 Gerar Chave (Selecione o Plano de Dias)</h2>
         <input type="text" id="genKeyCustom" placeholder="Nome personalizado da Key (Opcional)">
-        <button class="btn" onclick="gerarKeyRevendedor()">Gerar Key</button>
+        <select id="selectDias" onchange="atualizarCusto()">
+            <option value="1">1 Dia (Custo: $1.0)</option>
+            <option value="5">5 Dias (Custo: $3.0)</option>
+            <option value="7">7 Dias (Custo: $5.0)</option>
+            <option value="15">15 Dias (Custo: $9.0)</option>
+            <option value="30" selected>30 Dias (Custo: $15.0)</option>
+        </select>
+        <button class="btn" id="btnGerar" onclick="playClick(); gerarKeyRevendedor()">Gerar Chave (Custa <span id="lblCusto">$15.0</span>)</button>
     </div>
 
     <div class="card">
@@ -77,22 +192,56 @@
                 <thead>
                     <tr>
                         <th>Key</th>
+                        <th>Validade / Disp.</th>
                         <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaRevKeys">
-                    <tr><td colspan="3" style="text-align:center; color:var(--text-dim);">Carregando...</td></tr>
+                    <tr><td colspan="4" style="text-align:center; color:var(--text-dim);">Carregando...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
+<audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
 <script>
 const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
 let revAtual = null;
 let revFirebaseId = null;
+
+const custosDias = { "1": 1.0, "5": 3.0, "7": 5.0, "15": 9.0, "30": 15.0 };
+
+function playClick() {
+    const sound = document.getElementById("clickSound");
+    if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
+}
+
+function toggleTheme() {
+    playClick();
+    const html = document.documentElement;
+    const current = html.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("vtx_theme", next);
+    const icon = next === "dark" ? "☀️" : "🌙";
+    document.getElementById("themeIconLogin").textContent = icon;
+    document.getElementById("themeIconPainel").textContent = icon;
+}
+
+if(localStorage.getItem("vtx_theme") === "light") {
+    document.documentElement.setAttribute("data-theme", "light");
+    document.getElementById("themeIconLogin").textContent = "🌙";
+    document.getElementById("themeIconPainel").textContent = "🌙";
+}
+
+function atualizarCusto() {
+    const dias = document.getElementById("selectDias").value;
+    const custo = custosDias[dias] || 1.0;
+    document.getElementById("lblCusto").textContent = `$${custo.toFixed(1)}`;
+}
 
 async function fazerLogin() {
     const u = document.getElementById("loginUser").value.trim();
@@ -129,12 +278,10 @@ async function carregarPainelRevendedor() {
     document.getElementById("painelBox").style.display = "block";
     document.getElementById("lblUser").textContent = session.usuario;
 
-    // Atualiza créditos do revendedor
     const rRes = await fetch(`${FIREBASE_URL}/revendedores/${session.id}.json`);
     revAtual = await rRes.json();
-    document.getElementById("lblCreditos").textContent = `$${revAtual.creditos || '0.0'}`;
+    document.getElementById("lblCreditos").textContent = `$${parseFloat(revAtual.creditos || 0).toFixed(1)}`;
 
-    // Carrega apenas as keys geradas por este revendedor[cite: 3]
     const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
     const data = await kRes.json();
     let tbody = "";
@@ -146,25 +293,27 @@ async function carregarPainelRevendedor() {
                 tbody += `
                     <tr>
                         <td><strong>${k.key}</strong></td>
+                        <td>${k.validade || k.dias || '30'} dias (1 disp)</td>
                         <td><span class="badge ${k.status === 'ativada' ? 'ativa' : 'desativada'}">${k.status}</span></td>
                         <td>
-                            <button class="action-btn" onclick="revResetarKey('${uid}')">Resetar HWID</button>
+                            <button class="action-btn" onclick="playClick(); revResetarKey('${uid}')">Resetar HWID</button>
                         </td>
                     </tr>
                 `;
             }
         }
     }
-    document.getElementById("tabelaRevKeys").innerHTML = tbody || `<tr><td colspan="3" style="text-align:center;">Você ainda não gerou nenhuma key.</td></tr>`;
+    document.getElementById("tabelaRevKeys").innerHTML = tbody || `<tr><td colspan="4" style="text-align:center;">Você ainda não gerou nenhuma key.</td></tr>`;
 }
 
 async function gerarKeyRevendedor() {
     const session = JSON.parse(localStorage.getItem("vtx_rev"));
     let creditosAtuais = parseFloat(revAtual.creditos) || 0;
-    const custoKey = 1.0; // Custo de 1 crédito em dólares por key gerada
+    const diasSelecionados = document.getElementById("selectDias").value;
+    const custoKey = custosDias[diasSelecionados] || 1.0;
 
     if(creditosAtuais < custoKey) {
-        return alert("Créditos insuficientes para gerar uma nova key! Solicite recarga ao Administrador.");
+        return alert("Créditos insuficientes! Recarregue com o Administrador.");
     }
 
     const custom = document.getElementById("genKeyCustom").value.trim();
@@ -174,23 +323,21 @@ async function gerarKeyRevendedor() {
     const keyGen = custom ? custom : `VTX-${part}`;
     const uid = 'UID_' + Math.random().toString(36).substr(2, 9);
 
-    // Salva a key vinculada ao revendedor[cite: 3]
     await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
             device: "",
-            dias: "0",
+            dias: String(diasSelecionados),
+            validade: String(diasSelecionados),
             dispositivos: "1",
             key: keyGen,
             status: "ativada",
             uid: uid,
-            validade: "1",
-            criador: session.usuario // Restringe ao revendedor[cite: 3]
+            criador: session.usuario
         })
     });
 
-    // Desconta o crédito
     creditosAtuais -= custoKey;
     await fetch(`${FIREBASE_URL}/revendedores/${session.id}/creditos.json`, {
         method: "PUT",
@@ -213,10 +360,7 @@ async function revResetarKey(uid) {
     carregarPainelRevendedor();
 }
 
-function logout() {
-    localStorage.removeItem("vtx_rev");
-    window.location.reload();
-}
+function logout() { localStorage.removeItem("vtx_rev"); location.reload(); }
 
 window.onload = () => {
     if(localStorage.getItem("vtx_rev")) carregarPainelRevendedor();
