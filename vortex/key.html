@@ -367,7 +367,6 @@ function generateFirebaseUID() {
     return uid;
 }
 
-// Gerador de Key corrigido e padronizado (Ex: VTX-VIP-8492)
 function generateKey() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let part = '';
@@ -386,7 +385,7 @@ function startCountdown(expireTime) {
 
         if (distance < 0) {
             clearInterval(activeTimer);
-            localStorage.removeItem("vtx_session_v4");
+            localStorage.removeItem("vtx_session_v6");
             window.location.reload();
             return;
         }
@@ -401,7 +400,7 @@ function startCountdown(expireTime) {
 
 async function initKeySystem() {
     try {
-        setLoadMsg("OBTENDO SEU IP...");
+        setLoadMsg("VERIFICANDO IP...");
         
         const ipPromise = fetch("https://api.ipify.org?format=json").then(r => r.json());
         const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 4000));
@@ -414,29 +413,58 @@ async function initKeySystem() {
             console.warn("Contingência de IP ativada.");
         }
 
-        const safeIp = rawIp.replace(/[.#$[\]]/g, "_");
         document.getElementById("userIp").textContent = rawIp;
-
         const now = new Date().getTime();
 
-        // Verifica se já tem uma key válida salva no navegador para o usuário não perder se atualizar
-        const session = JSON.parse(localStorage.getItem("vtx_session_v4") || "null");
-        if (session && session.expireTime > now) {
-            document.getElementById("keyText").textContent = session.key;
-            document.getElementById("time").textContent = session.generatedAt;
-            startCountdown(session.expireTime);
+        // 1. Varre o banco em /usuariosT/ para ver se já existe uma key vinculada a este IP e que ainda não expirou
+        let activeKeyData = null;
+        try {
+            const res = await fetch(`${FIREBASE_URL}/usuariosT.json`);
+            if (res.ok) {
+                const allUsers = await res.json();
+                if (allUsers) {
+                    for (let uid in allUsers) {
+                        let userObj = allUsers[uid];
+                        // Se o IP bater e a chave ainda estiver dentro do prazo de 24h
+                        if (userObj && userObj.ip === rawIp && userObj.expireTime && userObj.expireTime > now) {
+                            activeKeyData = userObj;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch(e) {
+            console.warn("Erro ao buscar chaves existentes.");
+        }
+
+        // Se já tem uma chave ativa para este IP, reaproveita ela sem duplicar nada!
+        if (activeKeyData) {
+            const generatedAtTime = activeKeyData.generatedAt || new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
+            
+            document.getElementById("keyText").textContent = activeKeyData.key;
+            document.getElementById("time").textContent = generatedAtTime;
+            document.getElementById("msg").textContent = "KEY ATIVA RECUPERADA!";
             document.getElementById("copyBtn").style.display = "flex";
+            
+            startCountdown(activeKeyData.expireTime);
             hideLoading();
+            
+            localStorage.setItem("vtx_session_v6", JSON.stringify({
+                key: activeKeyData.key,
+                generatedAt: generatedAtTime,
+                expireTime: activeKeyData.expireTime
+            }));
             return;
         }
 
+        // 2. Se não existir, gera uma nova Key e salva o IP diretamente dentro do nó dela em /usuariosT/UID/
         setLoadMsg("GERANDO SUA KEY...");
         const newKey = generateKey();
         const UID = generateFirebaseUID();
         const generatedAtTime = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
         const expireTime = now + ONE_DAY_MS;
 
-        // Payload estruturado exatamente no padrão da sua foto para a pasta /usuariosT/
+        // Estrutura unificada: os campos que o seu painel lê + o IP e o tempo de expiração juntos
         const payload = {
             device: "",
             dias: "0",
@@ -444,30 +472,21 @@ async function initKeySystem() {
             key: newKey,
             status: "ativada",
             uid: UID,
-            validade: "1"
+            validade: "1",
+            ip: rawIp,                    // <-- IP gravado junto na key para evitar duplicidade
+            expireTime: expireTime,       // <-- Expiração para controle interno
+            generatedAt: generatedAtTime
         };
 
-        // Salva na Firebase em /usuariosT/UID
+        // Salva diretamente na Firebase em /usuariosT/UID
         await fetch(`${FIREBASE_URL}/usuariosT/${UID}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        // Salva o controle de IP no Firebase com expiração estendida (2 dias) para evitar lotação
-        await fetch(`${FIREBASE_URL}/usuariosT/ips_validos/${safeIp}.json`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                ip: rawIp,
-                key: newKey,
-                expireTime: now + (48 * 60 * 60 * 1000), 
-                generatedAt: generatedAtTime
-            })
-        }).catch(e => console.log("Aviso de IP:", e));
-
-        // Salva sessão local
-        localStorage.setItem("vtx_session_v4", JSON.stringify({
+        // Salva na sessão local do navegador
+        localStorage.setItem("vtx_session_v6", JSON.stringify({
             key: newKey,
             generatedAt: generatedAtTime,
             expireTime: expireTime
@@ -483,7 +502,6 @@ async function initKeySystem() {
 
     } catch (e) {
         console.error(e);
-        // Fallback para evitar travamento em caso de oscilação na rede
         const fallbackKey = generateKey();
         document.getElementById("keyText").textContent = fallbackKey;
         document.getElementById("time").textContent = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
