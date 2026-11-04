@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vortex • Painel Revendedor</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-deep: #050508;
+        --surface: #0e0e14;
+        --surface-glass: rgba(14, 14, 20, 0.85);
+        --border: rgba(255, 255, 255, 0.08);
+        --primary: #8a5cf5;
+        --text-main: #ffffff;
+        --text-sub: #94a3b8;
+        --text-dim: #64748b;
+        --success: #10b981;
+        --danger: #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-deep); color: var(--text-main); min-height: 100vh; padding: 20px; display: flex; align-items: center; justify-content: center; }
+    .container { width: 100%; max-width: 900px; }
+    .card { background: var(--surface-glass); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    h1 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 20px; }
+    h1 span { background: linear-gradient(135deg, var(--primary), #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 12px; color: #fff; font-size: 13px; outline: none; margin-bottom: 12px; }
+    input:focus { border-color: var(--primary); }
+    
+    .btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: #fff; border: none; border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; }
+    .btn:hover { opacity: 0.9; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; text-align: left; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+    .badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+    .badge.ativa { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .badge.desativada { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .action-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 5px 10px; border-radius: 6px; color: #fff; cursor: pointer; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="loginBox">
+    <div class="card" style="max-width: 400px; margin: 0 auto; text-align: center;">
+        <h1>LOGIN <span>REVENDEDOR</span></h1>
+        <input type="text" id="loginUser" placeholder="Usuário">
+        <input type="password" id="loginPass" placeholder="Senha">
+        <button class="btn" onclick="fazerLogin()">Entrar no Painel</button>
+    </div>
+</div>
+
+<div class="container" id="painelBox" style="display: none;">
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>PAINEL <span>REVENDEDOR</span></h1>
+            <p style="font-size: 12px; color: var(--text-dim);">Logado como: <strong id="lblUser" style="color:#fff;"></strong></p>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 11px; color: var(--text-dim); display: block;">CRÉDITOS DISPONÍVEIS</span>
+            <h2 id="lblCreditos" style="color: var(--success); font-size: 20px;">$0.0</h2>
+        </div>
+        <button class="btn" style="width: auto; background: var(--danger);" onclick="logout()">Sair</button>
+    </div>
+
+    <div class="card">
+        <h2>🔑 Gerar Chave (Custo: $1.0 por key)</h2>
+        <input type="text" id="genKeyCustom" placeholder="Nome personalizado da Key (Opcional)">
+        <button class="btn" onclick="gerarKeyRevendedor()">Gerar Key</button>
+    </div>
+
+    <div class="card">
+        <h2>📋 Suas Chaves Geradas</h2>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaRevKeys">
+                    <tr><td colspan="3" style="text-align:center; color:var(--text-dim);">Carregando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
+let revAtual = null;
+let revFirebaseId = null;
+
+async function fazerLogin() {
+    const u = document.getElementById("loginUser").value.trim();
+    const p = document.getElementById("loginPass").value.trim();
+
+    const res = await fetch(`${FIREBASE_URL}/revendedores.json`);
+    const data = await res.json();
+    
+    let encontrado = false;
+    if(data) {
+        for(let id in data) {
+            if(data[id].usuario === u && data[id].senha === p) {
+                encontrado = true;
+                revAtual = data[id];
+                revFirebaseId = id;
+                break;
+            }
+        }
+    }
+
+    if(encontrado) {
+        localStorage.setItem("vtx_rev", JSON.stringify({ id: revFirebaseId, usuario: revAtual.usuario }));
+        carregarPainelRevendedor();
+    } else {
+        alert("Usuário ou senha incorretos!");
+    }
+}
+
+async function carregarPainelRevendedor() {
+    const session = JSON.parse(localStorage.getItem("vtx_rev"));
+    if(!session) return;
+
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("painelBox").style.display = "block";
+    document.getElementById("lblUser").textContent = session.usuario;
+
+    // Atualiza créditos do revendedor
+    const rRes = await fetch(`${FIREBASE_URL}/revendedores/${session.id}.json`);
+    revAtual = await rRes.json();
+    document.getElementById("lblCreditos").textContent = `$${revAtual.creditos || '0.0'}`;
+
+    // Carrega apenas as keys geradas por este revendedor[cite: 3]
+    const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
+    const data = await kRes.json();
+    let tbody = "";
+
+    if(data) {
+        for(let uid in data) {
+            let k = data[uid];
+            if(k.criador === session.usuario) {
+                tbody += `
+                    <tr>
+                        <td><strong>${k.key}</strong></td>
+                        <td><span class="badge ${k.status === 'ativada' ? 'ativa' : 'desativada'}">${k.status}</span></td>
+                        <td>
+                            <button class="action-btn" onclick="revResetarKey('${uid}')">Resetar HWID</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+    }
+    document.getElementById("tabelaRevKeys").innerHTML = tbody || `<tr><td colspan="3" style="text-align:center;">Você ainda não gerou nenhuma key.</td></tr>`;
+}
+
+async function gerarKeyRevendedor() {
+    const session = JSON.parse(localStorage.getItem("vtx_rev"));
+    let creditosAtuais = parseFloat(revAtual.creditos) || 0;
+    const custoKey = 1.0; // Custo de 1 crédito em dólares por key gerada
+
+    if(creditosAtuais < custoKey) {
+        return alert("Créditos insuficientes para gerar uma nova key! Solicite recarga ao Administrador.");
+    }
+
+    const custom = document.getElementById("genKeyCustom").value.trim();
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let part = '';
+    for (let j = 0; j < 6; j++) part += chars.charAt(Math.floor(Math.random() * chars.length));
+    const keyGen = custom ? custom : `VTX-${part}`;
+    const uid = 'UID_' + Math.random().toString(36).substr(2, 9);
+
+    // Salva a key vinculada ao revendedor[cite: 3]
+    await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            device: "",
+            dias: "0",
+            dispositivos: "1",
+            key: keyGen,
+            status: "ativada",
+            uid: uid,
+            validade: "1",
+            criador: session.usuario // Restringe ao revendedor[cite: 3]
+        })
+    });
+
+    // Desconta o crédito
+    creditosAtuais -= custoKey;
+    await fetch(`${FIREBASE_URL}/revendedores/${session.id}/creditos.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(creditosAtuais.toFixed(1))
+    });
+
+    alert("Key gerada com sucesso!");
+    document.getElementById("genKeyCustom").value = "";
+    carregarPainelRevendedor();
+}
+
+async function revResetarKey(uid) {
+    await fetch(`${FIREBASE_URL}/usuariosT/${uid}/device.json`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify("")
+    });
+    alert("Key resetada com sucesso!");
+    carregarPainelRevendedor();
+}
+
+function logout() {
+    localStorage.removeItem("vtx_rev");
+    window.location.reload();
+}
+
+window.onload = () => {
+    if(localStorage.getItem("vtx_rev")) carregarPainelRevendedor();
+};
+</script>
+</body>
+</html>
