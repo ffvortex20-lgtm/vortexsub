@@ -153,17 +153,31 @@
     </div>
 
     <div class="card">
-        <h2>👤 Criar Novo Revendedor</h2>
-        <div class="form-row">
-            <input type="text" id="revUser" placeholder="Nome de Usuário">
-            <input type="password" id="revPass" placeholder="Senha">
-            <input type="text" id="revCredito" placeholder="Créditos em $ (Ex: 10.0)" value="10.0">
-            <button class="btn" onclick="playClick(); criarRevendedor()">Criar Revendedor</button>
+        <h2>👤 Gerenciar Revendedores (Adicionar Créditos)</h2>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Créditos Atuais ($)</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaRevendedores">
+                    <tr><td colspan="3" style="text-align:center;">Carregando revendedores...</td></tr>
+                </tbody>
+            </table>
         </div>
+        <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+            <input type="text" id="revUser" placeholder="Novo Usuário">
+            <input type="password" id="revPass" placeholder="Senha">
+            <input type="text" id="revCredito" placeholder="Créditos Iniciais ($)" value="10.0">
+        </div>
+        <button class="btn" style="margin-top: 10px;" onclick="playClick(); criarRevendedor()">Criar Novo Revendedor</button>
     </div>
 
     <div class="card">
-        <h2>📋 Gerenciamento de Keys e Punições</h2>
+        <h2>📋 Gerenciamento de Keys e Edição</h2>
         <div style="overflow-x: auto;">
             <table>
                 <thead>
@@ -172,7 +186,7 @@
                         <th>Criador[cite: 3]</th>
                         <th>Status[cite: 3]</th>
                         <th>Validade</th>
-                        <th>Ações e Punições[cite: 3]</th>
+                        <th>Ações[cite: 3]</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaKeys">
@@ -214,16 +228,32 @@ async function carregarPainelAdmin() {
         const statusManut = await mRes.json();
         atualizarBotaoManutencao(statusManut === "true" || statusManut === true);
 
+        // Carrega Revendedores
         const rRes = await fetch(`${FIREBASE_URL}/revendedores.json`);
         const revs = await rRes.json();
         let revsOnline = 0;
+        let revTableHtml = "";
+
         if(revs) {
             for(let id in revs) {
-                if(revs[id].online === true) revsOnline++; // Conta revendedores online[cite: 3]
+                let r = revs[id];
+                if(r.online === true) revsOnline++;
+                revTableHtml += `
+                    <tr>
+                        <td><strong>${r.usuario}</strong></td>
+                        <td style="color:var(--success)">$${parseFloat(r.creditos || 0).toFixed(1)}</td>
+                        <td>
+                            <button class="action-btn" onclick="playClick(); adicionarCreditos('${id}', '${r.usuario}')">Adicionar Créditos</button>
+                            <button class="action-btn" style="color:var(--danger)" onclick="playClick(); deletarRevendedor('${id}')">Excluir</button>
+                        </td>
+                    </tr>
+                `;
             }
         }
         document.getElementById("stRevOnline").textContent = revsOnline;
+        document.getElementById("tabelaRevendedores").innerHTML = revTableHtml || `<tr><td colspan="3" style="text-align:center;">Nenhum revendedor.</td></tr>`;
 
+        // Carrega Keys
         const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
         const data = await kRes.json();
         
@@ -250,9 +280,10 @@ async function carregarPainelAdmin() {
                         <td>${k.validade || k.dias || '30'} dias</td>
                         <td>
                             <div class="actions-group">
+                                <button class="action-btn" onclick="playClick(); editarKey('${uid}', '${k.key}', '${k.validade || k.dias || 30}')">Editar</button>
                                 <button class="action-btn" onclick="playClick(); mudarStatus('${uid}', '${k.status === 'ativada' ? 'desativada' : 'ativada'}')">${k.status === 'ativada' ? 'Desativar' : 'Ativar'}</button>
                                 <button class="action-btn" onclick="playClick(); punirKeyPrompt('${uid}')">Punição</button>
-                                <button class="action-btn" onclick="playClick(); resetarKey('${uid}')">Resetar</button>
+                                <button class="action-btn" onclick="playClick(); resetarKey('${uid}')">Reset</button>
                                 <button class="action-btn" style="color:var(--danger)" onclick="playClick(); deletarKey('${uid}')">Excluir</button>
                             </div>
                         </td>
@@ -267,6 +298,42 @@ async function carregarPainelAdmin() {
         document.getElementById("tabelaKeys").innerHTML = tbody || `<tr><td colspan="5" style="text-align:center;">Nenhuma key encontrada.</td></tr>`;
 
     } catch(e) { console.error(e); }
+}
+
+async function adicionarCreditos(idRev, nomeRev) {
+    const qtd = prompt(`Quantos créditos deseja adicionar para [${nomeRev}]? (Use valores negativos para descontar)`);
+    if(!qtd || isNaN(qtd)) return;
+
+    const rRes = await fetch(`${FIREBASE_URL}/revendedores/${idRev}/creditos.json`);
+    let atual = parseFloat(await rRes.json()) || 0;
+    let novoValor = atual + parseFloat(qtd);
+
+    await fetch(`${FIREBASE_URL}/revendedores/${idRev}/creditos.json`, {
+        method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(novoValor.toFixed(1))
+    });
+    alert("Créditos atualizados com sucesso!");
+    carregarPainelAdmin();
+}
+
+async function deletarRevendedor(idRev) {
+    if(confirm("Tem certeza que deseja excluir este revendedor?")) {
+        await fetch(`${FIREBASE_URL}/revendedores/${idRev}.json`, { method: "DELETE" });
+        carregarPainelAdmin();
+    }
+}
+
+async function editarKey(uid, keyAtual, diasAtual) {
+    const novaKey = prompt("Editar nome da Key:", keyAtual);
+    if(!novaKey) return;
+    const novosDias = prompt("Editar validade (dias):", diasAtual);
+    if(!novosDias) return;
+
+    await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
+        method: "PATCH", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ key: novaKey, validade: String(novosDias), dias: String(novosDias) })
+    });
+    alert("Key editada com sucesso!");
+    carregarPainelAdmin();
 }
 
 function atualizarBotaoManutencao(isAtiva) {
@@ -357,7 +424,7 @@ async function criarRevendedor() {
     const revId = 'rev_' + Math.random().toString(36).substr(2, 9);
     await fetch(`${FIREBASE_URL}/revendedores/${revId}.json`, {
         method: "PUT", headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ usuario: user, senha: pass, creditos: credito, gastoTotal: "0.0", keysGeradas: 0, online: false })
+        body: JSON.stringify({ usuario: user, senha: pass, creditos: credito, online: false })
     });
     alert("Revendedor criado com sucesso!");
     carregarPainelAdmin();
