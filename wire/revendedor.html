@@ -75,7 +75,6 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Gráficos em barra simples e limpos */
     .grafico-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-top: 15px; }
     .barra-progresso { width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; margin-top: 8px; }
     .barra-fill { height: 100%; background: linear-gradient(90deg, #ff1493, #00f2fe); width: 0%; transition: width 0.5s ease; }
@@ -88,7 +87,7 @@
     .badge.ativa { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .badge.desativada { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
     
-    .action-btn { background: var(--surface); border: 1px solid var(--border); padding: 6px 10px; border-radius: 8px; color: var(--text-sub); cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 4px; }
+    .action-btn { background: var(--surface); border: 1px solid var(--border); padding: 6px 10px; border-radius: 8px; color: var(--text-sub); cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 2px; }
     .action-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
     .theme-toggle { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
@@ -151,7 +150,6 @@
             <button class="btn" onclick="playClick(); gerarKeyRevendedor()">Gerar Chave (Custa <span id="lblCusto">$15.0</span>)</button>
         </div>
 
-        <!-- GRÁFICOS DE USO E GASTO -->
         <div class="card">
             <h2>📊 Gráfico de Uso e Gasto</h2>
             <div class="grafico-box">
@@ -173,8 +171,8 @@
         <div class="card">
             <h2>⚙️ Informações e Regras</h2>
             <p style="font-size: 13px; color: var(--text-sub); line-height: 1.6;">
-                • Gerencie suas chaves com total liberdade na aba Clientes.<br>
-                • Você pode resetar o HWID ou excluir as chaves geradas por você a qualquer momento[cite: 3].
+                • Gerencie e edite suas chaves na aba Clientes.<br>
+                • Você pode alterar a validade, resetar o HWID ou excluir as chaves geradas por você[cite: 3].
             </p>
         </div>
     </div>
@@ -182,7 +180,7 @@
     <!-- ABA 3: CLIENTES -->
     <div id="tab-clientes" class="tab-content">
         <div class="card">
-            <h2>📋 Suas Chaves e Clientes</h2>
+            <h2>📋 Suas Chaves e Clientes (Com Opção de Editar)</h2>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -262,7 +260,6 @@ async function fazerLogin() {
 
     if(encontrado) {
         localStorage.setItem("vtx_rev", JSON.stringify({ id: revFirebaseId, usuario: revAtual.usuario }));
-        // Marca como online no Firebase[cite: 3]
         await fetch(`${FIREBASE_URL}/revendedores/${revFirebaseId}/online.json`, { method: "PUT", body: "true" });
         carregarPainelRevendedor();
     } else { alert("Usuário ou senha incorretos!"); }
@@ -274,98 +271,4 @@ async function carregarPainelRevendedor() {
 
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("painelBox").style.display = "block";
-    document.getElementById("lblUser").textContent = session.usuario;
-
-    const rRes = await fetch(`${FIREBASE_URL}/revendedores/${session.id}.json`);
-    revAtual = await rRes.json();
-    const creditos = parseFloat(revAtual.creditos || 0);
-    document.getElementById("lblCreditos").textContent = `$${creditos.toFixed(1)}`;
-
-    const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
-    const data = await kRes.json();
-    let tbody = "";
-    let countKeys = 0;
-    let gastoTotal = 0;
-
-    if(data) {
-        for(let uid in data) {
-            let k = data[uid];
-            if(k.criador === session.usuario) {
-                countKeys++;
-                // Estima o gasto com base nos dias da key
-                gastoTotal += custosDias[k.validade || k.dias || "30"] || 1.0;
-                tbody += `
-                    <tr>
-                        <td><strong>${k.key}</strong></td>
-                        <td>${k.validade || k.dias || '30'} dias</td>
-                        <td><span class="badge ${k.status === 'ativada' ? 'ativa' : 'desativada'}">${k.status}</span></td>
-                        <td>
-                            <button class="action-btn" onclick="playClick(); revResetarKey('${uid}')">Reset</button>
-                            <button class="action-btn" style="color:var(--danger)" onclick="playClick(); revExcluirKey('${uid}')">Excluir[cite: 3]</button>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-    }
-    document.getElementById("tabelaRevKeys").innerHTML = tbody || `<tr><td colspan="4" style="text-align:center;">Você ainda não gerou nenhuma key.</td></tr>`;
-    
-    // Atualiza estatísticas do gráfico
-    document.getElementById("statKeysGeradas").textContent = countKeys;
-    document.getElementById("statGastoTotal").textContent = `$${gastoTotal.toFixed(1)}`;
-    document.getElementById("barraGasto").style.width = Math.min((gastoTotal / 100) * 100, 100) + "%";
-}
-
-async function gerarKeyRevendedor() {
-    const session = JSON.parse(localStorage.getItem("vtx_rev"));
-    let creditosAtuais = parseFloat(revAtual.creditos) || 0;
-    const diasSelecionados = document.getElementById("selectDias").value;
-    const custoKey = custosDias[diasSelecionados] || 1.0;
-
-    if(creditosAtuais < custoKey) return alert("Créditos insuficientes!");
-
-    const custom = document.getElementById("genKeyCustom").value.trim();
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let part = ''; for (let j = 0; j < 6; j++) part += chars.charAt(Math.floor(Math.random() * chars.length));
-    const keyGen = custom ? custom : `VTX-${part}`;
-    const uid = 'UID_' + Math.random().toString(36).substr(2, 9);
-
-    await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
-        method: "PUT", headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ device: "", dias: String(diasSelecionados), validade: String(diasSelecionados), dispositivos: "1", key: keyGen, status: "ativada", uid: uid, criador: session.usuario })
-    });
-
-    creditosAtuais -= custoKey;
-    await fetch(`${FIREBASE_URL}/revendedores/${session.id}/creditos.json`, {
-        method: "PUT", headers: {"Content-Type": "application/json"}, body: JSON.stringify(creditosAtuais.toFixed(1))
-    });
-
-    alert("Key gerada com sucesso!");
-    document.getElementById("genKeyCustom").value = "";
-    carregarPainelRevendedor();
-}
-
-async function revResetarKey(uid) {
-    await fetch(`${FIREBASE_URL}/usuariosT/${uid}/device.json`, { method: "PUT", body: JSON.stringify("") });
-    alert("Key resetada!"); carregarPainelRevendedor();
-}
-
-async function revExcluirKey(uid) {
-    if(confirm("Tem certeza que deseja excluir esta key[cite: 3]?")) {
-        await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, { method: "DELETE" });
-        carregarPainelRevendedor();
-    }
-}
-
-async function logout() {
-    const session = JSON.parse(localStorage.getItem("vtx_rev"));
-    if(session) {
-        await fetch(`${FIREBASE_URL}/revendedores/${session.id}/online.json`, { method: "PUT", body: "false" });
-    }
-    localStorage.removeItem("vtx_rev"); location.reload();
-}
-
-window.onload = () => { if(localStorage.getItem("vtx_rev")) carregarPainelRevendedor(); };
-</script>
-</body>
-</html>
+    document.
