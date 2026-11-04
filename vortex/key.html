@@ -385,7 +385,7 @@ function startCountdown(expireTime) {
 
         if (distance < 0) {
             clearInterval(activeTimer);
-            localStorage.removeItem("vtx_session_v6");
+            localStorage.removeItem("vtx_session_v7");
             window.location.reload();
             return;
         }
@@ -416,8 +416,10 @@ async function initKeySystem() {
         document.getElementById("userIp").textContent = rawIp;
         const now = new Date().getTime();
 
-        // 1. Varre o banco em /usuariosT/ para ver se já existe uma key vinculada a este IP e que ainda não expirou
+        // 1. Procura na pasta /usuariosT/ se já existe uma key ativa para este IP
         let activeKeyData = null;
+        let activeKeyUid = null;
+        
         try {
             const res = await fetch(`${FIREBASE_URL}/usuariosT.json`);
             if (res.ok) {
@@ -425,9 +427,9 @@ async function initKeySystem() {
                 if (allUsers) {
                     for (let uid in allUsers) {
                         let userObj = allUsers[uid];
-                        // Se o IP bater e a chave ainda estiver dentro do prazo de 24h
                         if (userObj && userObj.ip === rawIp && userObj.expireTime && userObj.expireTime > now) {
                             activeKeyData = userObj;
+                            activeKeyUid = uid;
                             break;
                         }
                     }
@@ -437,19 +439,25 @@ async function initKeySystem() {
             console.warn("Erro ao buscar chaves existentes.");
         }
 
-        // Se já tem uma chave ativa para este IP, reaproveita ela sem duplicar nada!
-        if (activeKeyData) {
+        // Se já existe uma chave para este IP, limpa o campo 'device' automaticamente para liberar o painel e reaproveita a mesma key!
+        if (activeKeyData && activeKeyUid) {
+            await fetch(`${FIREBASE_URL}/usuariosT/${activeKeyUid}/device.json`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify("")
+            });
+
             const generatedAtTime = activeKeyData.generatedAt || new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
             
             document.getElementById("keyText").textContent = activeKeyData.key;
             document.getElementById("time").textContent = generatedAtTime;
-            document.getElementById("msg").textContent = "KEY ATIVA RECUPERADA!";
+            document.getElementById("msg").textContent = "KEY LIBERADA COM SUCESSO!";
             document.getElementById("copyBtn").style.display = "flex";
             
             startCountdown(activeKeyData.expireTime);
             hideLoading();
             
-            localStorage.setItem("vtx_session_v6", JSON.stringify({
+            localStorage.setItem("vtx_session_v7", JSON.stringify({
                 key: activeKeyData.key,
                 generatedAt: generatedAtTime,
                 expireTime: activeKeyData.expireTime
@@ -457,14 +465,13 @@ async function initKeySystem() {
             return;
         }
 
-        // 2. Se não existir, gera uma nova Key e salva o IP diretamente dentro do nó dela em /usuariosT/UID/
+        // 2. Se não existir, gera uma nova Key limpa com o IP unificado no mesmo nó
         setLoadMsg("GERANDO SUA KEY...");
         const newKey = generateKey();
         const UID = generateFirebaseUID();
         const generatedAtTime = new Date().toLocaleTimeString("pt-BR", {hour:"2-digit", minute:"2-digit"});
         const expireTime = now + ONE_DAY_MS;
 
-        // Estrutura unificada: os campos que o seu painel lê + o IP e o tempo de expiração juntos
         const payload = {
             device: "",
             dias: "0",
@@ -473,20 +480,18 @@ async function initKeySystem() {
             status: "ativada",
             uid: UID,
             validade: "1",
-            ip: rawIp,                    // <-- IP gravado junto na key para evitar duplicidade
-            expireTime: expireTime,       // <-- Expiração para controle interno
+            ip: rawIp,
+            expireTime: expireTime,
             generatedAt: generatedAtTime
         };
 
-        // Salva diretamente na Firebase em /usuariosT/UID
         await fetch(`${FIREBASE_URL}/usuariosT/${UID}.json`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        // Salva na sessão local do navegador
-        localStorage.setItem("vtx_session_v6", JSON.stringify({
+        localStorage.setItem("vtx_session_v7", JSON.stringify({
             key: newKey,
             generatedAt: generatedAtTime,
             expireTime: expireTime
