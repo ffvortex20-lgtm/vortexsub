@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08080b">
+<title>VORTEX STORE | Loja Oficial</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:#08080b;color:#fff;min-height:100vh;padding:20px 15px;overflow-x:hidden}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.container{max-width:1000px;margin:auto;position:relative;z-index:1}
+header{text-align:center;padding:35px 10px 30px}
+.logo{width:100px;height:100px;border-radius:25px;object-fit:cover;margin-bottom:17px;border:1px solid #39393d}
+h1{font-size:35px;font-weight:800;letter-spacing:2px}
+h1 span{color:#92929a}
+.subtitle{color:#92929a;font-size:12px;letter-spacing:2px;margin-top:9px}
+.status{display:inline-block;border:1px solid #333;padding:8px 15px;border-radius:30px;font-size:11px;color:#bbb;margin-bottom:20px}
+.section-title{text-align:center;margin:28px 0 20px}
+.section-title h2{font-size:23px}
+.section-title p{font-size:12px;color:#888;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:#111115;border:1px solid #29292e;border-radius:22px;padding:23px 19px;transition:.25s}
+.card:hover{transform:translateY(-4px);border-color:#777}
+.card small{color:#999;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.card h3{font-size:25px;margin-top:13px}
+.card p{font-size:12px;color:#888;margin-top:6px}
+.price{font-size:29px;font-weight:800;margin:22px 0}
+.buy{display:block;background:linear-gradient(180deg,#fff,#dedee1);color:#111;text-align:center;text-decoration:none;padding:14px;border-radius:30px;font-size:12px;font-weight:800;transition:.2s}
+.buy:hover{filter:brightness(.87);transform:translateY(-2px)}
+.featured{border-color:#777;background:linear-gradient(145deg,#202024,#111115)}
+.featured small{color:#fff}
+.product{margin-top:30px;background:#111115;border:1px solid #29292e;border-radius:24px;padding:27px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.product h2{font-size:25px;margin:10px 0}
+.product p{font-size:13px;color:#999;line-height:1.7}
+.product .buy{min-width:190px;background:transparent;border:1px solid #aaa;color:#fff}
+.panel-link{margin-top:18px;background:#111115;border:1px solid #29292e;border-radius:20px;padding:23px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.panel-link p{font-size:12px;color:#999;margin-top:5px}
+.panel-link a{color:#111;background:#fff;text-decoration:none;padding:12px 18px;border-radius:25px;font-size:11px;font-weight:800;white-space:nowrap}
+.info{text-align:center;color:#777;font-size:12px;margin-top:25px;line-height:1.8}
+footer{text-align:center;color:#555;font-size:11px;margin:35px 0 10px}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.product{flex-direction:column;align-items:flex-start}.product .buy{width:100%}}
+@media(max-width:440px){.grid{grid-template-columns:1fr}h1{font-size:29px}.panel-link{align-items:flex-start;flex-direction:column}.panel-link a{width:100%;text-align:center}}
+</style>
+</head>
+<body>
+
+<canvas id="snow"></canvas>
+
+<div class="container">
+
+<header>
+<div class="status">● VORTEX STORE · ATENDIMENTO ONLINE</div><br>
+<img class="logo" src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg" alt="Vortex">
+<h1>VORTEX <span>STORE</span></h1>
+<p class="subtitle">TECNOLOGIA · ACESSOS · PROJETOS</p>
+</header>
+
+<section>
+<div class="section-title">
+<h2>Adquira seus créditos</h2>
+<p>Escolha seu pacote e solicite a liberação pelo WhatsApp.</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+<small>Plano inicial</small>
+<h3>15 créditos</h3>
+<p>Ideal para começar</p>
+<div class="price">R$ 6,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2015%20cr%C3%A9ditos%20por%20R%24%206%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card">
+<small>Plano básico</small>
+<h3>30 créditos</h3>
+<p>Mais possibilidades</p>
+<div class="price">R$ 15,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2030%20cr%C3%A9ditos%20por%20R%24%2015%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card featured">
+<small>★ Destaque</small>
+<h3>50 créditos</h3>
+<p>Ótimo custo-benefício</p>
+<div class="price">R$ 20,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2050%20cr%C3%A9ditos%20por%20R%24%2020%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card">
+<small>Plano avançado</small>
+<h3>60 créditos</h3>
+<p>Para ampliar suas vendas</p>
+<div class="price">R$ 30,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2060%20cr%C3%A9ditos%20por%20R%24%2030%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card">
+<small>Plano premium</small>
+<h3>70 créditos</h3>
+<p>Pacote com mais créditos</p>
+<div class="price">R$ 40,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2070%20cr%C3%A9ditos%20por%20R%24%2040%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+</div>
+</section>
+
+<section class="product">
+<div>
+<small style="color:#aaa;letter-spacing:1px">PRODUTO DISPONÍVEL</small>
+<h2>ROYAL MENU</h2>
+<p>Adquira o acesso de venda do APK Royal Menu.<br>Consulte as condições e informações de liberação.</p>
+</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20informa%C3%A7%C3%B5es%20sobre%20o%20acesso%20de%20venda%20do%20APK%20Royal%20Menu." target="_blank">CONSULTAR ACESSO</a>
+</section>
+
+<section class="panel-link">
+<div>
+<strong>Já é revendedor?</strong>
+<p>Acesse seu painel para gerar e administrar suas keys.</p>
+</div>
+<a href="revendedor.html">ACESSAR PAINEL →</a>
+</section>
+
+<div class="info">
+Atendimento e compras pelo WhatsApp.<br>
+A liberação dos créditos é realizada após confirmação do pagamento.
+</div>
+
+<footer>© 2026 VORTEX STORE · TODOS OS DIREITOS RESERVADOS</footer>
+
+</div>
+
+<script>
+(function(){
+const canvas=document.getElementById('snow');
+const ctx=canvas.getContext('2d');
+let w,h,flakes=[];
+function resize(){
+const dpr=Math.min(devicePixelRatio||1,2);
+w=innerWidth;h=innerHeight;
+canvas.width=w*dpr;canvas.height=h*dpr;
+ctx.setTransform(dpr,0,0,dpr,0,0);
+const total=w<600?55:100;
+while(flakes.length<total)flakes.push(make(true));
+flakes.length=total;
+}
+function make(initial){
+return{x:Math.random()*w,y:initial?Math.random()*h:-10,r:.5+Math.random()*1.8,s:.3+Math.random()*1.1,wind:Math.random()*.5-.25,phase:Math.random()*6.28,alpha:.2+Math.random()*.55};
+}
+function animate(){
+ctx.clearRect(0,0,w,h);
+flakes.forEach(f=>{
+f.phase+=.012;f.y+=f.s;f.x+=f.wind+Math.sin(f.phase)*.2;
+if(f.y>h+10)Object.assign(f,make(false));
+if(f.x<-10)f.x=w+10;if(f.x>w+10)f.x=-10;
+ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+ctx.fillStyle=`rgba(255,255,255,${f.alpha})`;ctx.fill();
+});
+requestAnimationFrame(animate);
+}
+resize();addEventListener('resize',resize);
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches)animate();
+})();
+</script>
+</body>
+</html>
