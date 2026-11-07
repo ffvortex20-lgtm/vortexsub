@@ -1,172 +1,1222 @@
 
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#08080b">
-<title>VORTEX STORE | Loja Oficial</title>
+<title>VORTEX | Painel Revendedor</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
-body{background:#08080b;color:#fff;min-height:100vh;padding:20px 15px;overflow-x:hidden}
-#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.container{max-width:1000px;margin:auto;position:relative;z-index:1}
-header{text-align:center;padding:35px 10px 30px}
-.logo{width:100px;height:100px;border-radius:25px;object-fit:cover;margin-bottom:17px;border:1px solid #39393d}
-h1{font-size:35px;font-weight:800;letter-spacing:2px}
-h1 span{color:#92929a}
-.subtitle{color:#92929a;font-size:12px;letter-spacing:2px;margin-top:9px}
-.status{display:inline-block;border:1px solid #333;padding:8px 15px;border-radius:30px;font-size:11px;color:#bbb;margin-bottom:20px}
-.section-title{text-align:center;margin:28px 0 20px}
-.section-title h2{font-size:23px}
-.section-title p{font-size:12px;color:#888;margin-top:8px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.card{background:#111115;border:1px solid #29292e;border-radius:22px;padding:23px 19px;transition:.25s}
-.card:hover{transform:translateY(-4px);border-color:#777}
-.card small{color:#999;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
-.card h3{font-size:25px;margin-top:13px}
-.card p{font-size:12px;color:#888;margin-top:6px}
-.price{font-size:29px;font-weight:800;margin:22px 0}
-.buy{display:block;background:linear-gradient(180deg,#fff,#dedee1);color:#111;text-align:center;text-decoration:none;padding:14px;border-radius:30px;font-size:12px;font-weight:800;transition:.2s}
-.buy:hover{filter:brightness(.87);transform:translateY(-2px)}
-.featured{border-color:#777;background:linear-gradient(145deg,#202024,#111115)}
-.featured small{color:#fff}
-.product{margin-top:30px;background:#111115;border:1px solid #29292e;border-radius:24px;padding:27px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.product h2{font-size:25px;margin:10px 0}
-.product p{font-size:13px;color:#999;line-height:1.7}
-.product .buy{min-width:190px;background:transparent;border:1px solid #aaa;color:#fff}
-.panel-link{margin-top:18px;background:#111115;border:1px solid #29292e;border-radius:20px;padding:23px;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.panel-link p{font-size:12px;color:#999;margin-top:5px}
-.panel-link a{color:#111;background:#fff;text-decoration:none;padding:12px 18px;border-radius:25px;font-size:11px;font-weight:800;white-space:nowrap}
-.info{text-align:center;color:#777;font-size:12px;margin-top:25px;line-height:1.8}
-footer{text-align:center;color:#555;font-size:11px;margin:35px 0 10px}
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.product{flex-direction:column;align-items:flex-start}.product .buy{width:100%}}
-@media(max-width:440px){.grid{grid-template-columns:1fr}h1{font-size:29px}.panel-link{align-items:flex-start;flex-direction:column}.panel-link a{width:100%;text-align:center}}
+:root{
+--bg:#08080b;
+--surface:#111115;
+--glass:rgba(17,17,21,.95);
+--border:rgba(255,255,255,.12);
+--text:#f7f7f8;
+--sub:#c5c5cc;
+--dim:#85858f;
+--primary:#f4f4f5;
+--success:#35cf79;
+--danger:#ef626c;
+}
+
+[data-theme="light"]{
+--bg:#f1f1f3;
+--surface:#fff;
+--glass:rgba(255,255,255,.96);
+--border:rgba(20,20,25,.13);
+--text:#17171b;
+--sub:#45454d;
+--dim:#777780;
+--primary:#17171b;
+--success:#159c58;
+--danger:#d93643;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+padding:28px 15px 45px;
+overflow-x:hidden;
+}
+
+#snowCanvas{
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:0;
+}
+
+.ambient-glow{
+position:fixed;
+width:350px;
+height:350px;
+border-radius:50%;
+background:rgba(180,180,200,.07);
+filter:blur(120px);
+top:-170px;
+left:calc(50% - 175px);
+pointer-events:none;
+z-index:0;
+}
+
+.container{
+width:100%;
+max-width:900px;
+margin:auto;
+position:relative;
+z-index:2;
+}
+
+.card{
+background:var(--glass);
+backdrop-filter:blur(18px);
+border:1px solid var(--border);
+border-radius:25px;
+padding:26px;
+margin-bottom:19px;
+box-shadow:0 18px 55px rgba(0,0,0,.22);
+}
+
+.login-brand{
+text-align:center;
+margin:15px auto 30px;
+}
+
+.login-logo{
+width:105px;
+height:105px;
+object-fit:cover;
+border-radius:25px;
+border:1px solid var(--border);
+margin-bottom:18px;
+}
+
+.brand-title{
+font-size:32px;
+font-weight:800;
+letter-spacing:2px;
+}
+
+.brand-subtitle{
+font-size:11px;
+letter-spacing:2px;
+color:var(--dim);
+margin-top:8px;
+}
+
+.login-card{
+max-width:620px;
+margin:auto;
+}
+
+.field-label{
+display:block;
+font-size:12px;
+font-weight:800;
+letter-spacing:1px;
+margin-bottom:15px;
+}
+
+input,select{
+width:100%;
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:17px;
+padding:16px;
+color:var(--text);
+font-size:14px;
+outline:none;
+margin-bottom:14px;
+min-height:54px;
+}
+
+input::placeholder{
+color:var(--dim);
+}
+
+input:focus,select:focus{
+border-color:rgba(255,255,255,.5);
+box-shadow:0 0 0 3px rgba(255,255,255,.05);
+}
+
+.btn{
+background:linear-gradient(180deg,#fff,#dedee1);
+color:#111115;
+border:1px solid #fff;
+border-radius:50px;
+padding:16px 20px;
+font-size:13px;
+font-weight:800;
+cursor:pointer;
+width:100%;
+transition:.2s;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+filter:brightness(.92);
+}
+
+.btn:disabled{
+opacity:.5;
+cursor:not-allowed;
+transform:none;
+}
+
+.theme-toggle{
+background:var(--surface);
+border:1px solid var(--border);
+color:var(--text);
+width:42px;
+height:42px;
+border-radius:50%;
+cursor:pointer;
+font-size:17px;
+}
+
+.header-card{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:18px;
+}
+
+.header-left{
+display:flex;
+align-items:center;
+gap:13px;
+}
+
+.logo-img{
+width:50px;
+height:50px;
+border-radius:16px;
+object-fit:cover;
+border:1px solid var(--border);
+}
+
+h1{
+font-size:17px;
+font-weight:800;
+}
+
+h1 span{
+color:var(--dim);
+}
+
+h2{
+font-size:17px;
+font-weight:800;
+margin-bottom:18px;
+}
+
+.header-right{
+display:flex;
+align-items:center;
+gap:13px;
+}
+
+.balance{
+text-align:right;
+}
+
+.balance small{
+font-size:10px;
+color:var(--dim);
+font-weight:800;
+}
+
+.balance strong{
+display:block;
+font-size:19px;
+margin-top:4px;
+}
+
+.logout-btn{
+width:auto;
+background:transparent;
+color:var(--text);
+border:1px solid rgba(239,98,108,.5);
+box-shadow:none;
+padding:10px 16px;
+}
+
+.tab-nav{
+display:flex;
+gap:7px;
+padding:7px;
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:17px;
+margin-bottom:20px;
+}
+
+.tab-btn{
+flex:1;
+background:transparent;
+border:0;
+color:var(--dim);
+padding:13px 8px;
+border-radius:12px;
+font-size:11px;
+font-weight:800;
+cursor:pointer;
+text-transform:uppercase;
+}
+
+.tab-btn.active{
+background:#f1f1f2;
+color:#111115;
+}
+
+.tab-content{
+display:none;
+}
+
+.tab-content.active{
+display:block;
+}
+
+.grafico-box{
+background:var(--surface);
+border:1px solid var(--border);
+border-radius:17px;
+padding:17px;
+margin-top:13px;
+}
+
+.stats-line{
+display:flex;
+justify-content:space-between;
+gap:10px;
+font-size:12px;
+font-weight:700;
+}
+
+.barra-progresso{
+height:8px;
+background:rgba(255,255,255,.08);
+border-radius:20px;
+overflow:hidden;
+margin-top:13px;
+}
+
+.barra-fill{
+height:100%;
+width:0;
+background:linear-gradient(90deg,#888,#fff);
+transition:width .5s;
+}
+
+.table-wrap{
+overflow-x:auto;
+border:1px solid var(--border);
+border-radius:15px;
+background:var(--surface);
+}
+
+table{
+width:100%;
+min-width:570px;
+border-collapse:collapse;
+font-size:12px;
+text-align:left;
+}
+
+th,td{
+padding:14px 11px;
+border-bottom:1px solid var(--border);
+color:var(--sub);
+}
+
+th{
+font-size:10px;
+color:var(--dim);
+text-transform:uppercase;
+letter-spacing:.8px;
+}
+
+.badge{
+padding:5px 9px;
+border-radius:20px;
+font-size:10px;
+font-weight:800;
+}
+
+.badge.ativa{
+background:rgba(53,207,121,.13);
+color:var(--success);
+}
+
+.badge.desativada{
+background:rgba(239,98,108,.13);
+color:var(--danger);
+}
+
+.action-btn{
+background:var(--surface);
+border:1px solid var(--border);
+padding:8px 10px;
+border-radius:9px;
+color:var(--sub);
+cursor:pointer;
+font-size:10px;
+font-weight:700;
+margin:2px;
+}
+
+.action-btn:hover{
+background:#fff;
+color:#111;
+}
+
+.danger-text{
+color:var(--danger);
+}
+
+.notice{
+font-size:12px;
+color:var(--dim);
+line-height:1.8;
+}
+
+#message{
+display:none;
+padding:13px;
+border:1px solid var(--border);
+background:var(--surface);
+border-radius:13px;
+margin-bottom:15px;
+font-size:12px;
+color:var(--sub);
+}
+
+@media(max-width:600px){
+body{padding:18px 12px 35px}
+.card{padding:20px 16px;border-radius:22px}
+.login-logo{width:90px;height:90px}
+.brand-title{font-size:28px}
+.header-card{align-items:flex-start}
+.header-right{width:100%;justify-content:space-between}
+.tab-nav{gap:3px}
+.tab-btn{font-size:9px;padding:12px 4px}
+}
 </style>
 </head>
+
 <body>
 
-<canvas id="snow"></canvas>
+<canvas id="snowCanvas"></canvas>
+<div class="ambient-glow"></div>
 
-<div class="container">
+<!-- LOGIN -->
 
-<header>
-<div class="status">● VORTEX STORE · ATENDIMENTO ONLINE</div><br>
-<img class="logo" src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg" alt="Vortex">
-<h1>VORTEX <span>STORE</span></h1>
-<p class="subtitle">TECNOLOGIA · ACESSOS · PROJETOS</p>
-</header>
+<div class="container" id="loginBox">
 
-<section>
-<div class="section-title">
-<h2>Adquira seus créditos</h2>
-<p>Escolha seu pacote e solicite a liberação pelo WhatsApp.</p>
+<div class="login-brand">
+
+<div style="display:flex;justify-content:flex-end;max-width:620px;margin:0 auto 8px">
+<button class="theme-toggle" onclick="toggleTheme()" id="themeIconLogin">☀️</button>
 </div>
 
-<div class="grid">
+<img class="login-logo"
+src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg"
+alt="Vortex">
 
-<div class="card">
-<small>Plano inicial</small>
-<h3>15 créditos</h3>
-<p>Ideal para começar</p>
-<div class="price">R$ 6,00</div>
-<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2015%20cr%C3%A9ditos%20por%20R%24%206%2C00." target="_blank">COMPRAR AGORA</a>
-</div>
+<div class="brand-title">VORTEX</div>
 
-<div class="card">
-<small>Plano básico</small>
-<h3>30 créditos</h3>
-<p>Mais possibilidades</p>
-<div class="price">R$ 15,00</div>
-<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2030%20cr%C3%A9ditos%20por%20R%24%2015%2C00." target="_blank">COMPRAR AGORA</a>
-</div>
-
-<div class="card featured">
-<small>★ Destaque</small>
-<h3>50 créditos</h3>
-<p>Ótimo custo-benefício</p>
-<div class="price">R$ 20,00</div>
-<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2050%20cr%C3%A9ditos%20por%20R%24%2020%2C00." target="_blank">COMPRAR AGORA</a>
-</div>
-
-<div class="card">
-<small>Plano avançado</small>
-<h3>60 créditos</h3>
-<p>Para ampliar suas vendas</p>
-<div class="price">R$ 30,00</div>
-<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2060%20cr%C3%A9ditos%20por%20R%24%2030%2C00." target="_blank">COMPRAR AGORA</a>
-</div>
-
-<div class="card">
-<small>Plano premium</small>
-<h3>70 créditos</h3>
-<p>Pacote com mais créditos</p>
-<div class="price">R$ 40,00</div>
-<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2070%20cr%C3%A9ditos%20por%20R%24%2040%2C00." target="_blank">COMPRAR AGORA</a>
+<div class="brand-subtitle">
+AUTENTICAÇÃO · SISTEMA ONLINE
 </div>
 
 </div>
-</section>
 
-<section class="product">
+<div class="card login-card">
+
+<div class="field-label">ACESSO DO REVENDEDOR</div>
+
+<div id="message"></div>
+
+<input id="loginUser"
+type="text"
+placeholder="Usuário"
+autocomplete="username">
+
+<input id="loginPass"
+type="password"
+placeholder="Senha"
+autocomplete="current-password">
+
+<button class="btn" id="loginButton" onclick="playClick(); fazerLogin()">
+ENTRAR NO PAINEL
+</button>
+
+</div>
+</div>
+
+<!-- PAINEL -->
+
+<div class="container" id="painelBox" style="display:none">
+
+<div class="card header-card">
+
+<div class="header-left">
+
+<img class="logo-img"
+src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg"
+alt="Vortex">
+
 <div>
-<small style="color:#aaa;letter-spacing:1px">PRODUTO DISPONÍVEL</small>
-<h2>ROYAL MENU</h2>
-<p>Adquira o acesso de venda do APK Royal Menu.<br>Consulte as condições e informações de liberação.</p>
-</div>
-<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20informa%C3%A7%C3%B5es%20sobre%20o%20acesso%20de%20venda%20do%20APK%20Royal%20Menu." target="_blank">CONSULTAR ACESSO</a>
-</section>
-
-<section class="panel-link">
-<div>
-<strong>Já é revendedor?</strong>
-<p>Acesse seu painel para gerar e administrar suas keys.</p>
-</div>
-<a href="revendedor.html">ACESSAR PAINEL →</a>
-</section>
-
-<div class="info">
-Atendimento e compras pelo WhatsApp.<br>
-A liberação dos créditos é realizada após confirmação do pagamento.
+<h1>VORTEX <span>REVENDEDOR</span></h1>
+<p style="font-size:11px;color:var(--dim);margin-top:5px">
+Conta: <strong id="lblUser"></strong>
+</p>
 </div>
 
-<footer>© 2026 VORTEX STORE · TODOS OS DIREITOS RESERVADOS</footer>
+</div>
+
+<div class="header-right">
+
+<div class="balance">
+<small>SALDO DE CRÉDITOS</small>
+<strong id="lblCreditos">0</strong>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()" id="themeIconPainel">☀️</button>
+
+<button class="btn logout-btn" onclick="playClick();logout()">SAIR</button>
 
 </div>
+</div>
+
+<div class="tab-nav">
+<button class="tab-btn active" onclick="switchTab('revendedor',this)">Revendedor</button>
+<button class="tab-btn" onclick="switchTab('sistema',this)">Sistema</button>
+<button class="tab-btn" onclick="switchTab('clientes',this)">Clientes</button>
+</div>
+
+<!-- REVENDEDOR -->
+
+<div id="tab-revendedor" class="tab-content active">
+
+<div class="card">
+
+<h2>🔑 Gerar nova chave</h2>
+
+<label class="field-label">NOME PERSONALIZADO (OPCIONAL)</label>
+
+<input type="text" id="genKeyCustom" placeholder="Digite o nome da key">
+
+<label class="field-label">ESCOLHA A VALIDADE</label>
+
+<select id="selectDias" onchange="atualizarCusto()">
+<option value="1">1 Dia — 1 crédito</option>
+<option value="5">5 Dias — 3 créditos</option>
+<option value="7">7 Dias — 5 créditos</option>
+<option value="15">15 Dias — 9 créditos</option>
+<option value="30" selected>30 Dias — 15 créditos</option>
+</select>
+
+<button class="btn" id="generateButton" onclick="playClick();gerarKeyRevendedor()">
+GERAR CHAVE · <span id="lblCusto">15 créditos</span>
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>📊 Estatísticas</h2>
+
+<div class="grafico-box">
+<div class="stats-line">
+<span>Total de keys geradas</span>
+<strong id="statKeysGeradas">0</strong>
+</div>
+</div>
+
+<div class="grafico-box">
+<div class="stats-line">
+<span>Total gasto em créditos</span>
+<strong id="statGastoTotal">0</strong>
+</div>
+<div class="barra-progresso">
+<div class="barra-fill" id="barraGasto"></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- SISTEMA -->
+
+<div id="tab-sistema" class="tab-content">
+
+<div class="card">
+
+<h2>⚙️ Informações do sistema</h2>
+
+<p class="notice">
+• Suas chaves ficam vinculadas ao seu usuário.<br>
+• Você pode editar o nome e a validade das suas keys.<br>
+• Você pode resetar o HWID de uma chave.<br>
+• Você pode excluir as chaves que gerou.<br>
+• A geração de novas keys desconta créditos do seu saldo.
+</p>
+
+</div>
+
+<div class="card">
+<h2>🛒 Adquirir créditos</h2>
+<p class="notice">Acesse a loja para comprar novos créditos e solicitar a adição ao seu saldo.</p>
+<a href="index.html" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:15px">
+ACESSAR VORTEX STORE
+</a>
+</div>
+
+</div>
+
+<!-- CLIENTES -->
+
+<div id="tab-clientes" class="tab-content">
+
+<div class="card">
+
+<h2>📋 Minhas keys</h2>
+
+<div class="table-wrap">
+
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Validade</th>
+<th>Status</th>
+<th>Ações</th>
+</tr>
+</thead>
+
+<tbody id="tabelaRevKeys">
+<tr><td colspan="4" style="text-align:center">Carregando...</td></tr>
+</tbody>
+
+</table>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<audio id="clickSound"
+src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"
+preload="auto"></audio>
 
 <script>
-(function(){
-const canvas=document.getElementById('snow');
-const ctx=canvas.getContext('2d');
-let w,h,flakes=[];
-function resize(){
-const dpr=Math.min(devicePixelRatio||1,2);
-w=innerWidth;h=innerHeight;
-canvas.width=w*dpr;canvas.height=h*dpr;
-ctx.setTransform(dpr,0,0,dpr,0,0);
-const total=w<600?55:100;
-while(flakes.length<total)flakes.push(make(true));
-flakes.length=total;
+const FIREBASE_URL="https://vmteam-fcb3e-default-rtdb.firebaseio.com";
+
+let revAtual=null;
+let revFirebaseId=null;
+let carregando=false;
+
+const custosDias={
+"1":1,
+"5":3,
+"7":5,
+"15":9,
+"30":15
+};
+
+function playClick(){
+const sound=document.getElementById("clickSound");
+if(sound){
+sound.currentTime=0;
+sound.play().catch(()=>{});
 }
-function make(initial){
-return{x:Math.random()*w,y:initial?Math.random()*h:-10,r:.5+Math.random()*1.8,s:.3+Math.random()*1.1,wind:Math.random()*.5-.25,phase:Math.random()*6.28,alpha:.2+Math.random()*.55};
 }
-function animate(){
-ctx.clearRect(0,0,w,h);
-flakes.forEach(f=>{
-f.phase+=.012;f.y+=f.s;f.x+=f.wind+Math.sin(f.phase)*.2;
-if(f.y>h+10)Object.assign(f,make(false));
-if(f.x<-10)f.x=w+10;if(f.x>w+10)f.x=-10;
-ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-ctx.fillStyle=`rgba(255,255,255,${f.alpha})`;ctx.fill();
+
+function mostrarMensagem(texto){
+const el=document.getElementById("message");
+el.textContent=texto;
+el.style.display="block";
+}
+
+function esconderMensagem(){
+const el=document.getElementById("message");
+el.style.display="none";
+el.textContent="";
+}
+
+function escapeHTML(value){
+return String(value??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+})[c]);
+}
+
+async function firebase(path,options={}){
+const response=await fetch(`${FIREBASE_URL}/${path}.json`,{
+...options,
+headers:{
+"Content-Type":"application/json",
+...(options.headers||{})
+}
 });
-requestAnimationFrame(animate);
+
+if(!response.ok){
+throw new Error("Falha ao comunicar com o Firebase.");
 }
-resize();addEventListener('resize',resize);
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches)animate();
+
+return response.json();
+}
+
+function switchTab(name,button){
+playClick();
+
+document.querySelectorAll(".tab-content")
+.forEach(el=>el.classList.remove("active"));
+
+document.querySelectorAll(".tab-btn")
+.forEach(el=>el.classList.remove("active"));
+
+document.getElementById("tab-"+name).classList.add("active");
+button.classList.add("active");
+}
+
+function toggleTheme(){
+playClick();
+
+const html=document.documentElement;
+const next=html.getAttribute("data-theme")==="dark"?"light":"dark";
+
+html.setAttribute("data-theme",next);
+localStorage.setItem("vtx_theme",next);
+
+const icon=next==="dark"?"☀️":"🌙";
+
+document.getElementById("themeIconLogin").textContent=icon;
+document.getElementById("themeIconPainel").textContent=icon;
+}
+
+function carregarTema(){
+const saved=localStorage.getItem("vtx_theme")||"dark";
+
+document.documentElement.setAttribute("data-theme",saved);
+
+const icon=saved==="dark"?"☀️":"🌙";
+
+document.getElementById("themeIconLogin").textContent=icon;
+document.getElementById("themeIconPainel").textContent=icon;
+}
+
+function atualizarCusto(){
+const dias=document.getElementById("selectDias").value;
+const custo=custosDias[dias]||1;
+
+document.getElementById("lblCusto").textContent=
+`${custo} ${custo===1?"crédito":"créditos"}`;
+}
+
+async function fazerLogin(){
+
+if(carregando)return;
+
+const usuario=document.getElementById("loginUser").value.trim();
+const senha=document.getElementById("loginPass").value.trim();
+
+if(!usuario||!senha){
+mostrarMensagem("Preencha o usuário e a senha.");
+return;
+}
+
+carregando=true;
+esconderMensagem();
+
+const button=document.getElementById("loginButton");
+button.disabled=true;
+button.textContent="VERIFICANDO...";
+
+try{
+
+const data=await firebase("revendedores");
+
+let encontrado=null;
+
+if(data){
+for(const id in data){
+
+const item=data[id];
+
+if(item&&String(item.usuario)===usuario&&String(item.senha)===senha){
+encontrado={id,...item};
+break;
+}
+
+}
+}
+
+if(!encontrado){
+mostrarMensagem("Usuário ou senha incorretos.");
+return;
+}
+
+revFirebaseId=encontrado.id;
+revAtual=encontrado;
+
+localStorage.setItem("vtx_rev",JSON.stringify({
+id:revFirebaseId,
+usuario:revAtual.usuario
+}));
+
+await firebase(`revendedores/${revFirebaseId}/online`,{
+method:"PUT",
+body:"true"
+});
+
+await carregarPainelRevendedor();
+
+}catch(error){
+mostrarMensagem("Não foi possível conectar ao sistema. Verifique sua conexão.");
+console.error(error);
+}finally{
+carregando=false;
+button.disabled=false;
+button.textContent="ENTRAR NO PAINEL";
+}
+
+}
+
+async function carregarPainelRevendedor(){
+
+const session=JSON.parse(localStorage.getItem("vtx_rev")||"null");
+
+if(!session||!session.id){
+document.getElementById("loginBox").style.display="block";
+document.getElementById("painelBox").style.display="none";
+return;
+}
+
+try{
+
+const conta=await firebase(`revendedores/${encodeURIComponent(session.id)}`);
+
+if(!conta){
+localStorage.removeItem("vtx_rev");
+location.reload();
+return;
+}
+
+revAtual=conta;
+revFirebaseId=session.id;
+
+document.getElementById("loginBox").style.display="none";
+document.getElementById("painelBox").style.display="block";
+
+document.getElementById("lblUser").textContent=conta.usuario||session.usuario;
+
+atualizarSaldo(conta.creditos);
+
+await atualizarTabela();
+
+}catch(error){
+console.error(error);
+alert("Erro ao carregar os dados do revendedor.");
+}
+
+}
+
+function atualizarSaldo(valor){
+const creditos=Number.parseFloat(valor)||0;
+document.getElementById("lblCreditos").textContent=creditos.toFixed(1);
+}
+
+async function atualizarTabela(){
+
+const session=JSON.parse(localStorage.getItem("vtx_rev")||"null");
+if(!session)return;
+
+const data=await firebase("usuariosT");
+
+let html="";
+let total=0;
+let gasto=0;
+
+if(data){
+
+for(const uid in data){
+
+const k=data[uid];
+
+if(!k||k.criador!==session.usuario)continue;
+
+total++;
+
+const dias=String(k.validade||k.dias||"30");
+gasto+=custosDias[dias]||1;
+
+const status=String(k.status||"desativada");
+const classe=status==="ativada"?"ativa":"desativada";
+
+html+=`
+<tr>
+<td><strong>${escapeHTML(k.key)}</strong></td>
+<td>${escapeHTML(dias)} dias</td>
+<td><span class="badge ${classe}">${escapeHTML(status)}</span></td>
+<td>
+<button class="action-btn" onclick="revEditarKey('${encodeURIComponent(uid)}')">✏️ Editar</button>
+<button class="action-btn" onclick="revResetarKey('${encodeURIComponent(uid)}')">Reset</button>
+<button class="action-btn danger-text" onclick="revExcluirKey('${encodeURIComponent(uid)}')">Excluir</button>
+</td>
+</tr>`;
+}
+
+}
+
+document.getElementById("tabelaRevKeys").innerHTML=
+html||`<tr><td colspan="4" style="text-align:center;color:var(--dim)">Você ainda não gerou nenhuma key.</td></tr>`;
+
+document.getElementById("statKeysGeradas").textContent=total;
+document.getElementById("statGastoTotal").textContent=gasto.toFixed(1);
+
+document.getElementById("barraGasto").style.width=
+Math.min(gasto,100)+"%";
+
+}
+
+async function gerarKeyRevendedor(){
+
+if(carregando)return;
+
+const session=JSON.parse(localStorage.getItem("vtx_rev")||"null");
+if(!session)return;
+
+carregando=true;
+
+const button=document.getElementById("generateButton");
+button.disabled=true;
+
+try{
+
+const conta=await firebase(`revendedores/${encodeURIComponent(session.id)}`);
+
+if(!conta)throw new Error("Conta não encontrada.");
+
+const dias=document.getElementById("selectDias").value;
+const custo=custosDias[dias]||1;
+const saldo=Number.parseFloat(conta.creditos)||0;
+
+if(saldo<custo){
+alert("Créditos insuficientes! Compre mais créditos na VORTEX STORE.");
+return;
+}
+
+const custom=document.getElementById("genKeyCustom").value.trim();
+
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+let part="";
+
+for(let i=0;i<6;i++){
+part+=chars.charAt(Math.floor(Math.random()*chars.length));
+}
+
+const keyGen=custom||`VTX-${part}`;
+const uid="UID_"+crypto.randomUUID().replace(/-/g,"").slice(0,12);
+
+const existente=await firebase("usuariosT");
+
+if(existente){
+const duplicada=Object.values(existente).some(k=>k&&String(k.key).toLowerCase()===keyGen.toLowerCase());
+if(duplicada){
+alert("Já existe uma key com esse nome. Escolha outro nome.");
+return;
+}
+}
+
+const novaConta={
+device:"",
+dias:String(dias),
+validade:String(dias),
+dispositivos:"1",
+key:keyGen,
+status:"ativada",
+uid:uid,
+criador:session.usuario
+};
+
+await firebase(`usuariosT/${uid}`,{
+method:"PUT",
+body:JSON.stringify(novaConta)
+});
+
+try{
+
+await firebase(`revendedores/${encodeURIComponent(session.id)}/creditos`,{
+method:"PUT",
+body:JSON.stringify(Number((saldo-custo).toFixed(1)))
+});
+
+}catch(error){
+
+await firebase(`usuariosT/${uid}`,{method:"DELETE"});
+throw error;
+
+}
+
+document.getElementById("genKeyCustom").value="";
+
+alert("Key gerada com sucesso!");
+
+await carregarPainelRevendedor();
+
+}catch(error){
+console.error(error);
+alert("Erro ao gerar a key: "+error.message);
+}finally{
+carregando=false;
+button.disabled=false;
+}
+
+}
+
+async function revEditarKey(uidEncoded){
+
+const uid=decodeURIComponent(uidEncoded);
+
+try{
+
+const k=await firebase(`usuariosT/${uid}`);
+
+if(!k||k.criador!==JSON.parse(localStorage.getItem("vtx_rev")).usuario){
+alert("Key não encontrada ou sem permissão.");
+return;
+}
+
+const novaKey=prompt("Editar nome da Key:",k.key||"");
+if(novaKey===null)return;
+
+if(!novaKey.trim()){
+alert("O nome da key não pode ficar vazio.");
+return;
+}
+
+const novosDias=prompt("Editar dias de validade:",k.validade||k.dias||"30");
+if(novosDias===null)return;
+
+if(!/^[1-9][0-9]{0,3}$/.test(novosDias.trim())){
+alert("Informe uma validade válida.");
+return;
+}
+
+await firebase(`usuariosT/${uid}`,{
+method:"PATCH",
+body:JSON.stringify({
+key:novaKey.trim(),
+dias:String(novosDias),
+validade:String(novosDias)
+})
+});
+
+alert("Key editada com sucesso!");
+await carregarPainelRevendedor();
+
+}catch(error){
+console.error(error);
+alert("Erro ao editar a key.");
+}
+
+}
+
+async function revResetarKey(uidEncoded){
+
+const uid=decodeURIComponent(uidEncoded);
+
+if(!confirm("Deseja realmente resetar o HWID desta key?"))return;
+
+try{
+
+const session=JSON.parse(localStorage.getItem("vtx_rev"));
+const k=await firebase(`usuariosT/${uid}`);
+
+if(!k||k.criador!==session.usuario){
+alert("Key não encontrada ou sem permissão.");
+return;
+}
+
+await firebase(`usuariosT/${uid}/device`,{
+method:"PUT",
+body:JSON.stringify("")
+});
+
+alert("HWID resetado com sucesso!");
+await carregarPainelRevendedor();
+
+}catch(error){
+console.error(error);
+alert("Erro ao resetar o HWID.");
+}
+
+}
+
+async function revExcluirKey(uidEncoded){
+
+const uid=decodeURIComponent(uidEncoded);
+
+if(!confirm("Tem certeza que deseja excluir esta key?"))return;
+
+try{
+
+const session=JSON.parse(localStorage.getItem("vtx_rev"));
+const k=await firebase(`usuariosT/${uid}`);
+
+if(!k||k.criador!==session.usuario){
+alert("Key não encontrada ou sem permissão.");
+return;
+}
+
+await firebase(`usuariosT/${uid}`,{
+method:"DELETE"
+});
+
+alert("Key excluída com sucesso!");
+await carregarPainelRevendedor();
+
+}catch(error){
+console.error(error);
+alert("Erro ao excluir a key.");
+}
+
+}
+
+async function logout(){
+
+const session=JSON.parse(localStorage.getItem("vtx_rev")||"null");
+
+try{
+if(session&&session.id){
+await firebase(`revendedores/${encodeURIComponent(session.id)}/online`,{
+method:"PUT",
+body:"false"
+});
+}
+}catch(error){
+console.error(error);
+}
+
+localStorage.removeItem("vtx_rev");
+location.reload();
+
+}
+
+// SNOW EFFECT
+
+(function(){
+
+const canvas=document.getElementById("snowCanvas");
+const ctx=canvas.getContext("2d");
+
+let w=0,h=0;
+let flakes=[];
+
+function resize(){
+
+const dpr=Math.min(devicePixelRatio||1,2);
+
+w=innerWidth;
+h=innerHeight;
+
+canvas.width=w*dpr;
+canvas.height=h*dpr;
+
+ctx.setTransform(dpr,0,0,dpr,0,0);
+
+const total=w<600?60:115;
+
+while(flakes.length<total)flakes.push(createFlake(true));
+flakes.length=total;
+
+}
+
+function createFlake(initial){
+
+return{
+x:Math.random()*w,
+y:initial?Math.random()*h:-10,
+radius:.5+Math.random()*1.8,
+speed:.3+Math.random()*1.1,
+wind:Math.random()*.5-.25,
+opacity:.2+Math.random()*.55,
+phase:Math.random()*Math.PI*2
+};
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,w,h);
+
+flakes.forEach(f=>{
+
+f.phase+=.012;
+f.y+=f.speed;
+f.x+=f.wind+Math.sin(f.phase)*.2;
+
+if(f.y>h+10)Object.assign(f,createFlake(false));
+if(f.x<-10)f.x=w+10;
+if(f.x>w+10)f.x=-10;
+
+ctx.beginPath();
+ctx.arc(f.x,f.y,f.radius,0,Math.PI*2);
+ctx.fillStyle=`rgba(255,255,255,${f.opacity})`;
+ctx.fill();
+
+});
+
+requestAnimationFrame(animate);
+
+}
+
+resize();
+addEventListener("resize",resize);
+
+if(!matchMedia("(prefers-reduced-motion: reduce)").matches)animate();
+
 })();
+
+// INICIALIZAÇÃO
+
+carregarTema();
+
+window.addEventListener("load",()=>{
+
+const session=JSON.parse(localStorage.getItem("vtx_rev")||"null");
+
+if(session&&session.id){
+carregarPainelRevendedor();
+}
+
+});
+
+document.getElementById("loginPass").addEventListener("keydown",e=>{
+if(e.key==="Enter")fazerLogin();
+});
+
 </script>
 </body>
 </html>
