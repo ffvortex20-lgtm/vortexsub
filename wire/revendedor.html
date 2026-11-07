@@ -1,1237 +1,172 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vortex • Painel Revendedor</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08080b">
+<title>VORTEX STORE | Loja Oficial</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg-deep:#08080b;
-  --surface:#111115;
-  --surface-glass:rgba(17,17,21,.94);
-  --border:rgba(255,255,255,.12);
-  --primary:#f4f4f5;
-  --primary-glow:rgba(255,255,255,.10);
-  --text-main:#f7f7f8;
-  --text-sub:#c5c5cc;
-  --text-dim:#85858f;
-  --success:#35cf79;
-  --danger:#ef626c;
-}
-
-[data-theme="light"]{
-  --bg-deep:#f1f1f3;
-  --surface:#fff;
-  --surface-glass:rgba(255,255,255,.96);
-  --border:rgba(20,20,25,.13);
-  --primary:#17171b;
-  --primary-glow:rgba(0,0,0,.08);
-  --text-main:#17171b;
-  --text-sub:#45454d;
-  --text-dim:#777780;
-  --success:#159c58;
-  --danger:#d93643;
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Plus Jakarta Sans',sans-serif;
-}
-
-html{
-  min-height:100%;
-  background:var(--bg-deep);
-}
-
-body{
-  background:
-  radial-gradient(circle at 50% 12%,rgba(100,100,115,.10),transparent 30%),
-  var(--bg-deep);
-  color:var(--text-main);
-  min-height:100vh;
-  padding:38px 18px 55px;
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  position:relative;
-  overflow-x:hidden;
-}
-
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.42;
-  background-image:
-  radial-gradient(circle at 14% 17%,#aaa 0 1px,transparent 2px),
-  radial-gradient(circle at 78% 23%,#777 0 1px,transparent 2px),
-  radial-gradient(circle at 25% 69%,#999 0 1.5px,transparent 2.5px),
-  radial-gradient(circle at 88% 83%,#777 0 1px,transparent 2px),
-  radial-gradient(circle at 55% 48%,#777 0 1px,transparent 2px);
-  background-size:
-  310px 330px,
-  390px 420px,
-  470px 390px,
-  360px 440px,
-  520px 510px;
-}
-
-.ambient-glow{
-  position:fixed;
-  width:360px;
-  height:360px;
-  border-radius:50%;
-  filter:blur(130px);
-  z-index:0;
-  pointer-events:none;
-  background:rgba(180,180,200,.07);
-  top:-170px;
-  left:calc(50% - 180px);
-}
-
-.container{
-  width:100%;
-  max-width:900px;
-  position:relative;
-  z-index:1;
-  margin:auto;
-}
-
-/* LOGIN */
-
-#loginBox{
-  max-width:650px;
-  margin:0 auto;
-}
-
-#loginBox .login-brand{
-  text-align:center;
-  margin:0 auto 36px;
-}
-
-#loginBox .login-logo{
-  width:112px;
-  height:112px;
-  object-fit:cover;
-  border-radius:25px;
-  display:block;
-  margin:0 auto 17px;
-  border:1px solid rgba(255,255,255,.16);
-  box-shadow:0 12px 45px rgba(0,0,0,.45);
-}
-
-#loginBox .brand-title{
-  font-size:clamp(24px,5vw,34px);
-  font-weight:800;
-  letter-spacing:1.8px;
-  color:var(--text-main);
-  margin-bottom:7px;
-}
-
-#loginBox .brand-subtitle{
-  font-size:13px;
-  letter-spacing:2px;
-  color:var(--text-dim);
-  text-transform:uppercase;
-}
-
-/* CARDS */
-
-.card{
-  background:var(--surface-glass);
-  backdrop-filter:blur(18px);
-  border:1px solid var(--border);
-  border-radius:28px;
-  padding:30px 32px;
-  margin-bottom:20px;
-  box-shadow:0 22px 65px rgba(0,0,0,.28);
-}
-
-.login-card{
-  max-width:650px;
-  margin:0 auto;
-}
-
-.login-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:22px;
-}
-
-.field-label{
-  display:block;
-  text-align:left;
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:1.2px;
-  margin:0 0 13px;
-  color:var(--text-main);
-  text-transform:uppercase;
-}
-
-/* INPUTS */
-
-input,select{
-  width:100%;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:17px 18px;
-  color:var(--text-main);
-  font-size:14px;
-  outline:none;
-  margin-bottom:14px;
-  min-height:56px;
-}
-
-input::placeholder{
-  color:var(--text-dim);
-}
-
-input:focus,select:focus{
-  border-color:rgba(255,255,255,.48);
-  box-shadow:0 0 0 3px rgba(255,255,255,.05);
-}
-
-/* BUTTONS */
-
-.btn{
-  background:linear-gradient(180deg,#fff,#dedee1);
-  color:#111115;
-  border:1px solid rgba(255,255,255,.8);
-  border-radius:999px;
-  padding:17px 22px;
-  font-size:14px;
-  font-weight:800;
-  letter-spacing:.3px;
-  cursor:pointer;
-  transition:transform .2s,filter .2s;
-  width:100%;
-  box-shadow:0 8px 24px rgba(0,0,0,.18);
-}
-
-.btn:hover{
-  filter:brightness(.94);
-  transform:translateY(-2px);
-}
-
-#loginBox .btn{
-  margin-top:7px;
-  min-height:60px;
-  font-size:16px;
-  text-transform:uppercase;
-}
-
-/* TABS */
-
-.tab-nav{
-  display:flex;
-  gap:8px;
-  margin-bottom:20px;
-  background:var(--surface);
-  padding:7px;
-  border-radius:17px;
-  border:1px solid var(--border);
-}
-
-.tab-btn{
-  flex:1;
-  background:transparent;
-  border:0;
-  color:var(--text-dim);
-  padding:13px 10px;
-  font-weight:800;
-  font-size:11px;
-  letter-spacing:.7px;
-  border-radius:13px;
-  cursor:pointer;
-  text-transform:uppercase;
-}
-
-.tab-btn.active{
-  background:#f1f1f2;
-  color:#111115;
-  box-shadow:0 5px 16px rgba(0,0,0,.2);
-}
-
-.tab-content{
-  display:none;
-}
-
-.tab-content.active{
-  display:block;
-}
-
-/* HEADER */
-
-.header-card{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:18px;
-}
-
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.logo-img{
-  width:52px;
-  height:52px;
-  border-radius:16px;
-  object-fit:cover;
-  border:1px solid var(--border);
-}
-
-h1{
-  font-size:18px;
-  font-weight:800;
-  letter-spacing:.5px;
-}
-
-h1 span{
-  color:var(--text-dim);
-}
-
-h2{
-  font-size:17px;
-  font-weight:800;
-  margin-bottom:18px;
-  letter-spacing:.2px;
-}
-
-/* THEME */
-
-.theme-toggle{
-  background:var(--surface);
-  border:1px solid var(--border);
-  color:var(--text-main);
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
-}
-
-/* GRAPH */
-
-.grafico-box{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:17px;
-  margin-top:13px;
-}
-
-.barra-progresso{
-  width:100%;
-  height:8px;
-  background:rgba(255,255,255,.08);
-  border-radius:9px;
-  overflow:hidden;
-  margin-top:12px;
-}
-
-.barra-fill{
-  height:100%;
-  background:linear-gradient(90deg,#777,#eee);
-  width:0%;
-  transition:width .5s ease;
-}
-
-/* TABLE */
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
-  font-size:13px;
-  text-align:left;
-  min-width:560px;
-}
-
-th,td{
-  padding:14px 12px;
-  border-bottom:1px solid var(--border);
-  color:var(--text-sub);
-}
-
-th{
-  color:var(--text-dim);
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
-/* STATUS */
-
-.badge{
-  padding:5px 10px;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:800;
-}
-
-.badge.ativa{
-  background:rgba(53,207,121,.13);
-  color:var(--success);
-}
-
-.badge.desativada{
-  background:rgba(239,98,108,.13);
-  color:var(--danger);
-}
-
-/* ACTIONS */
-
-.action-btn{
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:8px 11px;
-  border-radius:10px;
-  color:var(--text-sub);
-  cursor:pointer;
-  font-size:11px;
-  font-weight:700;
-  margin:2px;
-}
-
-.action-btn:hover{
-  background:#eee;
-  color:#111;
-  border-color:#eee;
-}
-
-#painelBox .header-card .btn{
-  width:auto;
-  background:transparent;
-  color:var(--text-main);
-  border:1px solid rgba(239,98,108,.5);
-  box-shadow:none;
-  padding:10px 17px;
-}
-
-#painelBox .header-card .btn:hover{
-  background:rgba(239,98,108,.12);
-  color:var(--danger);
-}
-
-/* RESPONSIVO */
-
-@media(max-width:600px){
-
-  body{
-    padding:24px 13px 38px;
-  }
-
-  .card{
-    padding:22px 18px;
-    border-radius:23px;
-  }
-
-  #loginBox .login-brand{
-    margin-bottom:28px;
-  }
-
-  #loginBox .login-logo{
-    width:94px;
-    height:94px;
-  }
-
-  .brand-subtitle{
-    font-size:10px!important;
-    letter-spacing:1.5px!important;
-  }
-
-  .login-card{
-    padding:22px 18px;
-  }
-
-  .header-card{
-    align-items:flex-start;
-  }
-
-  .header-card>div:last-child{
-    width:100%;
-    justify-content:space-between!important;
-  }
-
-  .tab-nav{
-    gap:4px;
-  }
-
-  .tab-btn{
-    font-size:10px;
-    padding:12px 5px;
-  }
-
-  .header-left h1{
-    font-size:15px;
-  }
-
-  .grafico-box{
-    padding:14px;
-  }
-}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:#08080b;color:#fff;min-height:100vh;padding:20px 15px;overflow-x:hidden}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.container{max-width:1000px;margin:auto;position:relative;z-index:1}
+header{text-align:center;padding:35px 10px 30px}
+.logo{width:100px;height:100px;border-radius:25px;object-fit:cover;margin-bottom:17px;border:1px solid #39393d}
+h1{font-size:35px;font-weight:800;letter-spacing:2px}
+h1 span{color:#92929a}
+.subtitle{color:#92929a;font-size:12px;letter-spacing:2px;margin-top:9px}
+.status{display:inline-block;border:1px solid #333;padding:8px 15px;border-radius:30px;font-size:11px;color:#bbb;margin-bottom:20px}
+.section-title{text-align:center;margin:28px 0 20px}
+.section-title h2{font-size:23px}
+.section-title p{font-size:12px;color:#888;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:#111115;border:1px solid #29292e;border-radius:22px;padding:23px 19px;transition:.25s}
+.card:hover{transform:translateY(-4px);border-color:#777}
+.card small{color:#999;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.card h3{font-size:25px;margin-top:13px}
+.card p{font-size:12px;color:#888;margin-top:6px}
+.price{font-size:29px;font-weight:800;margin:22px 0}
+.buy{display:block;background:linear-gradient(180deg,#fff,#dedee1);color:#111;text-align:center;text-decoration:none;padding:14px;border-radius:30px;font-size:12px;font-weight:800;transition:.2s}
+.buy:hover{filter:brightness(.87);transform:translateY(-2px)}
+.featured{border-color:#777;background:linear-gradient(145deg,#202024,#111115)}
+.featured small{color:#fff}
+.product{margin-top:30px;background:#111115;border:1px solid #29292e;border-radius:24px;padding:27px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.product h2{font-size:25px;margin:10px 0}
+.product p{font-size:13px;color:#999;line-height:1.7}
+.product .buy{min-width:190px;background:transparent;border:1px solid #aaa;color:#fff}
+.panel-link{margin-top:18px;background:#111115;border:1px solid #29292e;border-radius:20px;padding:23px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.panel-link p{font-size:12px;color:#999;margin-top:5px}
+.panel-link a{color:#111;background:#fff;text-decoration:none;padding:12px 18px;border-radius:25px;font-size:11px;font-weight:800;white-space:nowrap}
+.info{text-align:center;color:#777;font-size:12px;margin-top:25px;line-height:1.8}
+footer{text-align:center;color:#555;font-size:11px;margin:35px 0 10px}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.product{flex-direction:column;align-items:flex-start}.product .buy{width:100%}}
+@media(max-width:440px){.grid{grid-template-columns:1fr}h1{font-size:29px}.panel-link{align-items:flex-start;flex-direction:column}.panel-link a{width:100%;text-align:center}}
 </style>
 </head>
-
 <body>
 
-<div class="ambient-glow"></div>
+<canvas id="snow"></canvas>
 
-<!-- LOGIN -->
+<div class="container">
 
-<div class="container" id="loginBox">
+<header>
+<div class="status">● VORTEX STORE · ATENDIMENTO ONLINE</div><br>
+<img class="logo" src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg" alt="Vortex">
+<h1>VORTEX <span>STORE</span></h1>
+<p class="subtitle">TECNOLOGIA · ACESSOS · PROJETOS</p>
+</header>
 
-    <div class="login-brand">
-
-        <div style="display:flex;justify-content:flex-end;max-width:650px;margin:0 auto 8px;">
-
-            <button class="theme-toggle"
-            onclick="toggleTheme()"
-            id="themeIconLogin"
-            aria-label="Alternar tema">☀️</button>
-
-        </div>
-
-        <img class="login-logo"
-        src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg"
-        alt="Logo Vortex">
-
-        <div class="brand-title">VORTEX</div>
-
-        <div class="brand-subtitle">
-            PAINEL REVENDEDOR · SISTEMA ONLINE
-        </div>
-
-    </div>
-
-    <div class="card login-card">
-
-        <div class="login-top">
-            <span class="field-label" style="margin:0">
-                ACESSO DO REVENDEDOR
-            </span>
-        </div>
-
-        <input type="text"
-        id="loginUser"
-        placeholder="Usuário"
-        autocomplete="username">
-
-        <input type="password"
-        id="loginPass"
-        placeholder="Senha"
-        autocomplete="current-password">
-
-        <button class="btn"
-        onclick="playClick(); fazerLogin()">
-            ENTRAR NO PAINEL
-        </button>
-
-    </div>
-
+<section>
+<div class="section-title">
+<h2>Adquira seus créditos</h2>
+<p>Escolha seu pacote e solicite a liberação pelo WhatsApp.</p>
 </div>
 
-<!-- PAINEL -->
-
-<div class="container" id="painelBox" style="display:none;">
-
-    <div class="card header-card">
-
-        <div class="header-left">
-
-            <img
-            src="https://i.pinimg.com/736x/6e/c6/08/6ec6082652cf3caeb3cdc52c5d3ab553.jpg"
-            alt="Logo"
-            class="logo-img">
-
-            <div>
-
-                <h1>PAINEL <span>REVENDEDOR</span></h1>
-
-                <p style="font-size:12px;color:var(--text-dim);">
-                    Conta:
-                    <strong id="lblUser" style="color:var(--text-main);"></strong>
-                </p>
-
-            </div>
-
-        </div>
-
-        <div style="display:flex;align-items:center;gap:15px;">
-
-            <div style="text-align:right;">
-
-                <span style="font-size:10px;color:var(--text-dim);display:block;font-weight:700;">
-                    SALDO
-                </span>
-
-                <h2 id="lblCreditos"
-                style="color:var(--primary);font-size:18px;">
-                    $0.0
-                </h2>
-
-            </div>
-
-            <button class="theme-toggle"
-            onclick="toggleTheme()"
-            id="themeIconPainel">☀️</button>
-
-            <button class="btn"
-            style="width:auto;background:var(--danger);padding:8px 14px;"
-            onclick="playClick(); logout()">
-                Sair
-            </button>
-
-        </div>
-
-    </div>
-
-    <!-- NAVEGAÇÃO -->
-
-    <div class="tab-nav">
-
-        <button class="tab-btn active"
-        onclick="switchTab('revendedor',this)">
-            Revendedor
-        </button>
-
-        <button class="tab-btn"
-        onclick="switchTab('sistema',this)">
-            Sistema
-        </button>
-
-        <button class="tab-btn"
-        onclick="switchTab('clientes',this)">
-            Clientes
-        </button>
-
-    </div>
-
-    <!-- ABA REVENDEDOR -->
-
-    <div id="tab-revendedor" class="tab-content active">
-
-        <div class="card">
-
-            <h2>🔑 Gerar Chave (Custo por Plano)</h2>
-
-            <input type="text"
-            id="genKeyCustom"
-            placeholder="Nome personalizado (Opcional)">
-
-            <select id="selectDias" onchange="atualizarCusto()">
-
-                <option value="1">
-                    1 Dia - 1 Crédito ($1.0)
-                </option>
-
-                <option value="5">
-                    5 Dias - 3 Créditos ($3.0)
-                </option>
-
-                <option value="7">
-                    7 Dias - 5 Créditos ($5.0)
-                </option>
-
-                <option value="15">
-                    15 Dias - 9 Créditos ($9.0)
-                </option>
-
-                <option value="30" selected>
-                    30 Dias - 15 Créditos ($15.0)
-                </option>
-
-            </select>
-
-            <button class="btn"
-            onclick="playClick(); gerarKeyRevendedor()">
-
-                Gerar Chave (Custa
-                <span id="lblCusto">$15.0</span>)
-
-            </button>
-
-        </div>
-
-        <div class="card">
-
-            <h2>📊 Gráfico de Uso e Gasto</h2>
-
-            <div class="grafico-box">
-
-                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;">
-
-                    <span>Total de Keys Geradas:</span>
-
-                    <span id="statKeysGeradas">0</span>
-
-                </div>
-
-            </div>
-
-            <div class="grafico-box">
-
-                <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;">
-
-                    <span>Total Gasto em Créditos ($):</span>
-
-                    <span id="statGastoTotal">$0.0</span>
-
-                </div>
-
-                <div class="barra-progresso">
-                    <div class="barra-fill" id="barraGasto"></div>
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- ABA SISTEMA -->
-
-    <div id="tab-sistema" class="tab-content">
-
-        <div class="card">
-
-            <h2>⚙️ Informações e Regras</h2>
-
-            <p style="font-size:13px;color:var(--text-sub);line-height:1.6;">
-
-                • Gerencie suas chaves com total liberdade na aba Clientes.<br>
-
-                • Você pode editar, resetar o HWID ou excluir as chaves geradas por você.
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <!-- ABA CLIENTES -->
-
-    <div id="tab-clientes" class="tab-content">
-
-        <div class="card">
-
-            <h2>📋 Suas Chaves e Clientes</h2>
-
-            <div style="overflow-x:auto;border:1px solid var(--border);border-radius:15px;padding:0 10px 8px;background:var(--surface);">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-                            <th>Key</th>
-                            <th>Validade</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody id="tabelaRevKeys">
-
-                        <tr>
-                            <td colspan="4" style="text-align:center;color:var(--text-dim);">
-                                Carregando...
-                            </td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-
+<div class="grid">
+
+<div class="card">
+<small>Plano inicial</small>
+<h3>15 créditos</h3>
+<p>Ideal para começar</p>
+<div class="price">R$ 6,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2015%20cr%C3%A9ditos%20por%20R%24%206%2C00." target="_blank">COMPRAR AGORA</a>
 </div>
 
-<audio id="clickSound"
-src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"
-preload="auto"></audio>
+<div class="card">
+<small>Plano básico</small>
+<h3>30 créditos</h3>
+<p>Mais possibilidades</p>
+<div class="price">R$ 15,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2030%20cr%C3%A9ditos%20por%20R%24%2015%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card featured">
+<small>★ Destaque</small>
+<h3>50 créditos</h3>
+<p>Ótimo custo-benefício</p>
+<div class="price">R$ 20,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2050%20cr%C3%A9ditos%20por%20R%24%2020%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card">
+<small>Plano avançado</small>
+<h3>60 créditos</h3>
+<p>Para ampliar suas vendas</p>
+<div class="price">R$ 30,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2060%20cr%C3%A9ditos%20por%20R%24%2030%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+<div class="card">
+<small>Plano premium</small>
+<h3>70 créditos</h3>
+<p>Pacote com mais créditos</p>
+<div class="price">R$ 40,00</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20comprar%2070%20cr%C3%A9ditos%20por%20R%24%2040%2C00." target="_blank">COMPRAR AGORA</a>
+</div>
+
+</div>
+</section>
+
+<section class="product">
+<div>
+<small style="color:#aaa;letter-spacing:1px">PRODUTO DISPONÍVEL</small>
+<h2>ROYAL MENU</h2>
+<p>Adquira o acesso de venda do APK Royal Menu.<br>Consulte as condições e informações de liberação.</p>
+</div>
+<a class="buy" href="https://wa.me/558892439648?text=Ol%C3%A1%2C%20quero%20informa%C3%A7%C3%B5es%20sobre%20o%20acesso%20de%20venda%20do%20APK%20Royal%20Menu." target="_blank">CONSULTAR ACESSO</a>
+</section>
+
+<section class="panel-link">
+<div>
+<strong>Já é revendedor?</strong>
+<p>Acesse seu painel para gerar e administrar suas keys.</p>
+</div>
+<a href="revendedor.html">ACESSAR PAINEL →</a>
+</section>
+
+<div class="info">
+Atendimento e compras pelo WhatsApp.<br>
+A liberação dos créditos é realizada após confirmação do pagamento.
+</div>
+
+<footer>© 2026 VORTEX STORE · TODOS OS DIREITOS RESERVADOS</footer>
+
+</div>
 
 <script>
-
-// FIREBASE
-
-const FIREBASE_URL = "https://vmteam-fcb3e-default-rtdb.firebaseio.com";
-
-let revAtual = null;
-let revFirebaseId = null;
-
-const custosDias = {
-    "1": 1.0,
-    "5": 3.0,
-    "7": 5.0,
-    "15": 9.0,
-    "30": 15.0
-};
-
-// SOM
-
-function playClick() {
-
-    const sound = document.getElementById("clickSound");
-
-    if(sound) {
-        sound.currentTime = 0;
-        sound.play().catch(e => {});
-    }
-
+(function(){
+const canvas=document.getElementById('snow');
+const ctx=canvas.getContext('2d');
+let w,h,flakes=[];
+function resize(){
+const dpr=Math.min(devicePixelRatio||1,2);
+w=innerWidth;h=innerHeight;
+canvas.width=w*dpr;canvas.height=h*dpr;
+ctx.setTransform(dpr,0,0,dpr,0,0);
+const total=w<600?55:100;
+while(flakes.length<total)flakes.push(make(true));
+flakes.length=total;
 }
-
-// TROCAR ABA
-
-function switchTab(tabName, btn) {
-
-    playClick();
-
-    document.querySelectorAll('.tab-content')
-    .forEach(el => el.classList.remove('active'));
-
-    document.querySelectorAll('.tab-btn')
-    .forEach(el => el.classList.remove('active'));
-
-    document.getElementById('tab-' + tabName)
-    .classList.add('active');
-
-    btn.classList.add('active');
-
+function make(initial){
+return{x:Math.random()*w,y:initial?Math.random()*h:-10,r:.5+Math.random()*1.8,s:.3+Math.random()*1.1,wind:Math.random()*.5-.25,phase:Math.random()*6.28,alpha:.2+Math.random()*.55};
 }
-
-// TEMA CLARO E ESCURO
-
-function toggleTheme() {
-
-    playClick();
-
-    const html = document.documentElement;
-
-    const next =
-    html.getAttribute("data-theme") === "dark"
-    ? "light"
-    : "dark";
-
-    html.setAttribute("data-theme",next);
-
-    localStorage.setItem("vtx_theme",next);
-
-    const icon = next === "dark" ? "☀️" : "🌙";
-
-    document.getElementById("themeIconLogin").textContent = icon;
-
-    document.getElementById("themeIconPainel").textContent = icon;
-
+function animate(){
+ctx.clearRect(0,0,w,h);
+flakes.forEach(f=>{
+f.phase+=.012;f.y+=f.s;f.x+=f.wind+Math.sin(f.phase)*.2;
+if(f.y>h+10)Object.assign(f,make(false));
+if(f.x<-10)f.x=w+10;if(f.x>w+10)f.x=-10;
+ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+ctx.fillStyle=`rgba(255,255,255,${f.alpha})`;ctx.fill();
+});
+requestAnimationFrame(animate);
 }
-
-// CARREGAR TEMA
-
-if(localStorage.getItem("vtx_theme") === "light") {
-
-    document.documentElement.setAttribute("data-theme","light");
-
-    document.getElementById("themeIconLogin").textContent = "🌙";
-
-    document.getElementById("themeIconPainel").textContent = "🌙";
-
-}
-
-// ATUALIZAR CUSTO
-
-function atualizarCusto() {
-
-    const dias = document.getElementById("selectDias").value;
-
-    document.getElementById("lblCusto").textContent =
-    `$${(custosDias[dias] || 1.0).toFixed(1)}`;
-
-}
-
-// LOGIN
-
-async function fazerLogin() {
-
-    const u = document.getElementById("loginUser").value.trim();
-
-    const p = document.getElementById("loginPass").value.trim();
-
-    const res = await fetch(`${FIREBASE_URL}/revendedores.json`);
-
-    const data = await res.json();
-
-    let encontrado = false;
-
-    if(data) {
-
-        for(let id in data) {
-
-            if(data[id].usuario === u && data[id].senha === p) {
-
-                encontrado = true;
-
-                revAtual = data[id];
-
-                revFirebaseId = id;
-
-                break;
-
-            }
-
-        }
-
-    }
-
-    if(encontrado) {
-
-        localStorage.setItem(
-            "vtx_rev",
-            JSON.stringify({
-                id:revFirebaseId,
-                usuario:revAtual.usuario
-            })
-        );
-
-        await fetch(
-            `${FIREBASE_URL}/revendedores/${revFirebaseId}/online.json`,
-            {
-                method:"PUT",
-                body:"true"
-            }
-        );
-
-        carregarPainelRevendedor();
-
-    } else {
-
-        alert("Usuário ou senha incorretos!");
-
-    }
-
-}
-
-// CARREGAR PAINEL
-
-async function carregarPainelRevendedor() {
-
-    const session = JSON.parse(localStorage.getItem("vtx_rev"));
-
-    if(!session) return;
-
-    document.getElementById("loginBox").style.display = "none";
-
-    document.getElementById("painelBox").style.display = "block";
-
-    document.getElementById("lblUser").textContent = session.usuario;
-
-    const rRes = await fetch(
-        `${FIREBASE_URL}/revendedores/${session.id}.json`
-    );
-
-    revAtual = await rRes.json();
-
-    const creditos = parseFloat(revAtual.creditos || 0);
-
-    document.getElementById("lblCreditos").textContent =
-    `$${creditos.toFixed(1)}`;
-
-    const kRes = await fetch(`${FIREBASE_URL}/usuariosT.json`);
-
-    const data = await kRes.json();
-
-    let tbody = "";
-
-    let countKeys = 0;
-
-    let gastoTotal = 0;
-
-    if(data) {
-
-        for(let uid in data) {
-
-            let k = data[uid];
-
-            if(k.criador === session.usuario) {
-
-                countKeys++;
-
-                gastoTotal +=
-                custosDias[k.validade || k.dias || "30"] || 1.0;
-
-                tbody += `
-                    <tr>
-
-                        <td><strong>${k.key}</strong></td>
-
-                        <td>${k.validade || k.dias || '30'} dias</td>
-
-                        <td>
-                            <span class="badge ${k.status === 'ativada' ? 'ativa' : 'desativada'}">
-                                ${k.status}
-                            </span>
-                        </td>
-
-                        <td>
-
-                            <button class="action-btn"
-                            onclick="playClick(); revEditarKey('${uid}', '${k.key}', '${k.validade || k.dias || 30}')">
-                                ✏️ Editar
-                            </button>
-
-                            <button class="action-btn"
-                            onclick="playClick(); revResetarKey('${uid}')">
-                                Reset
-                            </button>
-
-                            <button class="action-btn"
-                            style="color:var(--danger)"
-                            onclick="playClick(); revExcluirKey('${uid}')">
-                                Excluir
-                            </button>
-
-                        </td>
-
-                    </tr>
-                `;
-
-            }
-
-        }
-
-    }
-
-    document.getElementById("tabelaRevKeys").innerHTML =
-    tbody ||
-    `<tr><td colspan="4" style="text-align:center;">
-    Você ainda não gerou nenhuma key.
-    </td></tr>`;
-
-    document.getElementById("statKeysGeradas").textContent =
-    countKeys;
-
-    document.getElementById("statGastoTotal").textContent =
-    `$${gastoTotal.toFixed(1)}`;
-
-    document.getElementById("barraGasto").style.width =
-    Math.min((gastoTotal / 100) * 100,100) + "%";
-
-}
-
-// GERAR KEY
-
-async function gerarKeyRevendedor() {
-
-    const session = JSON.parse(localStorage.getItem("vtx_rev"));
-
-    let creditosAtuais = parseFloat(revAtual.creditos) || 0;
-
-    const diasSelecionados =
-    document.getElementById("selectDias").value;
-
-    const custoKey = custosDias[diasSelecionados] || 1.0;
-
-    if(creditosAtuais < custoKey)
-    return alert("Créditos insuficientes!");
-
-    const custom =
-    document.getElementById("genKeyCustom").value.trim();
-
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-    let part = '';
-
-    for(let j = 0; j < 6; j++) {
-
-        part += chars.charAt(
-            Math.floor(Math.random() * chars.length)
-        );
-
-    }
-
-    const keyGen = custom ? custom : `VTX-${part}`;
-
-    const uid =
-    'UID_' + Math.random().toString(36).substr(2,9);
-
-    await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            device:"",
-            dias:String(diasSelecionados),
-            validade:String(diasSelecionados),
-            dispositivos:"1",
-            key:keyGen,
-            status:"ativada",
-            uid:uid,
-            criador:session.usuario
-
-        })
-
-    });
-
-    creditosAtuais -= custoKey;
-
-    await fetch(
-        `${FIREBASE_URL}/revendedores/${session.id}/creditos.json`,
-        {
-
-            method:"PUT",
-
-            headers:{
-                "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify(creditosAtuais.toFixed(1))
-
-        }
-    );
-
-    alert("Key gerada com sucesso!");
-
-    document.getElementById("genKeyCustom").value = "";
-
-    carregarPainelRevendedor();
-
-}
-
-// EDITAR KEY
-
-async function revEditarKey(uid,keyAtual,diasAtual) {
-
-    const novaKey = prompt("Editar nome da Key:",keyAtual);
-
-    if(novaKey === null) return;
-
-    const novosDias = prompt("Editar dias de validade:",diasAtual);
-
-    if(novosDias === null) return;
-
-    await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
-
-        method:"PATCH",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            key:novaKey,
-            dias:String(novosDias),
-            validade:String(novosDias)
-
-        })
-
-    });
-
-    alert("Key editada com sucesso!");
-
-    carregarPainelRevendedor();
-
-}
-
-// RESETAR HWID
-
-async function revResetarKey(uid) {
-
-    await fetch(
-        `${FIREBASE_URL}/usuariosT/${uid}/device.json`,
-        {
-            method:"PUT",
-            body:JSON.stringify("")
-        }
-    );
-
-    alert("Key resetada!");
-
-    carregarPainelRevendedor();
-
-}
-
-// EXCLUIR KEY
-
-async function revExcluirKey(uid) {
-
-    if(confirm("Tem certeza que deseja excluir esta key?")) {
-
-        await fetch(
-            `${FIREBASE_URL}/usuariosT/${uid}.json`,
-            {
-                method:"DELETE"
-            }
-        );
-
-        carregarPainelRevendedor();
-
-    }
-
-}
-
-// SAIR
-
-async function logout() {
-
-    const session = JSON.parse(localStorage.getItem("vtx_rev"));
-
-    if(session) {
-
-        await fetch(
-            `${FIREBASE_URL}/revendedores/${session.id}/online.json`,
-            {
-                method:"PUT",
-                body:"false"
-            }
-        );
-
-    }
-
-    localStorage.removeItem("vtx_rev");
-
-    location.reload();
-
-}
-
-// INICIALIZAÇÃO
-
-window.onload = () => {
-
-    if(localStorage.getItem("vtx_rev")) {
-
-        carregarPainelRevendedor();
-
-    }
-
-};
-
+resize();addEventListener('resize',resize);
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches)animate();
+})();
 </script>
-
 </body>
 </html>
