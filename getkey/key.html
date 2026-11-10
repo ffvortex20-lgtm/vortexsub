@@ -1,0 +1,951 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#08080b">
+<title>VORTEX | Key System</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+    --red: #ff1744;
+    --red2: #ff496b;
+    --bg: #07070a;
+    --text: #ffffff;
+    --muted: #85858f;
+    --glass: rgba(17,17,22,.78);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 16px;
+    color: var(--text);
+    overflow-x: hidden;
+    background:
+        radial-gradient(ellipse at 50% -15%, rgba(255,23,68,.17), transparent 55%),
+        radial-gradient(circle at 0% 100%, rgba(255,23,68,.07), transparent 35%),
+        #07070a;
+}
+
+/* BACKGROUND */
+
+.background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(to bottom, transparent, black, transparent);
+}
+
+.glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: var(--red);
+    filter: blur(180px);
+    opacity: .10;
+    animation: ambient 12s ease-in-out infinite alternate;
+}
+
+.glow.one {
+    top: -220px;
+    left: -130px;
+}
+
+.glow.two {
+    bottom: -250px;
+    right: -150px;
+    animation-delay: -5s;
+}
+
+@keyframes ambient {
+    from { transform: translate(0,0) scale(.9); }
+    to { transform: translate(100px,80px) scale(1.2); }
+}
+
+/* NEVE */
+
+.particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    top: -15px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.8);
+    box-shadow: 0 0 7px rgba(255,255,255,.45);
+    animation: snowfall linear infinite;
+    will-change: transform;
+}
+
+@keyframes snowfall {
+    0% {
+        transform: translate3d(0,-10px,0);
+        opacity: 0;
+    }
+    12% { opacity: .65; }
+    85% { opacity: .45; }
+    100% {
+        transform: translate3d(55px,110vh,0);
+        opacity: 0;
+    }
+}
+
+/* MOUSE LIGHT */
+
+.mouse-glow {
+    position: fixed;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle,rgba(255,23,68,.10),transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%,-50%);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .4s;
+}
+
+/* CARD */
+
+.card {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    padding: 34px 31px 27px;
+    border-radius: 25px;
+    background: linear-gradient(145deg,rgba(24,24,30,.91),rgba(9,9,13,.94));
+    border: 1px solid rgba(255,255,255,.09);
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.65),
+        0 0 55px rgba(255,23,68,.055),
+        inset 0 1px rgba(255,255,255,.07);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    text-align: center;
+    z-index: 5;
+    animation: cardEnter .85s cubic-bezier(.16,1,.3,1);
+    transition: border-color .4s, box-shadow .4s;
+}
+
+.card:hover {
+    border-color: rgba(255,23,68,.30);
+    box-shadow:
+        0 35px 100px rgba(0,0,0,.7),
+        0 0 55px rgba(255,23,68,.10),
+        inset 0 1px rgba(255,255,255,.08);
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(35px) scale(.96);
+        filter: blur(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+/* TOP LINE */
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 18%;
+    width: 64%;
+    height: 2px;
+    background: linear-gradient(90deg,transparent,var(--red),transparent);
+    filter: drop-shadow(0 0 7px var(--red));
+}
+
+/* LOGO */
+
+.logo {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(145deg,#ff496b,#c50035);
+    box-shadow:
+        0 10px 35px rgba(255,23,68,.24),
+        inset 0 1px rgba(255,255,255,.35);
+    position: relative;
+    animation: logoFloat 4s ease-in-out infinite;
+}
+
+.logo::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border: 1px solid rgba(255,23,68,.2);
+    border-radius: 26px;
+    animation: logoRing 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes logoRing {
+    50% { transform: scale(1.09); opacity: .3; }
+}
+
+/* TAG */
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 30px;
+    background: rgba(255,23,68,.07);
+    border: 1px solid rgba(255,23,68,.20);
+    color: #ff718a;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 17px;
+}
+
+.tag::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--red);
+    animation: statusPulse 1.6s infinite;
+}
+
+@keyframes statusPulse {
+    50% { opacity: .3; transform: scale(.7); }
+}
+
+/* TEXT */
+
+.title {
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -.9px;
+    margin-bottom: 9px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+    margin-bottom: 23px;
+}
+
+/* NATAL */
+
+.christmas-banner {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(110deg,rgba(255,23,68,.09),rgba(255,23,68,.025));
+    border: 1px solid rgba(255,23,68,.20);
+    border-radius: 14px;
+    padding: 13px;
+    margin-bottom: 19px;
+    transition: .3s;
+}
+
+.christmas-banner:hover {
+    border-color: rgba(255,23,68,.5);
+    transform: translateY(-2px);
+}
+
+.christmas-banner span {
+    display: block;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #ff718a;
+    margin-bottom: 5px;
+}
+
+.christmas-banner strong {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* KEY */
+
+.key-box {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 13px;
+    border-radius: 15px;
+    background: rgba(0,0,0,.38);
+    border: 1px dashed rgba(255,23,68,.40);
+    color: #fff;
+    font-family: monospace;
+    font-size: 17px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    word-break: break-all;
+    margin-bottom: 15px;
+    transition: .35s;
+}
+
+.key-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg,transparent,rgba(255,255,255,.045),transparent);
+    transform: translateX(-100%);
+    animation: keyShine 5s infinite;
+    pointer-events: none;
+}
+
+@keyframes keyShine {
+    50%,100% { transform: translateX(100%); }
+}
+
+.key-box:hover {
+    border-color: var(--red);
+    background: rgba(255,23,68,.045);
+    box-shadow: 0 0 25px rgba(255,23,68,.09);
+}
+
+/* STATUS */
+
+.status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #898993;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #20e070;
+    box-shadow: 0 0 10px #20e070;
+    animation: statusPulse 1.5s infinite;
+}
+
+/* BUTTONS */
+
+.btn {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .7px;
+    transition: transform .25s,box-shadow .3s,border-color .3s,background .3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    isolation: isolate;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+.btn:active {
+    transform: scale(.965);
+}
+
+.btn::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: -120%;
+    width: 65%;
+    height: 100%;
+    background: linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+    transform: skewX(-20deg);
+}
+
+.btn:hover::before {
+    animation: shine .8s;
+}
+
+@keyframes shine {
+    to { left: 150%; }
+}
+
+/* COPY */
+
+.btn-copy {
+    background: linear-gradient(115deg,#ff1744,#d50036);
+    box-shadow: 0 8px 28px rgba(255,0,55,.23);
+    margin-bottom: 13px;
+}
+
+.btn-copy:hover {
+    box-shadow: 0 12px 40px rgba(255,0,55,.38);
+}
+
+/* SOCIAL */
+
+.channel-btn {
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.09);
+    box-shadow: inset 0 1px rgba(255,255,255,.025);
+    margin-bottom: 10px;
+    text-align: left;
+    padding: 12px 14px;
+}
+
+.channel-btn:hover {
+    background: rgba(255,23,68,.055);
+    border-color: rgba(255,23,68,.42);
+    box-shadow: 0 8px 25px rgba(255,23,68,.07);
+}
+
+.btn-vip {
+    border-color: rgba(255,215,0,.18);
+    background: rgba(255,215,0,.025);
+}
+
+.btn-vip:hover {
+    border-color: rgba(255,215,0,.55);
+    background: rgba(255,215,0,.07);
+    box-shadow: 0 8px 25px rgba(255,215,0,.08);
+}
+
+.icon-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    transition: transform .3s;
+}
+
+.channel-btn:hover .icon-badge {
+    transform: rotate(-7deg) scale(1.08);
+}
+
+.discord-bg {
+    background: rgba(88,101,242,.18);
+    border: 1px solid rgba(88,101,242,.28);
+}
+
+.whatsapp-bg {
+    background: rgba(37,211,102,.12);
+    border: 1px solid rgba(37,211,102,.24);
+}
+
+.channel-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+}
+
+.channel-title {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .3px;
+}
+
+.channel-subtitle {
+    margin-top: 4px;
+    color: #777780;
+    font-size: 9px;
+}
+
+.channel-arrow {
+    font-size: 20px;
+    color: #777780;
+    transition: transform .3s,color .3s;
+}
+
+.channel-btn:hover .channel-arrow {
+    transform: translateX(4px);
+    color: var(--red2);
+}
+
+/* INFO */
+
+.info {
+    margin-top: 19px;
+    padding-top: 17px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    color: #777780;
+    font-size: 11px;
+    line-height: 1.9;
+}
+
+.info b {
+    color: #fff;
+}
+
+.success {
+    background: linear-gradient(135deg,#00c853,#00a844) !important;
+    box-shadow: 0 8px 30px rgba(0,200,83,.3) !important;
+    border-color: transparent !important;
+}
+
+@media(max-width:480px) {
+    body { padding: 18px 13px; }
+    .card { padding: 29px 20px 23px; border-radius: 21px; }
+    .title { font-size: 22px; }
+    .key-box { font-size: 15px; }
+}
+
+/* ACESSIBILIDADE */
+
+@media(prefers-reduced-motion:reduce) {
+    *,*::before,*::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="mouse-glow" id="mouseGlow"></div>
+
+<div class="background">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+    <div class="particles" id="particles"></div>
+</div>
+
+<div class="card" id="mainCard">
+
+    <div class="logo">VTX</div>
+
+    <div class="tag">🎄 VORTEX KEY SYSTEM ONLINE</div>
+
+    <div class="title">Sua Key está pronta</div>
+
+    <div class="subtitle">
+        Copie sua chave de acesso e utilize-a no aplicativo.
+    </div>
+
+    <div class="christmas-banner">
+        <span>🎁 Faltam para o Natal (Brasil)</span>
+        <strong id="christmasCountdown">Calculando...</strong>
+    </div>
+
+    <div class="key-box" id="key-display">
+        GERANDO...
+    </div>
+
+    <div class="status">
+        <span class="status-dot"></span>
+        SISTEMA OPERACIONAL
+    </div>
+
+    <button class="btn btn-copy" id="btn-copy" onclick="copyKey()">
+        ⧉ &nbsp; COPIAR KEY
+    </button>
+
+    <a class="btn channel-btn btn-vip"
+       href="https://discord.gg/FEkBTeZ5j"
+       target="_blank"
+       rel="noopener noreferrer"
+       onclick="sound('click')">
+
+        <span class="icon-badge discord-bg">🎮</span>
+
+        <span class="channel-text">
+            <span class="channel-title" style="color:#ffd700">PRODUTOS VIP</span>
+            <span class="channel-subtitle">Adquira acessos e recursos exclusivos</span>
+        </span>
+
+        <span class="channel-arrow">›</span>
+    </a>
+
+    <a class="btn channel-btn"
+       href="https://whatsapp.com/channel/0029Vb8TG8d6rsQq4XOiIa3N"
+       target="_blank"
+       rel="noopener noreferrer"
+       onclick="sound('click')">
+
+        <span class="icon-badge whatsapp-bg">💬</span>
+
+        <span class="channel-text">
+            <span class="channel-title">CANAL DE ATUALIZAÇÕES</span>
+            <span class="channel-subtitle">Receba novidades e avisos oficiais</span>
+        </span>
+
+        <span class="channel-arrow">›</span>
+    </a>
+
+    <div class="info" id="validity-display">
+        Verificando validade...
+    </div>
+
+</div>
+
+<script>
+
+/* MOUSE GLOW */
+
+const mouseGlow = document.getElementById("mouseGlow");
+const isDesktop = window.matchMedia("(pointer: fine)").matches;
+
+if (isDesktop && mouseGlow) {
+    window.addEventListener("mousemove", e => {
+        mouseGlow.style.opacity = "1";
+        mouseGlow.style.left = e.clientX + "px";
+        mouseGlow.style.top = e.clientY + "px";
+    });
+
+    document.addEventListener("mouseleave", () => {
+        mouseGlow.style.opacity = "0";
+    });
+}
+
+/* MOVIMENTO SUAVE DO CARD */
+
+const mainCard = document.getElementById("mainCard");
+
+if (isDesktop && mainCard) {
+    mainCard.addEventListener("mousemove", e => {
+        const rect = mainCard.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - .5;
+        const y = (e.clientY - rect.top) / rect.height - .5;
+
+        mainCard.style.transform =
+            `perspective(1000px) rotateX(${-y * 2}deg) rotateY(${x * 2}deg)`;
+    });
+
+    mainCard.addEventListener("mouseleave", () => {
+        mainCard.style.transform = "perspective(1000px) rotateX(0) rotateY(0)";
+    });
+}
+
+/* NEVE LEVE */
+
+const particles = document.getElementById("particles");
+const totalSnow = window.innerWidth < 600 ? 19 : 32;
+
+for (let i = 0; i < totalSnow; i++) {
+    const p = document.createElement("div");
+    p.className = "particle";
+
+    const size = 1 + Math.random() * 2.2;
+
+    p.style.left = Math.random() * 100 + "%";
+    p.style.width = size + "px";
+    p.style.height = size + "px";
+    p.style.opacity = .15 + Math.random() * .4;
+    p.style.animationDuration = (9 + Math.random() * 13) + "s";
+    p.style.animationDelay = (-Math.random() * 20) + "s";
+
+    particles.appendChild(p);
+}
+
+/* CONTADOR DE NATAL */
+
+function updateChristmasCountdown() {
+    const now = new Date();
+    const brazilTimeOffset = -3 * 60;
+    const localUtc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const brazilNow = new Date(localUtc + (3600000 * brazilTimeOffset));
+
+    let currentYear = brazilNow.getFullYear();
+    let christmasDate = new Date(currentYear, 11, 25, 0, 0, 0);
+
+    if (brazilNow > christmasDate) {
+        christmasDate = new Date(currentYear + 1, 11, 25, 0, 0, 0);
+    }
+
+    const diff = christmasDate - brazilNow;
+
+    if (diff <= 0) {
+        document.getElementById("christmasCountdown").textContent = "🎄 É NATAL HOJE! 🎅";
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById("christmasCountdown").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateChristmasCountdown, 1000);
+updateChristmasCountdown();
+
+/* SONS SATISFATÓRIOS */
+
+let audioCtx = null;
+
+function sound(type) {
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+
+        function tone(freq, endFreq, start, duration, volume) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(freq, now + start);
+            osc.frequency.exponentialRampToValueAtTime(endFreq, now + start + duration);
+
+            gain.gain.setValueAtTime(.0001, now + start);
+            gain.gain.exponentialRampToValueAtTime(volume, now + start + .012);
+            gain.gain.exponentialRampToValueAtTime(.0001, now + start + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now + start);
+            osc.stop(now + start + duration + .02);
+        }
+
+        if (type === "click") {
+            tone(520, 850, 0, .09, .045);
+        }
+
+        if (type === "success") {
+            tone(520, 850, 0, .12, .06);
+            tone(780, 1150, .09, .18, .045);
+        }
+
+    } catch(e) {}
+}
+
+/* CLIQUES EM TODOS OS BOTÕES */
+
+document.querySelectorAll("button, a").forEach(el => {
+    el.addEventListener("click", () => {
+        if (!el.classList.contains("btn-copy")) {
+            sound("click");
+        }
+    });
+});
+
+/* FIREBASE (NOOXSUB) & GERAÇÃO DE KEY */
+
+const FIREBASE_URL = "https://nooxsub-default-rtdb.firebaseio.com";
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+function generateUID() {
+    return "UID_" + crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+}
+
+function generateKey() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let part = "";
+
+    for (let i = 0; i < 6; i++) {
+        part += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return `VTX-${part}`;
+}
+
+let activeTimer = null;
+
+function startCountdown(expireTime) {
+    if (activeTimer) clearInterval(activeTimer);
+
+    activeTimer = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = expireTime - now;
+
+        const info = document.getElementById("validity-display");
+
+        if (distance < 0) {
+            clearInterval(activeTimer);
+            localStorage.removeItem("vtx_session_v58");
+
+            info.innerHTML = `<span style="color:#ff1744;font-weight:800;">⚠ KEY EXPIRADA. Atualize a página.</span>`;
+            return;
+        }
+
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        info.innerHTML = `Válida por <b>24h</b><br>Expira em: <b>${hours}h ${minutes}m ${seconds}s</b>`;
+    }, 1000);
+}
+
+async function initKeySystem() {
+    try {
+        const now = new Date().getTime();
+        const sessionData = JSON.parse(localStorage.getItem('vtx_session_v58') || "null");
+
+        if (sessionData && sessionData.expireTime > now) {
+            document.getElementById("key-display").textContent = sessionData.key;
+            startCountdown(sessionData.expireTime);
+            return;
+        }
+
+        let ipSafe = "LOCAL_USER";
+
+        try {
+            const ipRes = await fetch("https://api.ipify.org?format=json");
+            const ipData = await ipRes.json();
+
+            if (ipData && ipData.ip) {
+                ipSafe = ipData.ip.replace(/[.#$[\]]/g, "_");
+            }
+        } catch(e) {}
+
+        const checkRes = await fetch(`${FIREBASE_URL}/visitas/ips/${ipSafe}.json`);
+
+        if (checkRes.ok) {
+            const checkData = await checkRes.json();
+
+            if (checkData && checkData.expireTime && checkData.expireTime > now) {
+                document.getElementById("key-display").textContent = checkData.key;
+                startCountdown(checkData.expireTime);
+
+                localStorage.setItem('vtx_session_v58', JSON.stringify({
+                    key: checkData.key,
+                    expireTime: checkData.expireTime
+                }));
+
+                return;
+            }
+        }
+
+        const newKey = generateKey();
+        const uid = generateUID();
+        const expireTime = now + ONE_DAY_MS;
+
+        await fetch(`${FIREBASE_URL}/usuariosT/${uid}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                key: newKey,
+                status: "ativada",
+                uid: uid,
+                criador: "AUTO_GENERATOR"
+            })
+        });
+
+        await fetch(`${FIREBASE_URL}/visitas/ips/${ipSafe}.json`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: newKey, expireTime })
+        });
+
+        localStorage.setItem('vtx_session_v58', JSON.stringify({
+            key: newKey,
+            expireTime
+        }));
+
+        document.getElementById("key-display").textContent = newKey;
+        startCountdown(expireTime);
+
+    } catch (e) {
+        document.getElementById("key-display").textContent = "VTX-ERROR";
+        document.getElementById("validity-display").innerText = "Erro ao conectar com o banco de dados.";
+    }
+}
+
+/* COPIAR KEY */
+
+async function copyKey() {
+    const key = document.getElementById("key-display").textContent;
+
+    if (!key || key === "GERANDO..." || key === "VTX-ERROR") return;
+
+    sound("click");
+
+    try {
+        await navigator.clipboard.writeText(key);
+        showSuccess();
+    } catch(error) {
+        const area = document.createElement("textarea");
+        area.value = key;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+        showSuccess();
+    }
+}
+
+function showSuccess() {
+    const button = document.getElementById("btn-copy");
+
+    button.classList.add("success");
+    button.innerHTML = "✓ &nbsp; KEY COPIADA!";
+
+    sound("success");
+
+    setTimeout(() => {
+        button.classList.remove("success");
+        button.innerHTML = "⧉ &nbsp; COPIAR KEY";
+    }, 2200);
+}
+
+initKeySystem();
+
+</script>
+
+</body>
+</html>
