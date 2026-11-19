@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SubMais - Gerencie seus links</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  :root { --neon-red: #ef4444; --neon-white: #ffffff; --neon-lightred: #f87171; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { min-height: 100vh; color: #e2e8f0; font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #050816; overflow-x: hidden; }
+  #bgCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.35; z-index: 0; pointer-events: none; animation: float 12s ease-in-out infinite; }
+  .orb1 { width: 420px; height: 420px; background: #ef4444; top: -120px; left: -120px; }
+  .orb2 { width: 500px; height: 500px; background: #ffffff; bottom: -180px; right: -150px; animation-delay: -4s; }
+  .orb3 { width: 360px; height: 360px; background: #f87171; top: 40%; left: 50%; animation-delay: -8s; }
+  @keyframes float { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(40px,-30px) scale(1.1); } }
+  .glass { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06); }
+  .neon-card { position: relative; transition: transform .25s ease, box-shadow .25s ease; }
+  .neon-card:hover { transform: translateY(-4px); }
+  .neon-border-cyan { box-shadow: 0 0 0 1px rgba(239,68,68,.35), 0 0 24px rgba(239,68,68,.18); }
+  .neon-border-purple { box-shadow: 0 0 0 1px rgba(255,255,255,.35), 0 0 24px rgba(255,255,255,.18); }
+  .neon-text { text-shadow: 0 0 12px rgba(239,68,68,.6), 0 0 24px rgba(255,255,255,.4); }
+  .btn-neon { background: linear-gradient(135deg, #ef4444, #ffffff); color: #050816; font-weight: 700; box-shadow: 0 0 20px rgba(239,68,68,.45), 0 0 40px rgba(255,255,255,.25); transition: transform .2s, box-shadow .2s, filter .2s; }
+  .btn-neon:hover { transform: translateY(-2px); filter: brightness(1.15); box-shadow: 0 0 28px rgba(239,68,68,.7), 0 0 60px rgba(255,255,255,.4); }
+  .btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); transition: background .2s, border-color .2s; }
+  .btn-ghost:hover { background: rgba(255,255,255,0.12); border-color: rgba(239,68,68,.5); }
+  .input-neon { background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.12); transition: border-color .2s, box-shadow .2s; }
+  .input-neon:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.18), 0 0 18px rgba(239,68,68,.25); }
+  .chip { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: all .2s; }
+  .chip:hover { border-color: #ef4444; background: rgba(239,68,68,0.1); transform: translateY(-2px); }
+  .plat-card { transition: transform .25s, box-shadow .25s; }
+  .plat-card:hover { transform: translateY(-6px) scale(1.02); }
+  .scrollbar::-webkit-scrollbar { width: 8px; }
+  .scrollbar::-webkit-scrollbar-thumb { background: rgba(239,68,68,.4); border-radius: 4px; }
+  .fade-in { animation: fadeIn .5s ease both; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <header class="relative z-10 max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-xl btn-neon flex items-center justify-center font-black text-lg">S</div>
+      <div>
+        <h1 class="text-2xl font-black neon-text">SubMais</h1>
+        <p class="text-xs text-gray-400">Encurte, compartilhe e rankeie</p>
+      </div>
+    </div>
+    <div id="authArea" class="flex items-center gap-3"></div>
+  </header>
+
+  <main class="relative z-10 max-w-7xl mx-auto px-4 pb-20">
+    <section id="loginView" class="hidden">
+      <div class="glass neon-border-cyan rounded-3xl p-10 max-w-md mx-auto mt-16 fade-in">
+        <div class="w-16 h-16 rounded-2xl btn-neon flex items-center justify-center font-black text-2xl mx-auto mb-4">S</div>
+        <h2 class="text-3xl font-black mb-2 neon-text text-center" id="authTitle">Entrar</h2>
+        <p class="text-gray-400 mb-6 text-center text-sm" id="authSubtitle">Acesse sua conta para gerenciar seus links.</p>
+
+        <form id="authForm" class="space-y-3">
+          <input id="emailInput" type="email" required placeholder="E-mail" class="w-full input-neon rounded-xl px-4 py-3" />
+          <input id="passwordInput" type="password" required placeholder="Senha" minlength="6" class="w-full input-neon rounded-xl px-4 py-3" />
+          <div class="flex items-center justify-between text-xs">
+            <label class="flex items-center gap-2 text-gray-400"><input id="rememberMe" type="checkbox" checked class="accent-red-400" /> Lembrar de mim</label>
+            <button type="button" id="forgotBtn" class="text-red-300 hover:underline">Esqueci a senha</button>
+          </div>
+          <button type="submit" id="authSubmit" class="btn-neon w-full px-6 py-3 rounded-xl font-bold">Entrar</button>
+        </form>
+
+        <div class="mt-4 text-center text-sm text-gray-400">
+          <span id="toggleText">Não tem conta?</span>
+          <button id="toggleAuth" type="button" class="text-red-300 font-semibold hover:underline ml-1">Criar conta</button>
+        </div>
+        <p id="authError" class="text-xs text-red-400 mt-3 text-center hidden"></p>
+        <p id="configWarn" class="text-xs text-yellow-400 mt-4 hidden">Configure o Firebase (firebaseConfig) para habilitar o login.</p>
+      </div>
+    </section>
+
+    <section id="dashView" class="hidden fade-in">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass neon-border-cyan rounded-2xl p-6 lg:col-span-2">
+          <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+            <span class="text-red-400">＋</span> Adicionar novo link
+          </h3>
+          <form id="addForm" class="flex flex-col sm:flex-row gap-3">
+            <input id="titleInput" type="text" placeholder="Título (opcional)" class="flex-1 input-neon rounded-xl px-4 py-3" />
+            <input id="urlInput" type="url" required placeholder="https://seu-link.com" class="flex-1 input-neon rounded-xl px-4 py-3" />
+            <button type="submit" class="btn-neon px-6 py-3 rounded-xl">Adicionar</button>
+          </form>
+          <div id="platQuick" class="mt-4 flex flex-wrap gap-2"></div>
+          <p class="text-xs text-gray-400 mt-3">O link gerado passa por 3 etapas de 10s antes de redirecionar e conta cliques no ranking.</p>
+        </div>
+        <div class="glass neon-border-purple rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <img id="userPhoto" class="w-12 h-12 rounded-full border-2 border-red-300" src="" alt="" />
+            <div class="min-w-0">
+              <p id="userName" class="font-semibold truncate"></p>
+              <p id="userClicks" class="text-sm text-gray-400">0 cliques</p>
+            </div>
+          </div>
+          <button id="logoutBtn" class="btn-ghost w-full px-4 py-2 rounded-xl text-sm">Sair</button>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-xl neon-text">Plataformas</h3>
+          <span class="text-xs text-gray-400">Clique para preencher o formulário</span>
+        </div>
+        <div id="platformsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 mt-8">
+        <h3 class="font-bold text-lg mb-4">Seus links</h3>
+        <div id="linksList" class="space-y-3"></div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 mt-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-lg">🏆 Ranking Top 3</h3>
+          <span id="rankingStatus" class="text-xs text-gray-400"></span>
+        </div>
+        <div id="rankingProgress" class="text-center py-6 text-gray-400">Carregando...</div>
+        <div id="rankingList" class="hidden space-y-3"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="relative z-10 text-center text-xs text-gray-500 py-6">SubMais &copy; 2026 — feito com neon ✨</footer>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyB106vqq5dgPxSI7n8_wIuFMHhE-jen0nM",
+  authDomain: "nooxsub.firebaseapp.com",
+  databaseURL: "https://nooxsub-default-rtdb.firebaseio.com",
+  projectId: "nooxsub",
+  storageBucket: "nooxsub.firebasestorage.app",
+  messagingSenderId: "632380460031",
+  appId: "1:632380460031:web:21c89331c074be188bf5ca",
+  measurementId: "G-B7671FPDJQ"
+};
+
+let app, auth, db;
+let currentUser = null;
+let linksUnsub = null;
+let usersUnsub = null;
+
+const PLATFORMS = [
+  { id:'youtube', name:'YouTube', icon:'https://cdn.simpleicons.org/youtube/ff0000', color:'#ff0000', action:'Inscrever-se', group:'streaming' },
+  { id:'discord', name:'Discord', icon:'https://cdn.simpleicons.org/discord/5865F2', color:'#5865F2', action:'Entrar no servidor', group:'social' },
+  { id:'telegram', name:'Telegram', icon:'https://cdn.simpleicons.org/telegram/26A5E4', color:'#26A5E4', action:'Entrar no grupo', group:'social' },
+  { id:'whatsapp', name:'WhatsApp', icon:'https://cdn.simpleicons.org/whatsapp/25D366', color:'#25D366', action:'Entrar no grupo', group:'social' },
+  { id:'instagram', name:'Instagram', icon:'https://cdn.simpleicons.org/instagram/E4405F', color:'#E4405F', action:'Seguir', group:'social' },
+];
+
+function platformFromUrl(url) {
+  try {
+    const h = new URL(url).hostname.toLowerCase();
+    const map = [
+      ['youtube.com','youtube'], ['youtu.be','youtube'],
+      ['discord.com','discord'], ['discord.gg','discord'],
+      ['t.me','telegram'], ['telegram.org','telegram'],
+      ['whatsapp.com','whatsapp'], ['wa.me','whatsapp'],
+      ['instagram.com','instagram'],
+    ];
+    for (const [d, id] of map) if (h.includes(d)) return PLATFORMS.find(p=>p.id===id);
+  } catch {}
+  return null;
+}
+
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+function initParticles() {
+  particles = [];
+  const count = Math.min(90, Math.floor(window.innerWidth / 16));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 1.8 + 0.6,
+      c: ['#ef4444','#ffffff','#f87171','#fca5a5'][Math.floor(Math.random()*4)],
+    });
+  }
+}
+function drawParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for (const p of particles) {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = p.c;
+    ctx.shadowColor = p.c;
+    ctx.shadowBlur = 8;
+    ctx.fill();
+  }
+  ctx.shadowBlur = 0;
+  requestAnimationFrame(drawParticles);
+}
+resizeCanvas();
+initParticles();
+drawParticles();
+window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+
+function initFirebase() {
+  app = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.database();
+}
+initFirebase();
+
+const logoutBtn = document.getElementById('logoutBtn');
+const loginView = document.getElementById('loginView');
+const dashView = document.getElementById('dashView');
+const authForm = document.getElementById('authForm');
+const emailInput = document.getElementById('emailInput');
+const passwordInput = document.getElementById('passwordInput');
+const rememberMe = document.getElementById('rememberMe');
+const toggleAuth = document.getElementById('toggleAuth');
+const toggleText = document.getElementById('toggleText');
+const authTitle = document.getElementById('authTitle');
+const authSubtitle = document.getElementById('authSubtitle');
+const authSubmit = document.getElementById('authSubmit');
+const authError = document.getElementById('authError');
+const forgotBtn = document.getElementById('forgotBtn');
+
+let isRegister = false;
+
+function showLogin() { loginView.classList.remove('hidden'); dashView.classList.add('hidden'); }
+function showDash() { loginView.classList.add('hidden'); dashView.classList.remove('hidden'); }
+
+function setAuthMode(register) {
+  isRegister = register;
+  if (register) {
+    authTitle.textContent = 'Criar conta';
+    authSubtitle.textContent = 'Cadastre-se para gerenciar seus links.';
+    authSubmit.textContent = 'Registrar';
+    toggleText.textContent = 'Já tem conta?';
+    toggleAuth.textContent = 'Entrar';
+  } else {
+    authTitle.textContent = 'Entrar';
+    authSubtitle.textContent = 'Acesse sua conta para gerenciar seus links.';
+    authSubmit.textContent = 'Entrar';
+    toggleText.textContent = 'Não tem conta?';
+    toggleAuth.textContent = 'Criar conta';
+  }
+  authError.classList.add('hidden');
+  authError.classList.remove('text-green-400');
+  authError.classList.add('text-red-400');
+}
+
+toggleAuth.addEventListener('click', () => setAuthMode(!isRegister));
+
+authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  authError.classList.add('hidden');
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const persistence = rememberMe.checked
+    ? firebase.auth.Auth.Persistence.LOCAL
+    : firebase.auth.Auth.Persistence.SESSION;
+  try {
+    await auth.setPersistence(persistence);
+    if (isRegister) {
+      await auth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await auth.signInWithEmailAndPassword(email, password);
+    }
+  } catch (err) {
+    authError.textContent = traduzErro(err.code || err.message);
+    authError.classList.remove('hidden');
+  }
+});
+
+forgotBtn.addEventListener('click', async () => {
+  const email = emailInput.value.trim();
+  if (!email) { authError.textContent = 'Digite seu e-mail acima para recuperar a senha.'; authError.classList.remove('hidden'); return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    authError.textContent = 'E-mail de recuperação enviado.';
+    authError.classList.remove('hidden');
+    authError.classList.remove('text-red-400');
+    authError.classList.add('text-green-400');
+  } catch (err) {
+    authError.textContent = traduzErro(err.code || err.message);
+    authError.classList.remove('hidden');
+  }
+});
+
+function traduzErro(code) {
+  const map = {
+    'auth/invalid-email': 'E-mail inválido.',
+    'auth/user-disabled': 'Usuário desativado.',
+    'auth/user-not-found': 'Usuário não encontrado.',
+    'auth/wrong-password': 'Senha incorreta.',
+    'auth/email-already-in-use': 'E-mail já cadastrado.',
+    'auth/weak-password': 'Senha muito fraca (mín. 6 caracteres).',
+    'auth/too-many-requests': 'Muitas tentativas. Tente mais tarde.',
+    'auth/invalid-credential': 'E-mail ou senha inválidos.',
+  };
+  return map[code] || code;
+}
+
+logoutBtn.addEventListener('click', () => auth.signOut());
+
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+  if (user) {
+    await ensureUser(user);
+    showDash();
+    renderProfile(user);
+    loadLinks(user.uid);
+    loadRanking();
+    renderPlatforms();
+    renderQuickPlatforms();
+  } else {
+    cleanup();
+    showLogin();
+  }
+});
+
+async function ensureUser(user) {
+  const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Usuário');
+  const ref = db.ref('users/' + user.uid);
+  const snap = await ref.get();
+  if (!snap.exists()) {
+    await ref.set({
+      displayName: name,
+      photoURL: user.photoURL || '',
+      email: user.email || '',
+      totalClicks: 0,
+      createdAt: Date.now()
+    });
+  } else {
+    await ref.update({ displayName: name, photoURL: user.photoURL || '' });
+  }
+}
+
+function renderProfile(user) {
+  const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Usuário');
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userPhoto').src = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name);
+  db.ref('users/' + user.uid + '/totalClicks').on('value', s => {
+    document.getElementById('userClicks').textContent = (s.val() || 0) + ' cliques';
+  });
+}
+
+function cleanup() {
+  if (linksUnsub) { linksUnsub(); linksUnsub = null; }
+  if (usersUnsub) { usersUnsub(); usersUnsub = null; }
+}
+
+function renderPlatforms() {
+  const grid = document.getElementById('platformsGrid');
+  grid.innerHTML = '';
+  PLATFORMS.forEach(p => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'plat-card glass rounded-xl p-4 text-left neon-border-cyan';
+    card.style.borderColor = p.color + '55';
+    card.innerHTML = `
+      <img src="${p.icon}" alt="${p.name}" class="w-10 h-10 mb-2" onerror="this.style.display='none'" />
+      <p class="font-semibold text-sm truncate">${p.name}</p>
+      <p class="text-xs text-gray-400 mt-1">${p.action}</p>
+    `;
+    card.addEventListener('click', () => {
+      document.getElementById('titleInput').value = `${p.name} - ${p.action}`;
+      document.getElementById('urlInput').focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    grid.appendChild(card);
+  });
+}
+
+function renderQuickPlatforms() {
+  const box = document.getElementById('platQuick');
+  box.innerHTML = '';
+  ['youtube','discord','telegram','whatsapp','instagram'].forEach(id => {
+    const p = PLATFORMS.find(x=>x.id===id);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1';
+    b.innerHTML = `<img src="${p.icon}" alt="${p.name}" class="w-4 h-4" onerror="this.style.display='none'" /> ${p.name}`;
+    b.addEventListener('click', () => {
+      document.getElementById('titleInput').value = `${p.name} - ${p.action}`;
+      document.getElementById('urlInput').focus();
+    });
+    box.appendChild(b);
+  });
+}
+
+function loadLinks(uid) {
+  const container = document.getElementById('linksList');
+  const ref = db.ref('links').orderByChild('ownerUid').equalTo(uid);
+  linksUnsub = ref.on('value', snap => {
+    container.innerHTML = '';
+    const items = [];
+    snap.forEach(c => items.push({ id: c.key, ...c.val() }));
+    items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    if (items.length === 0) {
+      container.innerHTML = '<p class="text-gray-400 text-sm">Nenhum link ainda. Adicione o primeiro acima ou escolha uma plataforma.</p>';
+      return;
+    }
+    items.forEach(d => {
+      const genUrl = buildPageUrl(d.id);
+      const plat = platformFromUrl(d.url);
+      const el = document.createElement('div');
+      el.className = 'glass rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 neon-card';
+      el.innerHTML = `
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+          <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:${plat?plat.color+'22':'rgba(255,255,255,0.06)'};border:1px solid ${plat?plat.color+'55':'rgba(255,255,255,0.1)'}">
+            ${plat ? `<img src="${plat.icon}" alt="${plat.name}" class="w-6 h-6" onerror="this.style.display='none'" />` : '🔗'}
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold truncate">${escapeHtml(d.title || d.url)}</p>
+            <p class="text-xs text-gray-400 truncate">${escapeHtml(d.url)}</p>
+            <p class="text-xs text-red-300 mt-1">${d.clicks || 0} cliques${plat ? ' · ' + plat.name : ''}</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button data-copy="${genUrl}" class="copyBtn btn-ghost px-3 py-2 rounded-lg text-sm">Copiar</button>
+          <button data-del="${d.id}" class="delBtn bg-red-600/70 hover:bg-red-600 px-3 py-2 rounded-lg text-sm">Excluir</button>
+        </div>
+      `;
+      container.appendChild(el);
+    });
+    container.querySelectorAll('.copyBtn').forEach(b => b.addEventListener('click', () => {
+      navigator.clipboard.writeText(b.dataset.copy).then(() => {
+        const t = b.textContent; b.textContent = 'Copiado!'; setTimeout(() => b.textContent = t, 1500);
+      });
+    }));
+    container.querySelectorAll('.delBtn').forEach(b => b.addEventListener('click', async () => {
+      if (confirm('Excluir este link?')) await db.ref('links/' + b.dataset.del).remove();
+    }));
+  });
+}
+
+function buildPageUrl(id) {
+  const base = window.location.href.replace(/index\.html.*$/, '');
+  return base + 'pagina.html?id=' + encodeURIComponent(id);
+}
+
+document.getElementById('addForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const url = document.getElementById('urlInput').value.trim();
+  const title = document.getElementById('titleInput').value.trim();
+  if (!url) return;
+  let u;
+  try { u = new URL(url); } catch { alert('URL inválida'); return; }
+  if (!/^https?:$/.test(u.protocol)) { alert('Use http ou https'); return; }
+  const ref = db.ref('links').push();
+  await ref.set({
+    url, title: title || url, ownerUid: currentUser.uid,
+    ownerName: currentUser.displayName || 'Usuário',
+    clicks: 0, createdAt: Date.now()
+  });
+  document.getElementById('addForm').reset();
+});
+
+function loadRanking() {
+  const progressEl = document.getElementById('rankingProgress');
+  const listEl = document.getElementById('rankingList');
+  const statusEl = document.getElementById('rankingStatus');
+  usersUnsub = db.ref('users').on('value', snap => {
+    const all = [];
+    let total = 0;
+    snap.forEach(c => { const v = c.val(); total += (v.totalClicks || 0); all.push({ uid: c.key, ...v }); });
+    all.sort((a,b) => (b.totalClicks||0) - (a.totalClicks||0));
+    const top3 = all.slice(0,3);
+    if (total >= 100) {
+      progressEl.classList.add('hidden');
+      listEl.classList.remove('hidden');
+      statusEl.textContent = total + ' cliques no total';
+      renderRanking(listEl, top3);
+    } else {
+      listEl.classList.add('hidden');
+      progressEl.classList.remove('hidden');
+      progressEl.innerHTML = `<p>Ranking aparece a partir de <b>100 cliques</b>.</p><p class="text-sm mt-1">Atual: ${total}/100</p>`;
+      statusEl.textContent = total + '/100 cliques';
+    }
+  });
+}
+
+function renderRanking(container, top3) {
+  const medals = ['🥇','🥈','🥉'];
+  container.innerHTML = '';
+  top3.forEach((u, i) => {
+    if (!u || (u.totalClicks||0) <= 0) return;
+    const el = document.createElement('div');
+    el.className = 'flex items-center gap-4 glass rounded-xl p-4 neon-card';
+    el.innerHTML = `
+      <div class="text-3xl">${medals[i]}</div>
+      <img class="w-10 h-10 rounded-full border-2 border-red-400" src="${escapeAttr(u.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.displayName||'U'))}" />
+      <div class="flex-1">
+        <p class="font-semibold">${escapeHtml(u.displayName || 'Usuário')}</p>
+        <p class="text-xs text-gray-400">${u.totalClicks || 0} cliques</p>
+      </div>
+      <div class="text-2xl font-bold text-red-300">${i+1}º</div>
+    `;
+    container.appendChild(el);
+  });
+  if (container.children.length === 0) {
+    container.innerHTML = '<p class="text-gray-400 text-sm">Ainda sem cliques suficientes.</p>';
+  }
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeAttr(s){ return escapeHtml(s); }
+</script>
+</body>
+</html>
